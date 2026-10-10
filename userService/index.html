@@ -1,0 +1,2721 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/userService/">
+      
+      
+        <link rel="prev" href="../unitService/">
+      
+      
+        <link rel="next" href="../notificationService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Profile Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#profile-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Profile Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topic-มาตรฐาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        topic มาตรฐาน
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-auth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topic-มาตรฐาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        topic มาตรฐาน
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-auth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="profile-service">Profile Service<a class="headerlink" href="#profile-service" title="Permanent link">&para;</a></h1>
+<p>Service สำหรับเก็บข้อมูลโปรไฟล์ของผู้ใช้ในแต่ละแอป (เดิมหน้านี้ชื่อ User Service)</p>
+<pre><code>serviceKey: profile
+</code></pre>
+<ul>
+<li><strong>Profile</strong> — ชื่อ (<code>firstName</code>, <code>middleName</code>, <code>lastName</code>, <code>displayName</code>), เพศ (<code>gender</code>: <code>MALE</code>, <code>FEMALE</code>, <code>NOT_SPECIFIED</code>), รูปโปรไฟล์ (<code>profileImage</code>), ลายเซ็นอิเล็กทรอนิกส์ (<code>electronicSignatureKey</code>) และองค์กรเริ่มต้น (<code>defaultOrganizationId</code>, <code>defaultOrganizationKey</code>)</li>
+<li><strong>Metadata / Profile Custom</strong> — แอปกำหนดฟิลด์เสริมของโปรไฟล์เองได้ (<code>createMetadata</code>) โดยไม่ต้องแก้โค้ด แล้วเก็บค่าของผู้ใช้แต่ละคนใน profile custom · ชนิดฟิลด์: <code>STRING</code>, <code>NUMBER</code>, <code>SINGLE_CHOICE</code>, <code>MULTIPLE_CHOICE</code>, <code>DATE</code>, <code>DATE_TIME</code>, <code>TIME</code>, <code>BOOLEAN</code></li>
+</ul>
+<p>บัญชีผู้ใช้ (username, email, เบอร์โทร, รหัสผ่าน, การ login) อยู่ที่ <a href="../authenticationService/">Authentication Service</a> · เมื่อมีการสมัครบัญชี Authentication Service จะส่งข้อมูลเริ่มต้นมาทาง topic <code>sync-auth</code> แล้ว Profile Service สร้างโปรไฟล์ให้</p>
+<p><br></p>
+<ul>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">Kafka Produce Reference</a></li>
+</ul>
+<hr />
+<p><br>
+<br></p>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>การยืนยันตัวตนและ header ดูที่ <a href="../authenticationService/#app-credential">Authentication Service</a> · "สิทธิ์" คือ permissionKey ของ service <code>profile</code> ที่ได้รับผ่าน role ใน <a href="../aclService/">ACL Service</a></p>
+<hr />
+<p><strong>สรุป API ทั้งหมด 20 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#getmetadatafields">getMetadataFields</a></td>
+<td>ดึงนิยามฟิลด์เสริม (metadata) ของโปรไฟล์ในแอปปัจจุบัน แบบแบ่งหน้า</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmetadatabyid">getMetadataById</a></td>
+<td>ดึงนิยามฟิลด์เสริมตาม id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmetadatabykey">getMetadataByKey</a></td>
+<td>ดึงนิยามฟิลด์เสริมตาม key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmetadatafieldsbyappkey">getMetadataFieldsByAppKey</a></td>
+<td>ดึงนิยามฟิลด์เสริมของแอปที่ระบุ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmetadatabyidsystem">getMetadataByIdSystem</a></td>
+<td>ดึงนิยามฟิลด์เสริมตาม id โดยระบุ appKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmetadatabykeysystem">getMetadataByKeySystem</a></td>
+<td>ดึงนิยามฟิลด์เสริมตาม key โดยระบุ appKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getprofilecustom">getProfileCustom</a></td>
+<td>ดึงค่าฟิลด์เสริมของผู้ใช้ตาม authId</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmyprofilecustom">getMyProfileCustom</a></td>
+<td>ดึงค่าฟิลด์เสริมของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmyprofile">getMyProfile</a></td>
+<td>ดึงโปรไฟล์ของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getprofilebyid">getProfileById</a></td>
+<td>ดึงโปรไฟล์ตาม id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getprofiles">getProfiles</a></td>
+<td>ดึงโปรไฟล์ทั้งหมดในแอปปัจจุบัน แบบแบ่งหน้า</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getprofilesbyappkey">getProfilesByAppKey</a></td>
+<td>ดึงโปรไฟล์ของแอปที่ระบุ แบบแบ่งหน้า</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getprofilebyidsystem">getProfileByIdSystem</a></td>
+<td>ดึงโปรไฟล์ตาม id โดยระบุ appKey (ใช้ข้ามแอป)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createmetadata">createMetadata</a></td>
+<td>สร้างนิยามฟิลด์เสริมของโปรไฟล์</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatemetadata">updateMetadata</a></td>
+<td>แก้ไขนิยามฟิลด์เสริม (ส่งได้หลายรายการ)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deletemetadata">deleteMetadata</a></td>
+<td>ลบนิยามฟิลด์เสริมตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateprofilecustom">updateProfileCustom</a></td>
+<td>แก้ไขค่าฟิลด์เสริมของผู้ใช้ที่ระบุ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatemyprofilecustom">updateMyProfileCustom</a></td>
+<td>แก้ไขค่าฟิลด์เสริมของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateprofile">updateProfile</a></td>
+<td>แก้ไขโปรไฟล์ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatemyprofile">updateMyProfile</a></td>
+<td>แก้ไขโปรไฟล์ของผู้ใช้ที่ login อยู่</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการ Query ข้อมูลออกมา ไม่มีการแก้ไข Data</p>
+<hr />
+<h4 id="getmetadatafields">getMetadataFields<a class="headerlink" href="#getmetadatafields" title="Permanent link">&para;</a></h4>
+<p>ดึงนิยามฟิลด์เสริม (metadata) ของโปรไฟล์ในแอปปัจจุบัน แบบแบ่งหน้า</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getMetadataProfile</code></li>
+</ul>
+<pre><code class="language-graphql">query GetMetadataFields($input: GetMetadataFieldInput) {
+  getMetadataFields(input: $input) {
+    metadataFields { _id fieldLabel fieldKey fieldType min max }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetMetadataFieldInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetMetadataFieldFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetMetadataFieldSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetMetadataFieldSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>MetadataFieldPagination!</code></p>
+<hr />
+<h4 id="getmetadatabyid">getMetadataById<a class="headerlink" href="#getmetadatabyid" title="Permanent link">&para;</a></h4>
+<p>ดึงนิยามฟิลด์เสริมตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getMetadataProfileById</code></li>
+</ul>
+<pre><code class="language-graphql">query GetMetadataById($metadataId: ID!) {
+  getMetadataById(metadataId: $metadataId) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>metadataId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Metadata!</code></p>
+<hr />
+<h4 id="getmetadatabykey">getMetadataByKey<a class="headerlink" href="#getmetadatabykey" title="Permanent link">&para;</a></h4>
+<p>ดึงนิยามฟิลด์เสริมตาม key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getMetadataProfileByKey</code></li>
+</ul>
+<pre><code class="language-graphql">query GetMetadataByKey($metadataKey: String!) {
+  getMetadataByKey(metadataKey: $metadataKey) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>metadataKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Metadata!</code></p>
+<hr />
+<h4 id="getmetadatafieldsbyappkey">getMetadataFieldsByAppKey<a class="headerlink" href="#getmetadatafieldsbyappkey" title="Permanent link">&para;</a></h4>
+<p>ดึงนิยามฟิลด์เสริมของแอปที่ระบุ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMetadataFieldsByAppKey($appKey: String!, $input: GetMetadataFieldInput) {
+  getMetadataFieldsByAppKey(appKey: $appKey, input: $input) {
+    metadataFields { _id fieldLabel fieldKey fieldType min max }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetMetadataFieldInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetMetadataFieldFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetMetadataFieldSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetMetadataFieldSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appKey: String!</code></p>
+<p>Response: <code>MetadataFieldPagination</code></p>
+<hr />
+<h4 id="getmetadatabyidsystem">getMetadataByIdSystem<a class="headerlink" href="#getmetadatabyidsystem" title="Permanent link">&para;</a></h4>
+<p>ดึงนิยามฟิลด์เสริมตาม id โดยระบุ appKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMetadataByIdSystem($appKey: String!, $metadataId: ID!) {
+  getMetadataByIdSystem(appKey: $appKey, metadataId: $metadataId) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>metadataId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Metadata!</code></p>
+<hr />
+<h4 id="getmetadatabykeysystem">getMetadataByKeySystem<a class="headerlink" href="#getmetadatabykeysystem" title="Permanent link">&para;</a></h4>
+<p>ดึงนิยามฟิลด์เสริมตาม key โดยระบุ appKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMetadataByKeySystem($appKey: String!, $metadataKey: String!) {
+  getMetadataByKeySystem(appKey: $appKey, metadataKey: $metadataKey) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>metadataKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Metadata!</code></p>
+<hr />
+<h4 id="getprofilecustom">getProfileCustom<a class="headerlink" href="#getprofilecustom" title="Permanent link">&para;</a></h4>
+<p>ดึงค่าฟิลด์เสริมของผู้ใช้ตาม authId</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getProfileCustom</code></li>
+</ul>
+<pre><code class="language-graphql">query GetProfileCustom($authId: String!) {
+  getProfileCustom(authId: $authId) {
+    value
+    metadata { _id fieldLabel fieldKey fieldType min max }
+    updatedAt
+    updatedBy
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>[ProfileCustom]!</code></p>
+<hr />
+<h4 id="getmyprofilecustom">getMyProfileCustom<a class="headerlink" href="#getmyprofilecustom" title="Permanent link">&para;</a></h4>
+<p>ดึงค่าฟิลด์เสริมของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMyProfileCustom {
+  getMyProfileCustom {
+    value
+    metadata { _id fieldLabel fieldKey fieldType min max }
+    updatedAt
+    updatedBy
+  }
+}
+</code></pre>
+<p>Response: <code>[ProfileCustom]!</code></p>
+<hr />
+<h4 id="getmyprofile">getMyProfile<a class="headerlink" href="#getmyprofile" title="Permanent link">&para;</a></h4>
+<p>ดึงโปรไฟล์ของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMyProfile {
+  getMyProfile {
+    _id
+    appKey
+    firstName
+    middleName
+    lastName
+    displayName
+    gender
+    authId
+    username
+    profileImage
+    # ...
+  }
+}
+</code></pre>
+<p>Response: <code>Profile!</code></p>
+<hr />
+<h4 id="getprofilebyid">getProfileById<a class="headerlink" href="#getprofilebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงโปรไฟล์ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getProfileById</code></li>
+</ul>
+<pre><code class="language-graphql">query GetProfileById($profileId: ID!) {
+  getProfileById(profileId: $profileId) {
+    _id
+    appKey
+    firstName
+    middleName
+    lastName
+    displayName
+    gender
+    authId
+    username
+    profileImage
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>profileId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Profile!</code></p>
+<hr />
+<h4 id="getprofiles">getProfiles<a class="headerlink" href="#getprofiles" title="Permanent link">&para;</a></h4>
+<p>ดึงโปรไฟล์ทั้งหมดในแอปปัจจุบัน แบบแบ่งหน้า</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getProfiles</code></li>
+</ul>
+<pre><code class="language-graphql">query GetProfiles($input: GetProfilesInput) {
+  getProfiles(input: $input) {
+    profiles { _id appKey firstName middleName lastName displayName }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetProfilesInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetProfilesFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetProfilesSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetProfilesSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>ProfilesPagination!</code></p>
+<hr />
+<h4 id="getprofilesbyappkey">getProfilesByAppKey<a class="headerlink" href="#getprofilesbyappkey" title="Permanent link">&para;</a></h4>
+<p>ดึงโปรไฟล์ของแอปที่ระบุ แบบแบ่งหน้า</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getProfilesByAppKey</code></li>
+</ul>
+<pre><code class="language-graphql">query GetProfilesByAppKey($appKey: String!, $input: GetProfilesInput) {
+  getProfilesByAppKey(appKey: $appKey, input: $input) {
+    profiles { _id appKey firstName middleName lastName displayName }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetProfilesInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetProfilesFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetProfilesSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetProfilesSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appKey: String!</code></p>
+<p>Response: <code>ProfilesPagination!</code></p>
+<hr />
+<h4 id="getprofilebyidsystem">getProfileByIdSystem<a class="headerlink" href="#getprofilebyidsystem" title="Permanent link">&para;</a></h4>
+<p>ดึงโปรไฟล์ตาม id โดยระบุ appKey (ใช้ข้ามแอป)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getProfileById</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetProfileByIdSystem($profileId: ID!, $appKey: String) {
+  getProfileByIdSystem(profileId: $profileId, appKey: $appKey) {
+    _id
+    appKey
+    firstName
+    middleName
+    lastName
+    displayName
+    gender
+    authId
+    username
+    profileImage
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>profileId</td>
+<td><code>ID!</code></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Profile!</code></p>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการแก้ไขข้อมูล</p>
+<hr />
+<h4 id="createmetadata">createMetadata<a class="headerlink" href="#createmetadata" title="Permanent link">&para;</a></h4>
+<p>สร้างนิยามฟิลด์เสริมของโปรไฟล์</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createMetadataProfile</code></li>
+</ul>
+<pre><code class="language-graphql">mutation CreateMetadata($createMetadataInput: CreateMetadataInput!) {
+  createMetadata(createMetadataInput: $createMetadataInput) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<p><code>createMetadataInput</code>: <code>CreateMetadataInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>appKey ที่ต้องการสร้าง metadata ไม่ใส่ใช้ appKey จาก login</td>
+</tr>
+<tr>
+<td>fieldLabel</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>The Label when display in the form.</td>
+</tr>
+<tr>
+<td>fieldKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>The Key of the metadata.</td>
+</tr>
+<tr>
+<td>fieldType</td>
+<td><code>EnumFieldTypes!</code></td>
+<td>ใช่</td>
+<td>The Type of the metadata.</td>
+</tr>
+<tr>
+<td>fieldOptions</td>
+<td><code>[FieldOptionsInput]</code></td>
+<td></td>
+<td>The Options when the field type is SINGLE_CHOICE or MULTIPLE_CHOICE. Example: - SINGLE_CHOICE: - "fieldOptions": [{"key": "test1","value": "test1"}] - MULTIPLE_CHOICE: - "fieldOptions": [{"key": "test1","value": "test1"}]</td>
+</tr>
+<tr>
+<td>min</td>
+<td><code>Float</code></td>
+<td></td>
+<td>The min value of the metadata.</td>
+</tr>
+<tr>
+<td>max</td>
+<td><code>Float</code></td>
+<td></td>
+<td>The max value of the metadata.</td>
+</tr>
+<tr>
+<td>maxFileSize</td>
+<td><code>Int</code></td>
+<td></td>
+<td>The max file size of the metadata.</td>
+</tr>
+<tr>
+<td>default</td>
+<td><code>JSON!</code></td>
+<td>ใช่</td>
+<td>The default value in form. Example: - STRING: "text" - NUMBER: 0 - SINGLE_CHOICE: - "default": {"key": "test1","value": "test1"} - MULTIPLE_CHOICE: - "default": [{"key": "test1","value": "test1"}] - DATE: "2021-01-01" - DATE_TIME: "2021-01-01T00:00:00.000Z" - TIME: "2021-01-01T00:00:00.000Z"</td>
+</tr>
+<tr>
+<td>systemDescription</td>
+<td><code>String</code></td>
+<td></td>
+<td>The text for explain about base system metadata.</td>
+</tr>
+<tr>
+<td>displayDescription</td>
+<td><code>String</code></td>
+<td></td>
+<td>The text for explain about metadata.</td>
+</tr>
+<tr>
+<td>placeHolderText</td>
+<td><code>String</code></td>
+<td></td>
+<td>The placeHolder for description of metadata.</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean!</code></td>
+<td>ใช่</td>
+<td>The status of metadata.</td>
+</tr>
+<tr>
+<td>isRequired</td>
+<td><code>Boolean!</code></td>
+<td>ใช่</td>
+<td>The field is required or not.</td>
+</tr>
+<tr>
+<td>isSensitive</td>
+<td><code>Boolean!</code></td>
+<td>ใช่</td>
+<td>The field is sensitive or not.</td>
+</tr>
+<tr>
+<td>ordinalNumber</td>
+<td><code>Int!</code></td>
+<td>ใช่</td>
+<td>The order when sorting metadata.</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Metadata!</code></p>
+<hr />
+<h4 id="updatemetadata">updateMetadata<a class="headerlink" href="#updatemetadata" title="Permanent link">&para;</a></h4>
+<p>แก้ไขนิยามฟิลด์เสริม (ส่งได้หลายรายการ)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateMetadataProfile</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateMetadata($updateMetadataInput: [UpdateMetadataInput]!, $appKey: String) {
+  updateMetadata(updateMetadataInput: $updateMetadataInput, appKey: $appKey) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateMetadataInput</code>: <code>UpdateMetadataInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>metadataId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>The ID of the metadata.</td>
+</tr>
+<tr>
+<td>fieldLabel</td>
+<td><code>String</code></td>
+<td></td>
+<td>The Label when display in the form.</td>
+</tr>
+<tr>
+<td>default</td>
+<td><code>JSON</code></td>
+<td></td>
+<td>The default value in form. Example: - STRING: "text" - NUMBER: 0 - SINGLE_CHOICE: - "default": {"key": "test1","value": "test1"} - MULTIPLE_CHOICE: - "default": [{"key": "test1","value": "test1"}] - DATE: "2021-01-01" - DATE_TIME: "2021-01-01T00:00:00.000Z" - TIME: "2021-01-01T00:00:00.000Z"</td>
+</tr>
+<tr>
+<td>systemDescription</td>
+<td><code>String</code></td>
+<td></td>
+<td>The text for explain about metadata.</td>
+</tr>
+<tr>
+<td>displayDescription</td>
+<td><code>String</code></td>
+<td></td>
+<td>The text for explain about metadata.</td>
+</tr>
+<tr>
+<td>placeHolderText</td>
+<td><code>String</code></td>
+<td></td>
+<td>The placeHolder for description of metadata.</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>The status of metadata.</td>
+</tr>
+<tr>
+<td>isRequired</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>The field is required or not.</td>
+</tr>
+<tr>
+<td>ordinalNumber</td>
+<td><code>Int</code></td>
+<td></td>
+<td>the order when sorting metadata.</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appKey: String</code></p>
+<p>Response: <code>[Metadata]!</code></p>
+<hr />
+<h4 id="deletemetadata">deleteMetadata<a class="headerlink" href="#deletemetadata" title="Permanent link">&para;</a></h4>
+<p>ลบนิยามฟิลด์เสริมตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteMetadataProfile</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteMetadata($metadataId: ID!, $appKey: String) {
+  deleteMetadata(metadataId: $metadataId, appKey: $appKey) {
+    _id
+    fieldLabel
+    fieldKey
+    fieldType
+    fieldOptions { key value }
+    min
+    max
+    maxFileSize
+    default
+    systemDescription
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>metadataId</td>
+<td><code>ID!</code></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Metadata!</code></p>
+<hr />
+<h4 id="updateprofilecustom">updateProfileCustom<a class="headerlink" href="#updateprofilecustom" title="Permanent link">&para;</a></h4>
+<p>แก้ไขค่าฟิลด์เสริมของผู้ใช้ที่ระบุ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateProfileCustoms</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateProfileCustom($updateProfileCustomInput: [UpdateProfileCustomInput]!) {
+  updateProfileCustom(updateProfileCustomInput: $updateProfileCustomInput) {
+    value
+    metadata { _id fieldLabel fieldKey fieldType min max }
+    updatedAt
+    updatedBy
+  }
+}
+</code></pre>
+<p><code>updateProfileCustomInput</code>: <code>UpdateProfileCustomInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>specify application key of the profile custom field</td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>specify auth ID of the profile custom field</td>
+</tr>
+<tr>
+<td>fieldMetadataId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>specify field metadata ID of the profile custom field</td>
+</tr>
+<tr>
+<td>value</td>
+<td><code>JSON</code></td>
+<td></td>
+<td>specify value of the profile custom field</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>[ProfileCustom]!</code></p>
+<hr />
+<h4 id="updatemyprofilecustom">updateMyProfileCustom<a class="headerlink" href="#updatemyprofilecustom" title="Permanent link">&para;</a></h4>
+<p>แก้ไขค่าฟิลด์เสริมของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateMyProfileCustom($UpdateMyProfileCustomInput: [UpdateMyProfileCustomInput]!) {
+  updateMyProfileCustom(UpdateMyProfileCustomInput: $UpdateMyProfileCustomInput) {
+    value
+    metadata { _id fieldLabel fieldKey fieldType min max }
+    updatedAt
+    updatedBy
+  }
+}
+</code></pre>
+<p><code>UpdateMyProfileCustomInput</code>: <code>UpdateMyProfileCustomInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fieldMetadataId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>specify field metadata ID of the profile custom field</td>
+</tr>
+<tr>
+<td>value</td>
+<td><code>JSON</code></td>
+<td></td>
+<td>specify value of the profile custom field</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>[ProfileCustom]!</code></p>
+<hr />
+<h4 id="updateprofile">updateProfile<a class="headerlink" href="#updateprofile" title="Permanent link">&para;</a></h4>
+<p>แก้ไขโปรไฟล์ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateProfile</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateProfile($profileId: ID!, $updateProfileInput: UpdateProfileInput!, $appKey: String) {
+  updateProfile(profileId: $profileId, updateProfileInput: $updateProfileInput, appKey: $appKey) {
+    _id
+    appKey
+    firstName
+    middleName
+    lastName
+    displayName
+    gender
+    authId
+    username
+    profileImage
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateProfileInput</code>: <code>UpdateProfileInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>firstName</td>
+<td><code>String</code></td>
+<td></td>
+<td>first name of the profile.</td>
+</tr>
+<tr>
+<td>middleName</td>
+<td><code>String</code></td>
+<td></td>
+<td>middle name of the profile.</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td><code>String</code></td>
+<td></td>
+<td>last name of the profile.</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td><code>String</code></td>
+<td></td>
+<td>display name of the profile.</td>
+</tr>
+<tr>
+<td>gender</td>
+<td><code>EnumGender</code></td>
+<td></td>
+<td>gender of the profile.</td>
+</tr>
+<tr>
+<td>profileImage</td>
+<td><code>String</code></td>
+<td></td>
+<td>profile image of the profile.</td>
+</tr>
+<tr>
+<td>electronicSignatureKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>file key of electronic signature.</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>profileId: ID!</code>, <code>appKey: String</code></p>
+<p>Response: <code>Profile!</code></p>
+<hr />
+<h4 id="updatemyprofile">updateMyProfile<a class="headerlink" href="#updatemyprofile" title="Permanent link">&para;</a></h4>
+<p>แก้ไขโปรไฟล์ของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateMyProfile($updateProfileInput: UpdateProfileInput!) {
+  updateMyProfile(updateProfileInput: $updateProfileInput) {
+    _id
+    appKey
+    firstName
+    middleName
+    lastName
+    displayName
+    gender
+    authId
+    username
+    profileImage
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateProfileInput</code>: <code>UpdateProfileInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>firstName</td>
+<td><code>String</code></td>
+<td></td>
+<td>first name of the profile.</td>
+</tr>
+<tr>
+<td>middleName</td>
+<td><code>String</code></td>
+<td></td>
+<td>middle name of the profile.</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td><code>String</code></td>
+<td></td>
+<td>last name of the profile.</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td><code>String</code></td>
+<td></td>
+<td>display name of the profile.</td>
+</tr>
+<tr>
+<td>gender</td>
+<td><code>EnumGender</code></td>
+<td></td>
+<td>gender of the profile.</td>
+</tr>
+<tr>
+<td>profileImage</td>
+<td><code>String</code></td>
+<td></td>
+<td>profile image of the profile.</td>
+</tr>
+<tr>
+<td>electronicSignatureKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>file key of electronic signature.</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Profile!</code></p>
+<hr />
+<p><br>
+<br></p>
+<h2 id="kafka-consume-reference">Kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>ทุกข้อความมี header <code>appKey</code> และ <code>serviceKey</code> (service ปลายทาง) · payload อยู่ในรูป <code>{ &lt;ข้อมูล&gt;: {...}, action: "ADD" | "REMOVE" | ... }</code> · ข้อความของแอปที่ service นี้ไม่มี AppCertificate จะถูกข้าม</p>
+<hr />
+<h3 id="topic-มาตรฐาน">topic มาตรฐาน<a class="headerlink" href="#topic-มาตรฐาน" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init-system</code></td>
+<td>ตั้งระบบจากศูนย์ (เฉพาะ core set)</td>
+</tr>
+<tr>
+<td><code>refresh-data</code></td>
+<td>core สั่งให้ส่งข้อมูลที่ถืออยู่ขึ้นไปใหม่ (<code>sync-profile</code> และ <code>sync-permission</code>) + ล้าง cache</td>
+</tr>
+<tr>
+<td><code>sync-app-certificate</code></td>
+<td>รับ AppCertificate ของ service ต่อแอป จาก core</td>
+</tr>
+<tr>
+<td><code>sync-app-credential</code></td>
+<td>รับ AppCredential ของแอป จาก Authentication Service ใช้ตรวจ token / header</td>
+</tr>
+<tr>
+<td><code>sync-service-setting</code> / <code>sync-app-service-setting</code></td>
+<td>รับค่าตั้งค่าเพิ่มเติมแบบ JSON ทั้งระบบ / รายแอป</td>
+</tr>
+<tr>
+<td><code>sync-application</code></td>
+<td>รับข้อมูลแอป</td>
+</tr>
+<tr>
+<td><code>sync-user-policy</code></td>
+<td>รับ UserPolicy ของ permission <code>profile</code> จาก ACL ใช้ตรวจสิทธิ์</td>
+</tr>
+<tr>
+<td><code>sync-organization</code></td>
+<td>รับข้อมูลองค์กรจาก <a href="../unitService/">Unit Service</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-auth">sync-auth<a class="headerlink" href="#sync-auth" title="Permanent link">&para;</a></h3>
+<p>รับข้อมูลบัญชีจาก <a href="../authenticationService/">Authentication Service</a> แล้วสร้าง / อัปเดต / ลบโปรไฟล์</p>
+<pre><code>topic: sync-auth
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>account.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>account.authId</td>
+<td>string</td>
+<td>id ของบัญชี</td>
+</tr>
+<tr>
+<td>account.username</td>
+<td>string</td>
+<td>username</td>
+</tr>
+<tr>
+<td>account.firstName / middleName / lastName / displayName</td>
+<td>string</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>account.gender</td>
+<td>string</td>
+<td>เพศ</td>
+</tr>
+<tr>
+<td>account.profileImage</td>
+<td>string</td>
+<td>fileKey ของรูปโปรไฟล์</td>
+</tr>
+<tr>
+<td>account.electronicSignatureKey</td>
+<td>string</td>
+<td>fileKey ของลายเซ็น</td>
+</tr>
+<tr>
+<td>account.roleKey</td>
+<td>string</td>
+<td><code>ADMIN</code>, <code>NONE</code></td>
+</tr>
+<tr>
+<td>account.defaultOrganizationId / defaultOrganizationKey</td>
+<td>string</td>
+<td>องค์กรเริ่มต้น</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<p>ค่า message ถูกห่อเป็น <code>{ "value": "&lt;JSON string&gt;" }</code> ต้อง parse ค่า <code>value</code> อีกชั้น (ดู <a href="../authenticationService/#sync-auth">Authentication Service</a>)</p>
+<hr />
+<h3 id="set-profile">set-profile<a class="headerlink" href="#set-profile" title="Permanent link">&para;</a></h3>
+<p>ให้ service อื่นสร้าง / แก้โปรไฟล์ของผู้ใช้ผ่าน Kafka</p>
+<pre><code>topic: set-profile
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>account.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>account.authId</td>
+<td>string</td>
+<td>ผู้ใช้</td>
+</tr>
+<tr>
+<td>account.username</td>
+<td>string</td>
+<td>username</td>
+</tr>
+<tr>
+<td>account.emails</td>
+<td>string[]</td>
+<td>email</td>
+</tr>
+<tr>
+<td>account.firstName / middleName / lastName / displayName</td>
+<td>string</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>account.gender</td>
+<td>string</td>
+<td><code>MALE</code>, <code>FEMALE</code>, <code>NOT_SPECIFIED</code></td>
+</tr>
+<tr>
+<td>account.profileImage</td>
+<td>string</td>
+<td>fileKey ของรูปโปรไฟล์</td>
+</tr>
+<tr>
+<td>account.roleKey</td>
+<td>string</td>
+<td>role</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><br>
+<br></p>
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="sync-profile">sync-profile<a class="headerlink" href="#sync-profile" title="Permanent link">&para;</a></h3>
+<p>ส่งข้อมูลโปรไฟล์หลังมีการสร้าง / แก้ / ลบ ให้ service อื่นที่ต้องใช้ชื่อหรือรูปของผู้ใช้ (เช่น ACL Service, Notification Service)</p>
+<pre><code>topic: sync-profile
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>profile.id</td>
+<td>string</td>
+<td>id ของโปรไฟล์</td>
+</tr>
+<tr>
+<td>profile.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>profile.authId</td>
+<td>string</td>
+<td>id ของบัญชี</td>
+</tr>
+<tr>
+<td>profile.username</td>
+<td>string</td>
+<td>username</td>
+</tr>
+<tr>
+<td>profile.firstName / middleName / lastName / displayName</td>
+<td>string</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>profile.gender</td>
+<td>string</td>
+<td>เพศ</td>
+</tr>
+<tr>
+<td>profile.profileImage</td>
+<td>string</td>
+<td>fileKey ของรูปโปรไฟล์</td>
+</tr>
+<tr>
+<td>profile.electronicSignatureKey</td>
+<td>string</td>
+<td>fileKey ของลายเซ็น</td>
+</tr>
+<tr>
+<td>profile.defaultOrganizationId / defaultOrganizationKey</td>
+<td>string</td>
+<td>องค์กรเริ่มต้น</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">sync-permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>ส่ง permission ของ <code>profile</code> ให้ <a href="../aclService/">ACL Service</a> (ตอนได้ <code>refresh-data</code>)</p>
+<pre><code>topic: sync-permission
+</code></pre>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-profile-service@c4b90a4 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

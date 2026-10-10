@@ -1,0 +1,48 @@
+# Gumon
+
+> Gumon is a composable system: an application is assembled from ready-made microservices (NestJS + GraphQL + MongoDB + Redis are typical, but any stack works) that talk to each other **only through Kafka events**. Frontends call each service's GraphQL API directly. Docs are in Thai with English identifiers.
+
+Key rules an AI must know before writing Gumon code:
+
+- Never call another service's API directly — produce a Kafka event; any service may subscribe. The only requirement to join Gumon is speaking Kafka.
+- Every message carries headers `appKey` (the app/tenant) and `serviceKey` (the **destination** service, not the sender). Broadcasts to a whole app (`sync-application`, `sync-organization`, `sync-auth`, `sync-profile`, any service's `sync-<entity>`) carry only `appKey`.
+- Receiving: drop messages whose `serviceKey` is not yours **only on single-destination topics** (`refresh-data`, `hand-check`, `sync-app-credential`, `sync-user-policy`, `sync-*-setting`, `schedule-alarm`). Never filter broadcasts by `serviceKey`. `sync-app-certificate` carries the certificate owner's key but every service must store all of them. Drop anything for an app where you hold no app certificate.
+- Payload shape: `{ "action": "ADD" | "REMOVE" | ..., "<entity>": { ... } }`. Topic names are kebab-case. Consumer group: `<serviceKey>-consumer-<topic>`.
+- A service keeps local copies of data it needs from others (received via `sync-*` topics) instead of querying them.
+- Minimum contract for any service: produce `register-service` on boot and answer core's `hand-check` with `hand-check-result` (the template does both); consume `sync-app-certificate` (which apps it may serve) and `refresh-data` (re-publish everything it owns, clear its cache).
+- Permissions say *whether* a user may do X, not *whose* data it is: filter "my" data yourself by `authId` from the token.
+- Services with user-facing APIs also consume `sync-app-credential` (JWT keys; credential type `SYSTEM` = "apiKey" via `X-APP-CLIENT-ID` + `X-APP-CLIENT-SECRET`) and `sync-user-policy`, and produce `sync-permission`. Permission check = look up `${SERVICE_KEY}::${permissionKey}:${appKey}:${organizationId}:${authId}` (organizationId empty for app level) in local storage.
+- In a Kafka consumer, let errors throw: the template retries with backoff, then sends the message to `KAFKA_DEAD_LETTER_TOPIC` and moves on. Write to MongoDB through `runInTransaction`; clear Redis after commit. Never swallow errors silently.
+- Local development from `gumon-backend-template`: `pnpm test:e2e:up` (Kafka/Mongo/Redis in Docker) · `pnpm dev:keys` (throw-away `.gumon` keys) · `pnpm start:dev` · `pnpm test:e2e`. Register with a real core: `pnpm gumon:register`. `SERVICE_KEY` must be set (placeholder `CHANGE_ME` refuses to boot); `GRAPHQL_PLAYGROUND=true` enables the GraphQL page.
+- Use central services instead of building your own: `set-schedule` → schedule (replaces in-process cron so services can run many replicas), `create-notification` → notification, `sync-file-upload` → storage.
+
+Full text of every page: https://docs.gumon.io/llms-full.txt
+
+## Concepts
+
+- [Gumon concept](https://docs.gumon.io/concept.md): composable system, Kafka-only rule, tenancy (app / organization), headers, core set vs business services
+- [Standard Kafka topics](https://docs.gumon.io/standardTopics.md): every standard topic — producer, consumer, purpose, payload
+- [Service lifecycle](https://docs.gumon.io/serviceLifecycle.md): register / resign, add / remove service to an app, init-system, refresh-data, keys
+- [Frontends](https://docs.gumon.io/frontends.md): system-admin, dynamic-admin, embedding sub-admins, menu metadata
+
+## Building a service
+
+- [What a service must have](https://docs.gumon.io/serviceX.md): the 3-level contract (must / has API / as needed)
+- [Create a new service](https://docs.gumon.io/createService.md): step-by-step from gumon-backend-template, checklist
+- [Gumon CLI](https://docs.gumon.io/gumoncli.md): local stack in one command — `gumon up` (databases, init once, core set), `status`, `down`; planned commands listed
+
+## Core set services (API Reference + Kafka consume/produce)
+
+- [Core Service](https://docs.gumon.io/coreService.md): service registry, certificates, add service to app
+- [Application Service](https://docs.gumon.io/applicationService.md): apps, themes, host → app mapping
+- [Authentication Service](https://docs.gumon.io/authenticationService.md): accounts, login methods, app credentials
+- [ACL Service](https://docs.gumon.io/aclService.md): permissions, role bindings, user policies, menus
+- [Unit Service](https://docs.gumon.io/unitService.md): organizations, roles, types/tags, contacts, running numbers
+- [Profile Service](https://docs.gumon.io/userService.md): user profile data
+- [Notification Service](https://docs.gumon.io/notificationService.md): in-app (WebSocket), email, SMS
+- [Schedule Service](https://docs.gumon.io/scheduleService.md): central scheduler, `set-schedule` / `schedule-alarm`
+- [Storage Service](https://docs.gumon.io/storageService.md): presigned upload/download, file registry
+
+## Optional
+
+- [Label Service](https://docs.gumon.io/labelService.md): deprecated — merged into Unit Service

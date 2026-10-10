@@ -1,0 +1,2883 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/notificationService/">
+      
+      
+        <link rel="prev" href="../userService/">
+      
+      
+        <link rel="next" href="../scheduleService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Notification Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#notification-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Notification Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#การขอสงแจงเตอนจาก-service-อน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        การขอส่งแจ้งเตือนจาก service อื่น
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#การเชอมตอ-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        การเชื่อมต่อ WebSocket
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Notification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-notification-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Notification Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#การขอสงแจงเตอนจาก-service-อน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        การขอส่งแจ้งเตือนจาก service อื่น
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#การเชอมตอ-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        การเชื่อมต่อ WebSocket
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Notification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-notification-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Notification Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="notification-service">Notification Service<a class="headerlink" href="#notification-service" title="Permanent link">&para;</a></h1>
+<p>Service กลางสำหรับส่งการแจ้งเตือนของทุก service ในระบบ · serviceKey: <code>notification</code></p>
+<p>ช่องทางที่รองรับ</p>
+<ul>
+<li><strong>In-app</strong> แจ้งเตือนในแอปแบบ realtime ผ่าน WebSocket (Socket.IO) และเก็บเป็นรายการให้ดึงย้อนหลัง / อ่าน / ปิดได้</li>
+<li><strong>Email</strong> ส่งผ่าน SMTP provider ที่ตั้งค่าต่อแอป (เลือกตาม priority และสลับ provider อัตโนมัติเมื่อเกิน rate limit หรือส่งไม่สำเร็จ)</li>
+<li><strong>SMS</strong> ส่งผ่าน SMS provider ที่ตั้งค่าต่อแอป (หลักการเดียวกับ email)</li>
+<li><strong>Webhook</strong> มี API จัดการ provider แล้ว ช่องทางส่งอยู่ระหว่างพัฒนา</li>
+</ul>
+<p>service อื่นขอส่งแจ้งเตือนผ่าน Kafka topic <code>create-notification</code> (ไม่เรียก API ของ notification ตรง) · ตั้งเวลาส่งล่วงหน้าได้ โดย notification จะฝากเวลาไว้กับ <a href="../scheduleService/">Schedule Service</a> ให้เอง</p>
+<p>ทุกช่องทางส่งผ่านคิว (Redis) ทำให้รัน notification หลาย replica ได้ ทั้งฝั่งคิวและ WebSocket</p>
+<p><br></p>
+<ul>
+<li><a href="#การขอสงแจงเตอนจาก-service-อน">การขอส่งแจ้งเตือนจาก service อื่น</a></li>
+<li><a href="#การเชอมตอ-websocket">การเชื่อมต่อ WebSocket</a></li>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">kafka produce Reference</a></li>
+</ul>
+<hr />
+<p><br>
+<br></p>
+<h2 id="การขอสงแจงเตอนจาก-service-อน">การขอส่งแจ้งเตือนจาก service อื่น<a class="headerlink" href="#การขอสงแจงเตอนจาก-service-อน" title="Permanent link">&para;</a></h2>
+<p>produce ข้อความเข้า topic <code>create-notification</code> · header <code>appKey</code> = แอปที่จะส่ง, <code>serviceKey</code> = <code>notification</code> (service ปลายทาง)</p>
+<p>ใส่ช่องทางที่ต้องการได้หลายช่องทางในข้อความเดียว (<code>appNotification</code>, <code>email</code>, <code>sms</code>) ช่องทางที่ไม่ใส่จะไม่ถูกส่ง</p>
+<pre><code class="language-json">{
+  &quot;action&quot;: &quot;ADD&quot;,
+  &quot;notification&quot;: {
+    &quot;isSchedule&quot;: false,
+    &quot;organizationId&quot;: &quot;665000000000000000000010&quot;,
+    &quot;refKey&quot;: &quot;665000000000000000000020&quot;,
+    &quot;refType&quot;: &quot;leaveRequest&quot;,
+    &quot;appNotification&quot;: {
+      &quot;type&quot;: &quot;SELECT&quot;,
+      &quot;authId&quot;: [&quot;665000000000000000000030&quot;],
+      &quot;notificationType&quot;: &quot;GENERAL&quot;,
+      &quot;title&quot;: &quot;คำขอลาได้รับการอนุมัติ&quot;,
+      &quot;content&quot;: &quot;คำขอลาวันที่ 1 พ.ย. ได้รับการอนุมัติแล้ว&quot;,
+      &quot;from&quot;: &quot;SYSTEM&quot;,
+      &quot;to&quot;: &quot;665000000000000000000030&quot;,
+      &quot;displayType&quot;: &quot;SUCCESS&quot;,
+      &quot;url&quot;: &quot;/leave/665000000000000000000020&quot;
+    },
+    &quot;email&quot;: {
+      &quot;from&quot;: &quot;noreply@example.com&quot;,
+      &quot;to&quot;: &quot;user@example.com&quot;,
+      &quot;subject&quot;: &quot;คำขอลาได้รับการอนุมัติ&quot;,
+      &quot;html&quot;: &quot;&lt;p&gt;คำขอลาของคุณได้รับการอนุมัติแล้ว&lt;/p&gt;&quot;
+    }
+  }
+}
+</code></pre>
+<p>ตั้งเวลาส่ง: ใส่ <code>"isSchedule": true</code> และ <code>schedule</code> (โครงเดียวกับ payload <code>set-schedule</code> ของ <a href="../scheduleService/#set-schedule">Schedule Service</a> เช่น <code>notificationAt</code>, <code>timeZone</code>, <code>isRecurring</code>, <code>recurrence</code>, <code>expiryAt</code>) · notification จะสร้างรายการไว้ก่อนแล้วลงทะเบียนเวลากับ schedule เอง ผู้ขอไม่ต้องส่ง <code>set-schedule</code> เอง</p>
+<p><strong>ยกเลิกแจ้งเตือนที่ตั้งเวลาไว้</strong> (เช่น นัดถูกยกเลิก ไม่ต้องส่ง SMS เตือนแล้ว) — ส่ง <code>REMOVE</code> พร้อม <code>refKey</code> + <code>refType</code> เดียวกับที่ใช้ตอน <code>ADD</code></p>
+<pre><code class="language-json">{ &quot;action&quot;: &quot;REMOVE&quot;, &quot;notification&quot;: { &quot;refKey&quot;: &quot;665000000000000000000020&quot;, &quot;refType&quot;: &quot;booking.reminder&quot; } }
+</code></pre>
+<ul>
+<li>ยกเลิกทุกรายการที่ยังไม่ส่ง (in-app / email / SMS) ของ <code>refKey</code> + <code>refType</code> นั้นในแอปเดียวกัน และแจ้ง schedule ให้ถอนเวลา ⇒ ไม่ถูกส่ง</li>
+<li>ต้องใส่ทั้ง <code>refKey</code> และ <code>refType</code> (ไม่ครบ = ERROR ไม่ยกเลิกอะไร) · ส่งซ้ำ หรืออ้างถึงที่ไม่มี = SUCCESS โดย <code>removedCount: 0</code></li>
+<li>จะยกเลิกได้ ตอน <code>ADD</code> ต้องใส่ <code>refKey</code> / <code>refType</code> ไว้ · ตั้ง <code>refType</code> ขึ้นต้นด้วยชื่อ service ของตัวเอง (เช่น <code>booking.reminder</code>) กันชนกับ service อื่นในแอปเดียวกัน</li>
+</ul>
+<p>ผลการรับคำขอส่งกลับทาง topic <code>create-notification-result</code> (<code>SUCCESS</code> / <code>ERROR</code>)</p>
+<p>รายละเอียดฟิลด์ดูที่ <a href="#create-notification">Create Notification</a></p>
+<hr />
+<h2 id="การเชอมตอ-websocket">การเชื่อมต่อ WebSocket<a class="headerlink" href="#การเชอมตอ-websocket" title="Permanent link">&para;</a></h2>
+<p>ใช้รับแจ้งเตือน in-app แบบ realtime ที่หน้าบ้าน</p>
+<ol>
+<li>เรียก <a href="#get-my-appnotification-config">Get My AppNotification Config</a> เพื่อรับ <code>roomId</code> ของ user ที่ login</li>
+<li>เชื่อมต่อ Socket.IO (default namespace) ที่ host ของ notification service โดยส่ง header <code>authorization</code> (access token) และ <code>roomId</code> (ทาง query <code>?roomId=</code> หรือ header <code>roomid</code>)</li>
+<li>ฟัง event <code>appNotification</code> ได้ข้อมูลรูป <code>{ action, data }</code></li>
+<li><code>action: CREATE</code> = แจ้งเตือนใหม่</li>
+<li><code>action: UPDATE</code> = แจ้งเตือนเดิมถูกอ่าน / ปิด</li>
+<li><code>data</code> = ข้อมูล <a href="#appnotification">AppNotification</a></li>
+</ol>
+<pre><code class="language-js">import { io } from &quot;socket.io-client&quot;;
+
+const socket = io(NOTIFICATION_URL, {
+  query: { roomId },
+  extraHeaders: { authorization: `Bearer ${accessToken}` },
+});
+
+socket.on(&quot;appNotification&quot;, ({ action, data }) =&gt; {
+  console.log(action, data.content.title);
+});
+</code></pre>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<p>GraphQL endpoint <code>/graphql</code> · ทุก API ต้อง login (header <code>authorization</code>) และต้องมี <strong>permission ชื่อเดียวกับ API</strong> (เช่น <code>getAppNotifications</code>) ยกเว้น API แบบ <code>...ByAppKey</code> ที่ใช้ app credential ของระบบภายนอก (header <code>X-APP-CLIENT-ID</code> + <code>X-APP-CLIENT-SECRET</code>) · การระบุ <code>appKey</code> อื่นนอกจากแอปที่ login ต้องมี permission <code>systemApp</code></p>
+<p>API ที่มีคำว่า <code>My</code> ทำงานกับข้อมูลของ user ที่ login เท่านั้น ส่วน API ที่ไม่มี <code>My</code> ทำงานกับข้อมูลทั้งแอป (สำหรับผู้ดูแล)</p>
+<p>ทุก API แบบรายการรับ input รูปเดียวกัน <code>{ filter, search, sort: { sortBy, sortOrder }, pagination: { limit, page } }</code> และคืน <code>pagination { limit page totalItems totalPages hasPrevPage hasNextPage prevPage nextPage }</code></p>
+<p><strong>สรุป API ทั้งหมด 53 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-appnotification-config">Get My AppNotification Config</a></td>
+<td>คืน <code>roomId</code> (String) ของ user ที่ login สำหรับเชื่อมต่อ WebSocket</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-app-notifications">Get App Notifications</a></td>
+<td>ดึงแจ้งเตือน in-app ทั้งหมดของแอป</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-app-notification-by-id">Get App Notification By ID</a></td>
+<td>Response : <code>AppNotification</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-app-notification">Get My App Notification</a></td>
+<td>ดึงแจ้งเตือน in-app ของ user ที่ login (filter เหมือน Get App Notifications ยกเว้น `aut…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-app-notification-by-id">Get My App Notification By ID</a></td>
+<td>Response : <code>AppNotification</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-transactions">Get Email Transactions</a></td>
+<td>ดึงประวัติ email ทั้งหมดของแอป</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-email-transactions">Get My Email Transactions</a></td>
+<td>ดึงประวัติ email ที่ user ที่ login เป็นผู้สร้าง · input / response เหมือน Get Email Tr…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-transaction-by-id">Get Email Transaction By ID</a></td>
+<td>Input: <code>emailTransactionId: ID!</code>, <code>appKey: String</code> · Response : <code>EmailTransaction</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-email-transaction-by-id">Get My Email Transaction By ID</a></td>
+<td>Response : <code>EmailTransaction</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-transactions-by-appkey">Get Email Transactions By AppKey</a></td>
+<td>สำหรับระบบภายนอกที่เรียกด้วย app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-transactions">Get Sms Transactions</a></td>
+<td>ดึงประวัติ SMS ทั้งหมดของแอป · input เหมือน Get Email Transactions</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-sms-transactions">Get My Sms Transactions</a></td>
+<td>Response : <code>SmsTransactionPagination</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-transaction-by-id">Get Sms Transaction By ID</a></td>
+<td>Input: <code>smsTransactionId: ID!</code>, <code>appKey: String</code> · Response : <code>SmsTransaction</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-my-sms-transaction-by-id">Get My Sms Transaction By ID</a></td>
+<td>Response : <code>SmsTransaction</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-transactions-by-appkey">Get Sms Transactions By AppKey</a></td>
+<td>สำหรับระบบภายนอกที่เรียกด้วย app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-providers">Get Email Providers</a></td>
+<td>ดึงรายการ email provider (SMTP) ของแอป</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-provider-by-id">Get Email Provider By ID</a></td>
+<td>Response : <code>EmailProvider</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-provider-by-key">Get Email Provider By Key</a></td>
+<td>Response : <code>EmailProvider</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-email-providers-by-appkey">Get Email Providers By AppKey</a></td>
+<td>สำหรับระบบภายนอกที่เรียกด้วย app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-providers">Get Sms Providers</a></td>
+<td>ดึงรายการ SMS provider ของแอป · ฟิลด์เหมือน EmailProvider โดยใช้ <code>smsProviderKey</code>, `max…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-provider-by-id">Get Sms Provider By ID</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-provider-by-key">Get Sms Provider By Key</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-sms-providers-by-appkey">Get Sms Providers By AppKey</a></td>
+<td>สำหรับระบบภายนอกที่เรียกด้วย app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-webhook-providers">Get Webhook Providers</a></td>
+<td>ดึงรายการ webhook provider ของแอป · ฟิลด์เหมือน EmailProvider โดยใช้ `webhookProviderKe…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-webhook-provider-by-id">Get Webhook Provider By ID</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-webhook-provider-by-key">Get Webhook Provider By Key</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-webhook-providers-by-appkey">Get Webhook Providers By AppKey</a></td>
+<td>สำหรับระบบภายนอกที่เรียกด้วย app credential</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-app-notification">Create App Notification</a></td>
+<td>สร้างแจ้งเตือน in-app จากหน้าบ้าน (ผลเหมือนส่ง <code>create-notification</code> ที่มี `appNotifica…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#read-app-notification">Read App Notification</a></td>
+<td>ตั้งแจ้งเตือนของแอปเป็นอ่านแล้ว (ของ user ใดก็ได้ในแอป สำหรับผู้ดูแล)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#read-my-app-notification">Read My App Notification</a></td>
+<td>ตั้งแจ้งเตือนของ user ที่ login เป็นอ่านแล้ว · <code>type: ALL</code> = อ่านทั้งหมด</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#closed-app-notification">Closed App Notification</a></td>
+<td>ปิดการแสดงแจ้งเตือนของแอป (สำหรับผู้ดูแล) · input <code>CloseAppNotificationInput</code> รูปเดียวก…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#closed-my-app-notification">Closed My App Notification</a></td>
+<td>ปิดการแสดงแจ้งเตือนของ user ที่ login</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-email-transaction">Create Email Transaction</a></td>
+<td>สร้างและส่ง email จากหน้าบ้าน</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-email-transaction">Delete Email Transaction</a></td>
+<td>ลบประวัติ email ได้หลายรายการ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-my-email-transaction">Delete My Email Transaction</a></td>
+<td>ลบประวัติ email ของ user ที่ login</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resent-email-transaction">Resent Email Transaction</a></td>
+<td>ส่งซ้ำ: สร้างรายการใหม่จากรายการเดิม (รายการเดิมถูกตั้ง <code>isReSent = true</code>, รายการใหม่มี…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resent-my-email-transaction">Resent My Email Transaction</a></td>
+<td>ส่งซ้ำ email ของ user ที่ login</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#sent-all-queue-email-transaction">Sent All Queue Email Transaction</a></td>
+<td>นำ email ที่ยังค้างสถานะคิวกลับเข้าคิวส่งอีกครั้ง (สำหรับผู้ดูแล)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-sms-transaction">Create Sms Transaction</a></td>
+<td>สร้างและส่ง SMS จากหน้าบ้าน</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-sms-transaction">Delete Sms Transaction</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-my-sms-transaction">Delete My Sms Transaction</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resent-sms-transaction">Resent Sms Transaction</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resent-my-sms-transaction">Resent My Sms Transaction</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#sent-all-queue-sms-transaction">Sent All Queue Sms Transaction</a></td>
+<td>นำ SMS ที่ยังค้างสถานะคิวกลับเข้าคิวส่งอีกครั้ง (สำหรับผู้ดูแล)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-email-provider">Create Email Provider</a></td>
+<td>เพิ่ม SMTP provider ให้แอป</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#update-email-provider">Update Email Provider</a></td>
+<td>Input: <code>emailProviderId: ID!</code>, <code>update: UpdateEmailProviderInput!</code> (ฟิลด์เดียวกับ creat…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-email-provider">Delete Email Provider</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-sms-provider">Create Sms Provider</a></td>
+<td>เพิ่ม SMS provider ให้แอป</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#update-sms-provider">Update Sms Provider</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-sms-provider">Delete Sms Provider</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-webhook-provider">Create Webhook Provider</a></td>
+<td><code>config</code>: <code>senderName</code> (บังคับ), <code>url</code> (บังคับ), <code>method</code> (<code>GET</code> / <code>POST</code> ค่าเริ่มต้น `…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#update-webhook-provider">Update Webhook Provider</a></td>
+<td></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-webhook-provider">Delete Webhook Provider</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการ Query ข้อมูลออกมา ไม่มีการแก้ไข Data</p>
+<h4 id="get-my-appnotification-config">Get My AppNotification Config<a class="headerlink" href="#get-my-appnotification-config" title="Permanent link">&para;</a></h4>
+<p>คืน <code>roomId</code> (String) ของ user ที่ login สำหรับเชื่อมต่อ WebSocket</p>
+<pre><code class="language-graphql">query {
+  getMyAppNotificationConfig
+}
+</code></pre>
+<hr />
+<h4 id="get-app-notifications">Get App Notifications<a class="headerlink" href="#get-app-notifications" title="Permanent link">&para;</a></h4>
+<p>ดึงแจ้งเตือน in-app ทั้งหมดของแอป</p>
+<pre><code class="language-graphql">query {
+  getAppNotifications(input: {
+    filter: { isRead: false, notificationType: URGENT }
+    sort: { sortBy: createdAt, sortOrder: DESC }
+    pagination: { limit: 20, page: 1 }
+  }) {
+    appNotifications { _id authId notificationType isRead isClosed sentAt content { title content displayType url } }
+    pagination { totalItems totalPages }
+  }
+}
+</code></pre>
+<p>filter: <code>organizationId</code>, <code>authId</code>, <code>isSchedule</code>, <code>scheduleRefKey</code>, <code>scheduleRefType</code>, <code>sentStatus</code>, <code>isReSent</code>, <code>reSentBy</code>, <code>notificationType</code>, <code>isRead</code>, <code>isClosed</code>, <code>displayType</code>, <code>createdBy</code>, <code>updatedBy</code>, <code>createdAtStart/End</code>, <code>updatedAtStart/End</code> · search: <code>organizationId</code>, <code>scheduleRefKey</code>, <code>scheduleRefType</code>, <code>content { title content from to }</code></p>
+<p>Response : <code>AppNotificationPagination</code> = <code>{ appNotifications: [AppNotification], pagination }</code></p>
+<h5 id="appnotification">AppNotification<a class="headerlink" href="#appnotification" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>organizationId</td>
+<td>String</td>
+<td>องค์กรที่ส่ง (ถ้าส่งในนามองค์กร)</td>
+</tr>
+<tr>
+<td>authId</td>
+<td>String</td>
+<td>user ผู้รับ</td>
+</tr>
+<tr>
+<td>isSchedule</td>
+<td>Boolean</td>
+<td>เป็นการตั้งเวลาส่งหรือไม่</td>
+</tr>
+<tr>
+<td>scheduleRefKey / scheduleRefType</td>
+<td>String</td>
+<td>อ้างอิงกับ schedule (เมื่อ isSchedule = true)</td>
+</tr>
+<tr>
+<td>sentStatus</td>
+<td>ENUM</td>
+<td><code>PREPARE</code> (รอเข้าคิว) · <code>QUEUED</code> · <code>SUCCEED</code> · <code>FAIL</code></td>
+</tr>
+<tr>
+<td>sentAt</td>
+<td>Date</td>
+<td>เวลาที่จะส่ง / ส่ง</td>
+</tr>
+<tr>
+<td>succeedSentAt</td>
+<td>Date</td>
+<td>เวลาที่ส่งสำเร็จ</td>
+</tr>
+<tr>
+<td>isReSent / reSentBy</td>
+<td>Boolean / String</td>
+<td>ถูกส่งซ้ำแล้ว / id ต้นฉบับ</td>
+</tr>
+<tr>
+<td>notificationType</td>
+<td>ENUM</td>
+<td><code>VERY_URGENT</code>, <code>URGENT</code>, <code>IMPORTANT</code>, <code>GENERAL</code>, <code>REMINDER</code>, <code>APP_NOTIFICATION</code></td>
+</tr>
+<tr>
+<td>isRead / readAt</td>
+<td>Boolean / Date</td>
+<td>อ่านแล้ว / เวลาอ่าน</td>
+</tr>
+<tr>
+<td>isClosed / closedAt</td>
+<td>Boolean / Date</td>
+<td>ปิดการแสดงแล้ว (ยังดึงย้อนหลังได้) / เวลาปิด</td>
+</tr>
+<tr>
+<td>content.title</td>
+<td>String</td>
+<td>หัวข้อ</td>
+</tr>
+<tr>
+<td>content.content</td>
+<td>String</td>
+<td>เนื้อหา</td>
+</tr>
+<tr>
+<td>content.from / content.to</td>
+<td>String</td>
+<td>ข้อความบอกผู้ส่ง / ผู้รับ เช่น "จากโรงแรม A", "ถึงคุณสมชาย"</td>
+</tr>
+<tr>
+<td>content.displayType</td>
+<td>ENUM</td>
+<td><code>SUCCESS</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code> (ให้หน้าบ้านเลือกรูปแบบแสดงผล)</td>
+</tr>
+<tr>
+<td>content.url</td>
+<td>String</td>
+<td>ลิงก์เมื่อกดแจ้งเตือน</td>
+</tr>
+<tr>
+<td>createdAt / updatedAt</td>
+<td>Date</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-app-notification-by-id">Get App Notification By ID<a class="headerlink" href="#get-app-notification-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getAppNotificationById(appNotificationId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id authId isRead content { title } }
+}
+</code></pre>
+<p>Response : <code>AppNotification</code></p>
+<hr />
+<h4 id="get-my-app-notification">Get My App Notification<a class="headerlink" href="#get-my-app-notification" title="Permanent link">&para;</a></h4>
+<p>ดึงแจ้งเตือน in-app ของ user ที่ login (filter เหมือน Get App Notifications ยกเว้น <code>authId</code>)</p>
+<pre><code class="language-graphql">query {
+  getMyAppNotification(input: { filter: { isClosed: false }, sort: { sortBy: createdAt, sortOrder: DESC }, pagination: { limit: 20, page: 1 } }) {
+    appNotifications { _id isRead content { title content displayType url } createdAt }
+    pagination { totalItems hasNextPage }
+  }
+}
+</code></pre>
+<p>Response : <code>AppNotificationPagination</code></p>
+<hr />
+<h4 id="get-my-app-notification-by-id">Get My App Notification By ID<a class="headerlink" href="#get-my-app-notification-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getMyAppNotificationById(appNotificationId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id isRead content { title content } }
+}
+</code></pre>
+<p>Response : <code>AppNotification</code></p>
+<hr />
+<h4 id="get-email-transactions">Get Email Transactions<a class="headerlink" href="#get-email-transactions" title="Permanent link">&para;</a></h4>
+<p>ดึงประวัติ email ทั้งหมดของแอป</p>
+<pre><code class="language-graphql">query {
+  getEmailTransactions(input: { filter: { sentStatus: FAIL }, pagination: { limit: 20, page: 1 } }) {
+    emailTransactions { _id sentStatus sentAt succeedSentAt content { to subject } transactionLogs { sentAt isSucceed } }
+    pagination { totalItems }
+  }
+}
+</code></pre>
+<p>filter: <code>organizationId</code>, <code>isSchedule</code>, <code>scheduleRefKey</code>, <code>scheduleRefType</code>, <code>sentStatus</code>, <code>isReSent</code>, <code>reSentBy</code>, <code>createdBy</code>, <code>updatedBy</code> · search: <code>scheduleRefKey</code>, <code>scheduleRefType</code></p>
+<p>Response : <code>EmailTransactionPagination</code> = <code>{ emailTransactions: [EmailTransaction], pagination }</code></p>
+<h5 id="emailtransaction">EmailTransaction<a class="headerlink" href="#emailtransaction" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>organizationId</td>
+<td>String</td>
+<td>องค์กรที่ส่ง</td>
+</tr>
+<tr>
+<td>isSchedule, scheduleRefKey, scheduleRefType</td>
+<td></td>
+<td>การตั้งเวลา (เหมือน AppNotification)</td>
+</tr>
+<tr>
+<td>sentStatus</td>
+<td>ENUM</td>
+<td><code>PREPARE</code>, <code>QUEUED</code>, <code>SUCCEED</code>, <code>FAIL</code></td>
+</tr>
+<tr>
+<td>sentAt / succeedSentAt</td>
+<td>Date</td>
+<td>เวลาที่จะส่ง / เวลาส่งสำเร็จ</td>
+</tr>
+<tr>
+<td>isReSent / reSentBy</td>
+<td>Boolean / String</td>
+<td>การส่งซ้ำ</td>
+</tr>
+<tr>
+<td>content</td>
+<td>EmailTransactionContent</td>
+<td><code>to</code>, <code>subject</code>, <code>html</code>, <code>text</code>, <code>attachments [JSON]</code>, <code>cc</code>, <code>bcc</code>, <code>from</code></td>
+</tr>
+<tr>
+<td>transactionLogs</td>
+<td>[EmailTransactionLog]</td>
+<td>ประวัติแต่ละครั้งที่พยายามส่ง: <code>sentAt</code>, <code>emailProviderId</code>, <code>isSucceed</code>, <code>response</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-my-email-transactions">Get My Email Transactions<a class="headerlink" href="#get-my-email-transactions" title="Permanent link">&para;</a></h4>
+<p>ดึงประวัติ email ที่ user ที่ login เป็นผู้สร้าง · input / response เหมือน Get Email Transactions</p>
+<pre><code class="language-graphql">query {
+  getMyEmailTransactions(input: { pagination: { limit: 20, page: 1 } }) { emailTransactions { _id sentStatus content { to subject } } }
+}
+</code></pre>
+<hr />
+<h4 id="get-email-transaction-by-id">Get Email Transaction By ID<a class="headerlink" href="#get-email-transaction-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getEmailTransactionById(emailTransactionId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id sentStatus content { to subject } transactionLogs { isSucceed response } }
+}
+</code></pre>
+<p>Input: <code>emailTransactionId: ID!</code>, <code>appKey: String</code> · Response : <code>EmailTransaction</code></p>
+<hr />
+<h4 id="get-my-email-transaction-by-id">Get My Email Transaction By ID<a class="headerlink" href="#get-my-email-transaction-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getMyEmailTransactionById(emailTransactionId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id sentStatus }
+}
+</code></pre>
+<p>Response : <code>EmailTransaction</code></p>
+<hr />
+<h4 id="get-email-transactions-by-appkey">Get Email Transactions By AppKey<a class="headerlink" href="#get-email-transactions-by-appkey" title="Permanent link">&para;</a></h4>
+<p>สำหรับระบบภายนอกที่เรียกด้วย app credential</p>
+<pre><code class="language-graphql">query {
+  getEmailTransactionsByAppKey(appKey: &quot;yourAppKey&quot;, input: { pagination: { limit: 20, page: 1 } }) { emailTransactions { _id sentStatus } }
+}
+</code></pre>
+<p>Response : <code>EmailTransactionPagination</code></p>
+<hr />
+<h4 id="get-sms-transactions">Get Sms Transactions<a class="headerlink" href="#get-sms-transactions" title="Permanent link">&para;</a></h4>
+<p>ดึงประวัติ SMS ทั้งหมดของแอป · input เหมือน Get Email Transactions</p>
+<pre><code class="language-graphql">query {
+  getSmsTransactions(input: { filter: { sentStatus: SUCCEED }, pagination: { limit: 20, page: 1 } }) {
+    smsTransactions { _id sentStatus sentAt content { msisdn message sender } }
+    pagination { totalItems }
+  }
+}
+</code></pre>
+<p>Response : <code>SmsTransactionPagination</code> = <code>{ smsTransactions: [SmsTransaction], pagination }</code></p>
+<p>SmsTransaction มีฟิลด์สถานะ / การตั้งเวลา / การส่งซ้ำ / <code>transactionLogs</code> เหมือน EmailTransaction และ <code>content</code>:</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>msisdn</td>
+<td>String</td>
+<td>เบอร์ผู้รับ</td>
+</tr>
+<tr>
+<td>message</td>
+<td>String</td>
+<td>ข้อความ</td>
+</tr>
+<tr>
+<td>sender</td>
+<td>String</td>
+<td>ชื่อผู้ส่ง (sender name)</td>
+</tr>
+<tr>
+<td>scheduled_delivery</td>
+<td>String</td>
+<td>เวลาส่งฝั่ง provider (ถ้า provider รองรับ)</td>
+</tr>
+<tr>
+<td>force</td>
+<td>String</td>
+<td>ตัวเลือกเฉพาะ provider</td>
+</tr>
+<tr>
+<td>shorten_url / tracking_url</td>
+<td>String</td>
+<td>ตัวเลือกย่อ / ติดตามลิงก์ (ถ้า provider รองรับ)</td>
+</tr>
+<tr>
+<td>expire</td>
+<td>String</td>
+<td>อายุข้อความ (ถ้า provider รองรับ)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-my-sms-transactions">Get My Sms Transactions<a class="headerlink" href="#get-my-sms-transactions" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getMySmsTransactions(input: { pagination: { limit: 20, page: 1 } }) { smsTransactions { _id sentStatus content { msisdn } } }
+}
+</code></pre>
+<p>Response : <code>SmsTransactionPagination</code></p>
+<hr />
+<h4 id="get-sms-transaction-by-id">Get Sms Transaction By ID<a class="headerlink" href="#get-sms-transaction-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getSmsTransactionById(smsTransactionId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id sentStatus content { msisdn message } }
+}
+</code></pre>
+<p>Input: <code>smsTransactionId: ID!</code>, <code>appKey: String</code> · Response : <code>SmsTransaction</code></p>
+<hr />
+<h4 id="get-my-sms-transaction-by-id">Get My Sms Transaction By ID<a class="headerlink" href="#get-my-sms-transaction-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getMySmsTransactionById(smsTransactionId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id sentStatus }
+}
+</code></pre>
+<p>Response : <code>SmsTransaction</code></p>
+<hr />
+<h4 id="get-sms-transactions-by-appkey">Get Sms Transactions By AppKey<a class="headerlink" href="#get-sms-transactions-by-appkey" title="Permanent link">&para;</a></h4>
+<p>สำหรับระบบภายนอกที่เรียกด้วย app credential</p>
+<pre><code class="language-graphql">query {
+  getSmsTransactionsByAppKey(appKey: &quot;yourAppKey&quot;, input: { pagination: { limit: 20, page: 1 } }) { smsTransactions { _id sentStatus } }
+}
+</code></pre>
+<p>Response : <code>SmsTransactionPagination</code></p>
+<hr />
+<h4 id="get-email-providers">Get Email Providers<a class="headerlink" href="#get-email-providers" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ email provider (SMTP) ของแอป</p>
+<pre><code class="language-graphql">query {
+  getEmailProviders(input: { pagination: { limit: 10, page: 1 } }) {
+    emailProviders { _id emailProviderKey title priority isActive maxEmailsPerMinute maxRetriesPerProvider totalSentCount totalFailedCount config { senderName host port secure } }
+    pagination { totalItems }
+  }
+}
+</code></pre>
+<h5 id="emailprovider">EmailProvider<a class="headerlink" href="#emailprovider" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>emailProviderKey</td>
+<td>String</td>
+<td>key อ้างอิง</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>Int</td>
+<td>ลำดับการเลือกใช้</td>
+</tr>
+<tr>
+<td>title / description</td>
+<td>String</td>
+<td>ชื่อ / รายละเอียด</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean</td>
+<td>เปิดใช้งาน</td>
+</tr>
+<tr>
+<td>config</td>
+<td>EmailProviderConfig</td>
+<td><code>senderName</code>, <code>host</code>, <code>port</code>, <code>secure</code>, <code>username</code></td>
+</tr>
+<tr>
+<td>maxEmailsPerMinute</td>
+<td>Int</td>
+<td>จำนวน email สูงสุดต่อนาที ก่อนสลับไป provider ถัดไป</td>
+</tr>
+<tr>
+<td>maxRetriesPerProvider</td>
+<td>Int</td>
+<td>จำนวนครั้งที่ลองส่งซ้ำก่อนสลับ provider</td>
+</tr>
+<tr>
+<td>totalSentCount / totalFailedCount</td>
+<td>Int</td>
+<td>สถิติการส่ง</td>
+</tr>
+<tr>
+<td>sentDueToLimitCount, failedDueToLimitCount, sentDueToMaxRetriesCount, failedDueToMaxRetriesCount</td>
+<td>Int</td>
+<td>สถิติการสลับ provider</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-email-provider-by-id">Get Email Provider By ID<a class="headerlink" href="#get-email-provider-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getEmailProviderById(emailProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id title isActive }
+}
+</code></pre>
+<p>Response : <code>EmailProvider</code></p>
+<hr />
+<h4 id="get-email-provider-by-key">Get Email Provider By Key<a class="headerlink" href="#get-email-provider-by-key" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getEmailProviderByKey(emailProviderKey: &quot;main-smtp&quot;) { _id title isActive }
+}
+</code></pre>
+<p>Response : <code>EmailProvider</code></p>
+<hr />
+<h4 id="get-email-providers-by-appkey">Get Email Providers By AppKey<a class="headerlink" href="#get-email-providers-by-appkey" title="Permanent link">&para;</a></h4>
+<p>สำหรับระบบภายนอกที่เรียกด้วย app credential</p>
+<pre><code class="language-graphql">query {
+  getEmailProvidersByAppKey(appKey: &quot;yourAppKey&quot;) { emailProviders { _id title } }
+}
+</code></pre>
+<hr />
+<h4 id="get-sms-providers">Get Sms Providers<a class="headerlink" href="#get-sms-providers" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ SMS provider ของแอป · ฟิลด์เหมือน EmailProvider โดยใช้ <code>smsProviderKey</code>, <code>maxSmsPerMinute</code> และเพิ่ม <code>providerType</code></p>
+<pre><code class="language-graphql">query {
+  getSmsProviders(input: { pagination: { limit: 10, page: 1 } }) {
+    smsProviders { _id smsProviderKey title providerType priority isActive maxSmsPerMinute }
+  }
+}
+</code></pre>
+<p><code>providerType</code>: enum <code>THAIBULKSMS</code>, <code>SMSMKT</code>, <code>INFOBIP</code>, <code>THSMS</code>, <code>MAILBIT</code>, <code>AWS</code>, <code>TWILIO</code> · ที่ส่งได้ในปัจจุบันคือ <code>THAIBULKSMS</code> และ <code>TWILIO</code></p>
+<hr />
+<h4 id="get-sms-provider-by-id">Get Sms Provider By ID<a class="headerlink" href="#get-sms-provider-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getSmsProviderById(smsProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id title providerType }
+}
+</code></pre>
+<hr />
+<h4 id="get-sms-provider-by-key">Get Sms Provider By Key<a class="headerlink" href="#get-sms-provider-by-key" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getSmsProviderByKey(smsProviderKey: &quot;main-sms&quot;) { _id title providerType }
+}
+</code></pre>
+<hr />
+<h4 id="get-sms-providers-by-appkey">Get Sms Providers By AppKey<a class="headerlink" href="#get-sms-providers-by-appkey" title="Permanent link">&para;</a></h4>
+<p>สำหรับระบบภายนอกที่เรียกด้วย app credential</p>
+<pre><code class="language-graphql">query {
+  getSmsProvidersByAppKey(appKey: &quot;yourAppKey&quot;) { smsProviders { _id title } }
+}
+</code></pre>
+<hr />
+<h4 id="get-webhook-providers">Get Webhook Providers<a class="headerlink" href="#get-webhook-providers" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ webhook provider ของแอป · ฟิลด์เหมือน EmailProvider โดยใช้ <code>webhookProviderKey</code>, <code>maxWebhooksPerMinute</code> (ไม่มี priority)</p>
+<pre><code class="language-graphql">query {
+  getWebhookProviders(input: { pagination: { limit: 10, page: 1 } }) { webhookProviders { _id webhookProviderKey title isActive } }
+}
+</code></pre>
+<hr />
+<h4 id="get-webhook-provider-by-id">Get Webhook Provider By ID<a class="headerlink" href="#get-webhook-provider-by-id" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getWebhookProviderById(webhookProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id title }
+}
+</code></pre>
+<hr />
+<h4 id="get-webhook-provider-by-key">Get Webhook Provider By Key<a class="headerlink" href="#get-webhook-provider-by-key" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getWebhookProviderByKey(webhookProviderKey: &quot;main-hook&quot;) { _id title }
+}
+</code></pre>
+<hr />
+<h4 id="get-webhook-providers-by-appkey">Get Webhook Providers By AppKey<a class="headerlink" href="#get-webhook-providers-by-appkey" title="Permanent link">&para;</a></h4>
+<p>สำหรับระบบภายนอกที่เรียกด้วย app credential</p>
+<pre><code class="language-graphql">query {
+  getWebhookProvidersByAppKey(appKey: &quot;yourAppKey&quot;) { webhookProviders { _id title } }
+}
+</code></pre>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการแก้ไขข้อมูล</p>
+<h4 id="create-app-notification">Create App Notification<a class="headerlink" href="#create-app-notification" title="Permanent link">&para;</a></h4>
+<p>สร้างแจ้งเตือน in-app จากหน้าบ้าน (ผลเหมือนส่ง <code>create-notification</code> ที่มี <code>appNotification</code>)</p>
+<pre><code class="language-graphql">mutation {
+  createAppNotification(input: {
+    type: SELECT
+    authIds: [&quot;665000000000000000000030&quot;]
+    notificationType: GENERAL
+    content: { title: &quot;ประกาศ&quot;, content: &quot;ระบบจะปิดปรับปรุงคืนนี้&quot;, displayType: WARNING }
+    isSchedule: true
+    schedule: { notificationAt: &quot;2026-11-01T11:00:00Z&quot;, timeZone: &quot;Asia/Bangkok&quot; }
+  }) {
+    _id authId sentStatus sentAt
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>String</td>
+<td>ไม่ใส่ = แอปที่ login</td>
+</tr>
+<tr>
+<td>organizationId</td>
+<td>String</td>
+<td>ส่งในนามองค์กร</td>
+</tr>
+<tr>
+<td>type</td>
+<td>ENUM</td>
+<td><code>SELECT</code> (ส่งตาม authIds) · <code>ALL</code> (ส่งทุก user ในแอป) ค่าเริ่มต้น <code>SELECT</code></td>
+</tr>
+<tr>
+<td>authIds</td>
+<td>[ID]</td>
+<td>ผู้รับ (เมื่อ type = SELECT)</td>
+</tr>
+<tr>
+<td>content</td>
+<td>CreateAppNotificationContentInput!</td>
+<td><code>title</code>, <code>content</code>, <code>from</code>, <code>to</code>, <code>displayType</code> (ค่าเริ่มต้น <code>INFO</code>), <code>url</code></td>
+</tr>
+<tr>
+<td>notificationType</td>
+<td>ENUM</td>
+<td>ค่าเริ่มต้น <code>APP_NOTIFICATION</code></td>
+</tr>
+<tr>
+<td>isSchedule</td>
+<td>Boolean</td>
+<td>ตั้งเวลาส่ง (ค่าเริ่มต้น <code>false</code>)</td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>CreateAppNotificationScheduleInput</td>
+<td><code>notificationAt</code>, <code>timeZone</code>, <code>isRecurring</code>, <code>recurrence { type interval value specific { dayOfWeek dayOfMonth } }</code>, <code>expiryAt</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>[AppNotification]</code> (หนึ่งรายการต่อผู้รับ)</p>
+<hr />
+<h4 id="read-app-notification">Read App Notification<a class="headerlink" href="#read-app-notification" title="Permanent link">&para;</a></h4>
+<p>ตั้งแจ้งเตือนของแอปเป็นอ่านแล้ว (ของ user ใดก็ได้ในแอป สำหรับผู้ดูแล)</p>
+<pre><code class="language-graphql">mutation {
+  readAppNotification(input: { type: SELECT, appNotificationIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;] }) { _id isRead readAt }
+}
+</code></pre>
+<p>Input <code>ReadAppNotificationInput</code>: <code>type</code> <code>SELECT</code> (เฉพาะ <code>appNotificationIds</code>) / <code>ALL</code> · <code>appNotificationIds: [ID]</code></p>
+<p>Response : <code>[AppNotification]</code></p>
+<hr />
+<h4 id="read-my-app-notification">Read My App Notification<a class="headerlink" href="#read-my-app-notification" title="Permanent link">&para;</a></h4>
+<p>ตั้งแจ้งเตือนของ user ที่ login เป็นอ่านแล้ว · <code>type: ALL</code> = อ่านทั้งหมด</p>
+<pre><code class="language-graphql">mutation {
+  readMyAppNotification(input: { type: ALL }) { _id isRead }
+}
+</code></pre>
+<hr />
+<h4 id="closed-app-notification">Closed App Notification<a class="headerlink" href="#closed-app-notification" title="Permanent link">&para;</a></h4>
+<p>ปิดการแสดงแจ้งเตือนของแอป (สำหรับผู้ดูแล) · input <code>CloseAppNotificationInput</code> รูปเดียวกับ Read</p>
+<pre><code class="language-graphql">mutation {
+  closedAppNotification(input: { type: SELECT, appNotificationIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;] }) { _id isClosed closedAt }
+}
+</code></pre>
+<hr />
+<h4 id="closed-my-app-notification">Closed My App Notification<a class="headerlink" href="#closed-my-app-notification" title="Permanent link">&para;</a></h4>
+<p>ปิดการแสดงแจ้งเตือนของ user ที่ login</p>
+<pre><code class="language-graphql">mutation {
+  closedMyAppNotification(input: { type: SELECT, appNotificationIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;] }) { _id isClosed }
+}
+</code></pre>
+<hr />
+<h4 id="create-email-transaction">Create Email Transaction<a class="headerlink" href="#create-email-transaction" title="Permanent link">&para;</a></h4>
+<p>สร้างและส่ง email จากหน้าบ้าน</p>
+<pre><code class="language-graphql">mutation {
+  createEmailTransaction(input: {
+    content: { from: &quot;noreply@example.com&quot;, to: &quot;user@example.com&quot;, subject: &quot;ยินดีต้อนรับ&quot;, html: &quot;&lt;p&gt;สวัสดี&lt;/p&gt;&quot; }
+  }) {
+    _id sentStatus
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>String</td>
+<td>ไม่ใส่ = แอปที่ login</td>
+</tr>
+<tr>
+<td>organizationId</td>
+<td>String</td>
+<td>ส่งในนามองค์กร</td>
+</tr>
+<tr>
+<td>isSchedule</td>
+<td>Boolean</td>
+<td>ตั้งเวลาส่ง (ค่าเริ่มต้น <code>false</code>)</td>
+</tr>
+<tr>
+<td>sentAt</td>
+<td>Date</td>
+<td>เวลาที่ต้องการส่ง</td>
+</tr>
+<tr>
+<td>content.to</td>
+<td>String!</td>
+<td>ผู้รับ</td>
+</tr>
+<tr>
+<td>content.subject</td>
+<td>String!</td>
+<td>หัวข้อ</td>
+</tr>
+<tr>
+<td>content.from</td>
+<td>String!</td>
+<td>ผู้ส่ง</td>
+</tr>
+<tr>
+<td>content.html / content.text</td>
+<td>String</td>
+<td>เนื้อหา HTML / ข้อความล้วน (ส่งเนื้อหาสำเร็จรูปมาเอง ไม่มี template)</td>
+</tr>
+<tr>
+<td>content.cc / content.bcc</td>
+<td>String</td>
+<td>คั่นด้วย comma</td>
+</tr>
+<tr>
+<td>content.attachments</td>
+<td>[JSON]</td>
+<td>ไฟล์แนบ (รูปแบบ attachment ของ nodemailer)</td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>EmailTransaction</code></p>
+<hr />
+<h4 id="delete-email-transaction">Delete Email Transaction<a class="headerlink" href="#delete-email-transaction" title="Permanent link">&para;</a></h4>
+<p>ลบประวัติ email ได้หลายรายการ</p>
+<pre><code class="language-graphql">mutation {
+  deleteEmailTransaction(emailTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id }
+}
+</code></pre>
+<p>Input: <code>emailTransactionIds: [ID]!</code>, <code>appKey: String</code> · Response : <code>[EmailTransaction]</code></p>
+<hr />
+<h4 id="delete-my-email-transaction">Delete My Email Transaction<a class="headerlink" href="#delete-my-email-transaction" title="Permanent link">&para;</a></h4>
+<p>ลบประวัติ email ของ user ที่ login</p>
+<pre><code class="language-graphql">mutation {
+  deleteMyEmailTransaction(emailTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id }
+}
+</code></pre>
+<hr />
+<h4 id="resent-email-transaction">Resent Email Transaction<a class="headerlink" href="#resent-email-transaction" title="Permanent link">&para;</a></h4>
+<p>ส่งซ้ำ: สร้างรายการใหม่จากรายการเดิม (รายการเดิมถูกตั้ง <code>isReSent = true</code>, รายการใหม่มี <code>reSentBy</code> = id เดิม)</p>
+<pre><code class="language-graphql">mutation {
+  resentEmailTransaction(emailTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id reSentBy sentStatus }
+}
+</code></pre>
+<hr />
+<h4 id="resent-my-email-transaction">Resent My Email Transaction<a class="headerlink" href="#resent-my-email-transaction" title="Permanent link">&para;</a></h4>
+<p>ส่งซ้ำ email ของ user ที่ login</p>
+<pre><code class="language-graphql">mutation {
+  resentMyEmailTransaction(emailTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id reSentBy }
+}
+</code></pre>
+<hr />
+<h4 id="sent-all-queue-email-transaction">Sent All Queue Email Transaction<a class="headerlink" href="#sent-all-queue-email-transaction" title="Permanent link">&para;</a></h4>
+<p>นำ email ที่ยังค้างสถานะคิวกลับเข้าคิวส่งอีกครั้ง (สำหรับผู้ดูแล)</p>
+<pre><code class="language-graphql">mutation {
+  sentAllQueueEmailTransaction { _id sentStatus }
+}
+</code></pre>
+<p>Input: <code>appKey: String</code> · Response : <code>[EmailTransaction]</code></p>
+<hr />
+<h4 id="create-sms-transaction">Create Sms Transaction<a class="headerlink" href="#create-sms-transaction" title="Permanent link">&para;</a></h4>
+<p>สร้างและส่ง SMS จากหน้าบ้าน</p>
+<pre><code class="language-graphql">mutation {
+  createSmsTransaction(input: { content: { msisdn: &quot;0812345678&quot;, message: &quot;รหัสยืนยันของคุณคือ 123456&quot;, sender: &quot;MyApp&quot; } }) {
+    _id sentStatus
+  }
+}
+</code></pre>
+<p>Input: <code>appKey</code>, <code>organizationId</code>, <code>isSchedule</code>, <code>sentAt</code>, <code>content</code> (ฟิลด์ตาม <a href="#get-sms-transactions">Get Sms Transactions</a>) · Response : <code>SmsTransaction</code></p>
+<hr />
+<h4 id="delete-sms-transaction">Delete Sms Transaction<a class="headerlink" href="#delete-sms-transaction" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  deleteSmsTransaction(smsTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id }
+}
+</code></pre>
+<hr />
+<h4 id="delete-my-sms-transaction">Delete My Sms Transaction<a class="headerlink" href="#delete-my-sms-transaction" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  deleteMySmsTransaction(smsTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id }
+}
+</code></pre>
+<hr />
+<h4 id="resent-sms-transaction">Resent Sms Transaction<a class="headerlink" href="#resent-sms-transaction" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  resentSmsTransaction(smsTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id reSentBy }
+}
+</code></pre>
+<hr />
+<h4 id="resent-my-sms-transaction">Resent My Sms Transaction<a class="headerlink" href="#resent-my-sms-transaction" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  resentMySmsTransaction(smsTransactionIds: [&quot;6650f0c2a1b2c3d4e5f60718&quot;]) { _id reSentBy }
+}
+</code></pre>
+<hr />
+<h4 id="sent-all-queue-sms-transaction">Sent All Queue Sms Transaction<a class="headerlink" href="#sent-all-queue-sms-transaction" title="Permanent link">&para;</a></h4>
+<p>นำ SMS ที่ยังค้างสถานะคิวกลับเข้าคิวส่งอีกครั้ง (สำหรับผู้ดูแล)</p>
+<pre><code class="language-graphql">mutation {
+  sentAllQueueSmsTransaction { _id sentStatus }
+}
+</code></pre>
+<hr />
+<h4 id="create-email-provider">Create Email Provider<a class="headerlink" href="#create-email-provider" title="Permanent link">&para;</a></h4>
+<p>เพิ่ม SMTP provider ให้แอป</p>
+<pre><code class="language-graphql">mutation {
+  createEmailProvider(create: {
+    title: &quot;Main SMTP&quot;
+    priority: 0
+    config: { senderName: &quot;MyApp&quot;, host: &quot;smtp.example.com&quot;, port: 587, secure: false, username: &quot;smtp-user&quot;, password: &quot;********&quot; }
+    maxEmailsPerMinute: 600
+    maxRetriesPerProvider: 3
+  }) {
+    _id emailProviderKey
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>String</td>
+<td>ไม่ใส่ = แอปที่ login</td>
+</tr>
+<tr>
+<td>emailProviderKey</td>
+<td>String</td>
+<td>key อ้างอิง</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>Int</td>
+<td>ลำดับการเลือกใช้ (ค่าเริ่มต้น 0)</td>
+</tr>
+<tr>
+<td>title</td>
+<td>String!</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>รายละเอียด</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean</td>
+<td>ค่าเริ่มต้น <code>true</code></td>
+</tr>
+<tr>
+<td>config</td>
+<td>CreateEmailProviderConfigInput!</td>
+<td><code>senderName</code> (บังคับ), <code>host</code>, <code>port</code>, <code>secure</code>, <code>username</code>, <code>password</code></td>
+</tr>
+<tr>
+<td>maxEmailsPerMinute</td>
+<td>Int</td>
+<td>ค่าเริ่มต้น 600</td>
+</tr>
+<tr>
+<td>maxRetriesPerProvider</td>
+<td>Int</td>
+<td>ค่าเริ่มต้น 3</td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>EmailProvider</code></p>
+<hr />
+<h4 id="update-email-provider">Update Email Provider<a class="headerlink" href="#update-email-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  updateEmailProvider(emailProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;, update: { isActive: false }) { _id isActive }
+}
+</code></pre>
+<p>Input: <code>emailProviderId: ID!</code>, <code>update: UpdateEmailProviderInput!</code> (ฟิลด์เดียวกับ create ไม่บังคับ), <code>appKey: String</code></p>
+<hr />
+<h4 id="delete-email-provider">Delete Email Provider<a class="headerlink" href="#delete-email-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  deleteEmailProvider(emailProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id }
+}
+</code></pre>
+<hr />
+<h4 id="create-sms-provider">Create Sms Provider<a class="headerlink" href="#create-sms-provider" title="Permanent link">&para;</a></h4>
+<p>เพิ่ม SMS provider ให้แอป</p>
+<pre><code class="language-graphql">mutation {
+  createSmsProvider(create: {
+    title: &quot;ThaiBulkSMS&quot;
+    providerType: THAIBULKSMS
+    config: { senderName: &quot;MyApp&quot;, apiKey: &quot;********&quot;, apiSecret: &quot;********&quot; }
+  }) {
+    _id smsProviderKey
+  }
+}
+</code></pre>
+<p>ฟิลด์เหมือน Create Email Provider โดยใช้ <code>smsProviderKey</code>, <code>maxSmsPerMinute</code> และเพิ่ม <code>providerType</code> · <code>config</code>: <code>senderName</code> (บังคับ), <code>apiKey</code>, <code>apiSecret</code>, <code>hostname</code>, <code>username</code>, <code>password</code>, <code>port</code>, <code>headers</code>, <code>smsBody</code>, <code>etc</code> (ใช้ตามที่ provider แต่ละเจ้าต้องการ)</p>
+<hr />
+<h4 id="update-sms-provider">Update Sms Provider<a class="headerlink" href="#update-sms-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  updateSmsProvider(smsProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;, update: { priority: 1 }) { _id priority }
+}
+</code></pre>
+<hr />
+<h4 id="delete-sms-provider">Delete Sms Provider<a class="headerlink" href="#delete-sms-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  deleteSmsProvider(smsProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id }
+}
+</code></pre>
+<hr />
+<h4 id="create-webhook-provider">Create Webhook Provider<a class="headerlink" href="#create-webhook-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  createWebhookProvider(create: {
+    title: &quot;Partner hook&quot;
+    config: { senderName: &quot;MyApp&quot;, url: &quot;https://partner.example.com/hook&quot;, method: POST }
+  }) {
+    _id webhookProviderKey
+  }
+}
+</code></pre>
+<p><code>config</code>: <code>senderName</code> (บังคับ), <code>url</code> (บังคับ), <code>method</code> (<code>GET</code> / <code>POST</code> ค่าเริ่มต้น <code>GET</code>), <code>apiKey</code>, <code>apiSecret</code>, <code>username</code>, <code>password</code>, <code>headers</code>, <code>WebhookBody</code> · และ <code>maxWebhooksPerMinute</code>, <code>maxRetriesPerProvider</code></p>
+<hr />
+<h4 id="update-webhook-provider">Update Webhook Provider<a class="headerlink" href="#update-webhook-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  updateWebhookProvider(webhookProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;, update: { isActive: false }) { _id isActive }
+}
+</code></pre>
+<hr />
+<h4 id="delete-webhook-provider">Delete Webhook Provider<a class="headerlink" href="#delete-webhook-provider" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation {
+  deleteWebhookProvider(webhookProviderId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id }
+}
+</code></pre>
+<hr />
+<h2 id="kafka-consume-reference">kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>ทุก topic ตรวจว่า notification มีสิทธิ์ในแอปตาม <code>appKey</code> (มี appCertificate ของแอปนั้น) ก่อนทำงาน</p>
+<h3 id="standard-topics">Standard topics<a class="headerlink" href="#standard-topics" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init-system</code></td>
+<td>ตั้งระบบจากศูนย์ (เฉพาะ core set)</td>
+</tr>
+<tr>
+<td><code>refresh-data</code></td>
+<td>ส่งข้อมูลที่ตัวเองถือขึ้นไปใหม่ (เช่น permission) และล้าง cache</td>
+</tr>
+<tr>
+<td><code>sync-app-certificate</code></td>
+<td>รับ appCertificate ของแอปที่ notification มีสิทธิ์</td>
+</tr>
+<tr>
+<td><code>sync-app-credential</code></td>
+<td>รับข้อมูลการเข้าใช้ของ user ในแอป (ใช้ตรวจ token)</td>
+</tr>
+<tr>
+<td><code>sync-application</code></td>
+<td>รับข้อมูลแอป</td>
+</tr>
+<tr>
+<td><code>sync-user-policy</code></td>
+<td>รับ UserPolicy สำหรับตรวจ permission</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="create-notification">Create Notification<a class="headerlink" href="#create-notification" title="Permanent link">&para;</a></h3>
+<p>คำขอส่งแจ้งเตือนจาก service อื่น · ดูภาพรวมที่ <a href="#การขอสงแจงเตอนจาก-service-อน">การขอส่งแจ้งเตือนจาก service อื่น</a></p>
+<pre><code>topic: create-notification
+header: appKey, serviceKey = notification
+Action: ADD | REMOVE
+</code></pre>
+<p>notification</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>isSchedule</td>
+<td>boolean</td>
+<td><code>true</code> = ตั้งเวลาส่งตาม <code>schedule</code> · <code>false</code> = ส่งทันที</td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>object</td>
+<td>โครงเดียวกับ <code>set-schedule</code> (<code>notificationAt</code>, <code>timeZone</code>, <code>isRecurring</code>, <code>recurrence</code>, <code>expiryAt</code>, <code>title</code>, <code>description</code>)</td>
+</tr>
+<tr>
+<td>organizationId</td>
+<td>string</td>
+<td>ส่งในนามองค์กร</td>
+</tr>
+<tr>
+<td>refKey / refType</td>
+<td>string</td>
+<td>อ้างอิงข้อมูลฝั่งผู้ขอ · <strong>ใช้ยกเลิกด้วย <code>REMOVE</code></strong> — ตั้ง <code>refType</code> ขึ้นต้นด้วยชื่อ service ของตัวเอง</td>
+</tr>
+<tr>
+<td>appNotification</td>
+<td>object</td>
+<td>แจ้งเตือน in-app (ดูด้านล่าง)</td>
+</tr>
+<tr>
+<td>email</td>
+<td>object</td>
+<td><code>to</code>, <code>subject</code>, <code>html</code>, <code>text</code>, <code>cc</code>, <code>bcc</code>, <code>attachments</code>, <code>from</code></td>
+</tr>
+<tr>
+<td>sms</td>
+<td>object</td>
+<td><code>msisdn</code>, <code>message</code>, <code>sender</code>, <code>scheduledDelivery</code>, <code>force</code>, <code>shortenUrl</code>, <code>trackingUrl</code>, <code>expire</code></td>
+</tr>
+</tbody>
+</table>
+<p>appNotification</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td>ENUM</td>
+<td><code>SELECT</code> = ส่งตาม <code>authId</code> · <code>ALL</code> = ส่งทุก user ในแอป</td>
+</tr>
+<tr>
+<td>authId</td>
+<td>string[]</td>
+<td>ผู้รับ (เมื่อ type = SELECT)</td>
+</tr>
+<tr>
+<td>notificationType</td>
+<td>ENUM</td>
+<td><code>VERY_URGENT</code>, <code>URGENT</code>, <code>IMPORTANT</code>, <code>GENERAL</code>, <code>REMINDER</code>, <code>APP_NOTIFICATION</code></td>
+</tr>
+<tr>
+<td>title</td>
+<td>string</td>
+<td>หัวข้อ</td>
+</tr>
+<tr>
+<td>content</td>
+<td>string</td>
+<td>เนื้อหา</td>
+</tr>
+<tr>
+<td>from / to</td>
+<td>string</td>
+<td>ข้อความบอกผู้ส่ง / ผู้รับ</td>
+</tr>
+<tr>
+<td>displayType</td>
+<td>ENUM</td>
+<td><code>SUCCESS</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code></td>
+</tr>
+<tr>
+<td>url</td>
+<td>string</td>
+<td>ลิงก์เมื่อกดแจ้งเตือน</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="schedule-alarm">Schedule Alarm<a class="headerlink" href="#schedule-alarm" title="Permanent link">&para;</a></h3>
+<p>รับ alarm จาก <a href="../scheduleService/#schedule-alarm">Schedule Service</a> สำหรับแจ้งเตือนที่ตั้งเวลาไว้ · รับเฉพาะรายการที่ <code>scheduleAlarm.serviceKey = notification</code> แล้วแยกช่องทางตาม <code>scheduleRefType</code> (<code>appNotificationTransaction</code>, <code>emailTransaction</code>, <code>smsTransaction</code>) จากนั้นนำรายการเข้าคิวส่ง และตอบ <code>schedule-alarm-result</code></p>
+<pre><code>topic: schedule-alarm
+Action: ADD
+</code></pre>
+<hr />
+<h3 id="sync-profile">Sync Profile<a class="headerlink" href="#sync-profile" title="Permanent link">&para;</a></h3>
+<p>รับรายชื่อ user ของแต่ละแอป ใช้สำหรับส่งแจ้งเตือนแบบ <code>type: ALL</code></p>
+<pre><code>topic: sync-profile
+Action: ADD | REMOVE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>profile.id</td>
+<td>string</td>
+<td>id ของ profile</td>
+</tr>
+<tr>
+<td>profile.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>profile.authId</td>
+<td>string</td>
+<td>id ของ user</td>
+</tr>
+<tr>
+<td>profile.username, firstName, middleName, lastName, displayName, gender, profileImage</td>
+<td>string</td>
+<td>ข้อมูล profile</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<h3 id="set-schedule">Set Schedule<a class="headerlink" href="#set-schedule" title="Permanent link">&para;</a></h3>
+<p>ลงทะเบียนเวลาส่งกับ schedule เมื่อคำขอมี <code>isSchedule = true</code> (หนึ่งรายการต่อ transaction) · <code>scheduleRefType</code> = <code>appNotificationTransaction</code> / <code>emailTransaction</code> / <code>smsTransaction</code></p>
+<pre><code>topic: set-schedule
+header: appKey, serviceKey = schedule
+Action: ADD
+</code></pre>
+<hr />
+<h3 id="schedule-alarm-result">Schedule Alarm Result<a class="headerlink" href="#schedule-alarm-result" title="Permanent link">&para;</a></h3>
+<p>ตอบกลับ schedule หลังรับ alarm (ส่งคืน <code>alarmRefKey</code> พร้อม <code>clientReceivedAt</code>, <code>clientSentAt</code>)</p>
+<pre><code>topic: schedule-alarm-result
+header: appKey, serviceKey = schedule
+Action: ADD
+</code></pre>
+<hr />
+<h3 id="create-notification-result">Create Notification Result<a class="headerlink" href="#create-notification-result" title="Permanent link">&para;</a></h3>
+<p>ผลการรับคำขอจาก <code>create-notification</code></p>
+<pre><code>topic: create-notification-result
+Action: SUCCESS | ERROR
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>SUCCESS</code> หรือ <code>ERROR</code></td>
+</tr>
+<tr>
+<td>requestAction</td>
+<td>string</td>
+<td><code>REMOVE</code> เมื่อเป็นผลของคำขอยกเลิก</td>
+</tr>
+<tr>
+<td>notification</td>
+<td>object</td>
+<td>คำขอเดิม</td>
+</tr>
+<tr>
+<td>removedCount</td>
+<td>number</td>
+<td>จำนวนรายการที่ถูกยกเลิก (เฉพาะ <code>REMOVE</code>)</td>
+</tr>
+<tr>
+<td>error</td>
+<td>object</td>
+<td>รายละเอียดข้อผิดพลาด (กรณี ERROR)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">Sync Permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>ส่ง permission ของ notification ให้ access-control เมื่อได้รับ <code>refresh-data</code> เพื่อนำไปผูกกับ role (ชื่อ permission ตรงกับชื่อ API ด้านบน และ <code>systemApp</code>)</p>
+<pre><code>topic: sync-permission
+Action: ADD
+</code></pre>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-notification-service@318d224 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

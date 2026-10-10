@@ -1,0 +1,2067 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/storageService/">
+      
+      
+        <link rel="prev" href="../scheduleService/">
+      
+      
+        <link rel="next" href="../labelService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Storage Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#storage-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Storage Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ภาพรวมการใชงาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ภาพรวมการใช้งาน
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ภาพรวมการใช้งาน">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#อปโหลดไฟล" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        อัปโหลดไฟล์
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ดาวนโหลด-แสดงไฟล" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ดาวน์โหลด / แสดงไฟล์
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ไฟลท-service-อนสรางเอง" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ไฟล์ที่ service อื่นสร้างเอง
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-file-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync File Upload
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ภาพรวมการใชงาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ภาพรวมการใช้งาน
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ภาพรวมการใช้งาน">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#อปโหลดไฟล" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        อัปโหลดไฟล์
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ดาวนโหลด-แสดงไฟล" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ดาวน์โหลด / แสดงไฟล์
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ไฟลท-service-อนสรางเอง" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ไฟล์ที่ service อื่นสร้างเอง
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-file-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync File Upload
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="storage-service">Storage Service<a class="headerlink" href="#storage-service" title="Permanent link">&para;</a></h1>
+<p>Service กลางสำหรับจัดการไฟล์ของทุกแอป · serviceKey: <code>storage</code></p>
+<p>storage ไม่รับตัวไฟล์ผ่านตัวเองตอนอัปโหลด แต่ออก <strong>presigned URL</strong> ให้หน้าบ้านอัปโหลด / ดาวน์โหลดกับ object storage (S3 หรือ S3-compatible) โดยตรง แล้วเก็บข้อมูลไฟล์ (metadata) ไว้อ้างอิงด้วย <code>fileKey</code></p>
+<p><br></p>
+<ul>
+<li><a href="#ภาพรวมการใชงาน">ภาพรวมการใช้งาน</a></li>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">kafka produce Reference</a></li>
+</ul>
+<hr />
+<p><br>
+<br></p>
+<h2 id="ภาพรวมการใชงาน">ภาพรวมการใช้งาน<a class="headerlink" href="#ภาพรวมการใชงาน" title="Permanent link">&para;</a></h2>
+<h3 id="อปโหลดไฟล">อัปโหลดไฟล์<a class="headerlink" href="#อปโหลดไฟล" title="Permanent link">&para;</a></h3>
+<ol>
+<li>หน้าบ้านเรียก <a href="#put-signed-upload-file">Put Signed Upload File</a> (login แล้ว) หรือ <a href="#put-public-signed-upload-file">Put Public Signed Upload File</a> (ยังไม่ login) พร้อม <code>fileName</code>, <code>contentType</code>, <code>path</code>, <code>acl</code></li>
+<li>ได้ <code>signedUrl</code> (อายุ 1 ชั่วโมง) และ <code>fileKey</code> กลับมา</li>
+<li>หน้าบ้าน <code>PUT</code> ตัวไฟล์ไปที่ <code>signedUrl</code> โดยตรง ใส่ header <code>Content-Type</code> ให้ตรงกับ <code>contentType</code> ที่ขอไว้</li>
+</ol>
+<p><code>js
+   await fetch(signedUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });</code></p>
+<ol>
+<li>เก็บ <code>fileKey</code> ไว้ในข้อมูลของ service ตัวเอง (เช่น รูปโปรไฟล์ เอกสารแนบ) ใช้อ้างถึงไฟล์นี้ต่อไป</li>
+<li>storage ตั้งเวลากับ <a href="../scheduleService/">Schedule Service</a> ไว้ตอนหมดอายุ signedUrl แล้วตรวจว่าไฟล์ถูกอัปโหลดจริงหรือไม่ · สถานะไฟล์จะเปลี่ยนจาก <code>UNKNOWN</code> เป็น <code>SUCCESS</code> (พร้อมขนาดไฟล์) หรือ <code>FAILED</code></li>
+</ol>
+<h3 id="file-key">File key<a class="headerlink" href="#file-key" title="Permanent link">&para;</a></h3>
+<p>รูปแบบ <code>fileKey</code> = <code>&lt;appKey&gt;/&lt;path&gt;/&lt;id&gt;&lt;นามสกุลไฟล์&gt;</code> เช่น <code>myApp/profile/6650f0c2a1b2c3d4e5f60718.png</code></p>
+<ul>
+<li><code>path</code> คือหมวดที่ใช้จัดกลุ่มไฟล์ในแอป (ค่าเริ่มต้น <code>default</code>)</li>
+<li>ไฟล์ทุกไฟล์อยู่ใต้ <code>appKey</code> ของแอปตัวเอง</li>
+</ul>
+<h3 id="ดาวนโหลด-แสดงไฟล">ดาวน์โหลด / แสดงไฟล์<a class="headerlink" href="#ดาวนโหลด-แสดงไฟล" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>acl: PUBLIC</code> ใช้ <code>publicUrl</code> ได้ตรง ๆ</li>
+<li><code>acl: PRIVATE</code> ต้องเรียก <a href="#get-signed-url">Get Signed Url</a> ด้วย <code>fileKey</code> เพื่อขอ URL ชั่วคราว (อายุ 1 ชั่วโมง) ทุกครั้งที่จะแสดงไฟล์ · ต้อง login</li>
+<li><code>publicUrl</code> อาจชี้ไปที่ object storage โดยตรง หรือชี้มาที่ <code>GET /file/&lt;fileKey&gt;</code> ของ storage service (ส่งไฟล์แบบ stream, <code>Content-Disposition: inline</code>) ขึ้นกับการตั้งค่าของระบบ ให้ใช้ URL ตามที่ได้รับ</li>
+</ul>
+<h3 id="ไฟลท-service-อนสรางเอง">ไฟล์ที่ service อื่นสร้างเอง<a class="headerlink" href="#ไฟลท-service-อนสรางเอง" title="Permanent link">&para;</a></h3>
+<p>service ที่สร้างไฟล์ลง object storage เอง (เช่น ผลการแปลงวิดีโอ) ลงทะเบียนไฟล์นั้นกับ storage ผ่าน Kafka topic <a href="#sync-file-upload"><code>sync-file-upload</code></a> เพื่อให้เรียกดูผ่าน API เดียวกันได้</p>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<p>GraphQL endpoint <code>/graphql</code> · API ที่ต้อง login ใช้ header <code>authorization</code> และต้องมี permission ตามที่ระบุ · API ที่ระบุว่า "app credential" เรียกได้ทั้งแบบ login หรือแบบไม่ login โดยใช้ client ของแอป (header <code>X-APP-CLIENT-ID</code> และสำหรับระบบภายนอกเพิ่ม <code>X-APP-CLIENT-SECRET</code>)</p>
+<p><strong>สรุป API ทั้งหมด 8 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#get-signed-url">Get Signed Url</a></td>
+<td>ขอ URL สำหรับเปิดไฟล์จาก <code>fileKey</code> (ได้หลายไฟล์พร้อมกัน) · app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-file-uploads">Get File Uploads</a></td>
+<td>ดึงรายการไฟล์ของแอปที่ login (แบ่งหน้า) · permission: <code>getFileUploads</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-file-upload-by-id">Get File Upload By ID</a></td>
+<td>ดึงข้อมูลไฟล์ตาม <code>_id</code> · permission: <code>getFileUploadById</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-file-upload-by-file-key">Get File Upload By File Key</a></td>
+<td>ดึงข้อมูลไฟล์ตาม <code>fileKey</code> · permission: <code>getFileUploadByFileKey</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#put-signed-upload-file">Put Signed Upload File</a></td>
+<td>ขอ presigned URL สำหรับอัปโหลดไฟล์ (อายุ 1 ชั่วโมง) แล้วบันทึกข้อมูลไฟล์สถานะ <code>UNKNOWN</code>…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#put-public-signed-upload-file">Put Public Signed Upload File</a></td>
+<td>ขอ presigned URL สำหรับอัปโหลดไฟล์โดยไม่ต้อง login (เช่น ฟอร์มสาธารณะ) · app credential…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-file-upload">Delete File Upload</a></td>
+<td>ลบข้อมูลไฟล์และลบไฟล์ใน object storage ตาม <code>fileKey</code> (ได้หลายไฟล์) · permission: `delet…</td>
+</tr>
+<tr>
+<td>REST</td>
+<td><a href="#get-file">Get File</a></td>
+<td>ส่งไฟล์แบบ stream ผ่าน storage service (<code>Content-Disposition: inline</code> พร้อม `Content-Ty…</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการ Query ข้อมูลออกมา ไม่มีการแก้ไข Data</p>
+<h4 id="get-signed-url">Get Signed Url<a class="headerlink" href="#get-signed-url" title="Permanent link">&para;</a></h4>
+<p>ขอ URL สำหรับเปิดไฟล์จาก <code>fileKey</code> (ได้หลายไฟล์พร้อมกัน) · app credential</p>
+<ul>
+<li>ไฟล์ <code>PUBLIC</code> คืน <code>publicUrl</code></li>
+<li>ไฟล์ <code>PRIVATE</code> คืน <code>signedUrl</code> อายุ 1 ชั่วโมง และ <code>expired</code> · ต้อง login ถ้าไม่ login จะได้ error Forbidden</li>
+<li>ทุก <code>fileKey</code> ต้องมีอยู่จริงในแอป ไม่อย่างนั้นได้ error Not Found</li>
+</ul>
+<pre><code class="language-graphql">query {
+  getSignedUrl(fileKeys: [&quot;myApp/profile/6650f0c2a1b2c3d4e5f60718.png&quot;]) {
+    _id fileKey fileName acl publicUrl signedUrl expired contentType
+  }
+}
+</code></pre>
+<p>Response : <code>[FileUploadsUrl]</code></p>
+<p>FileUploadsUrl</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>acl</td>
+<td>ENUM</td>
+<td><code>PUBLIC</code>, <code>PRIVATE</code></td>
+</tr>
+<tr>
+<td>signedUrl</td>
+<td>String</td>
+<td>URL ชั่วคราว (อัปโหลด: ใช้ <code>PUT</code> ไฟล์ · ดาวน์โหลดไฟล์ PRIVATE: ใช้เปิดไฟล์)</td>
+</tr>
+<tr>
+<td>publicUrl</td>
+<td>String</td>
+<td>URL ของไฟล์ (ไฟล์ PRIVATE ต้องใช้ signedUrl แทน)</td>
+</tr>
+<tr>
+<td>fileKey</td>
+<td>String</td>
+<td>key อ้างอิงไฟล์</td>
+</tr>
+<tr>
+<td>fileName</td>
+<td>String</td>
+<td>ชื่อไฟล์</td>
+</tr>
+<tr>
+<td>contentType</td>
+<td>String</td>
+<td>MIME type</td>
+</tr>
+<tr>
+<td>expired</td>
+<td>Date</td>
+<td>เวลาหมดอายุของ signedUrl</td>
+</tr>
+<tr>
+<td>fileType</td>
+<td>ENUM</td>
+<td><code>INTERNAL</code> (อัปโหลดผ่าน storage) · <code>EXTERNAL</code> (ลงทะเบียนจากภายนอก)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-file-uploads">Get File Uploads<a class="headerlink" href="#get-file-uploads" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการไฟล์ของแอปที่ login (แบ่งหน้า) · permission: <code>getFileUploads</code></p>
+<pre><code class="language-graphql">query {
+  getFileUploads(input: {
+    filter: { acl: PRIVATE, path: &quot;myApp/profile&quot; }
+    search: { fileName: &quot;invoice&quot; }
+    sort: { sortBy: createdAt, sortOrder: DESC }
+    pagination: { limit: 20, page: 1 }
+  }) {
+    fileUploads { _id fileKey fileName contentType acl authId createdAt }
+    pagination { totalItems totalPages hasNextPage }
+  }
+}
+</code></pre>
+<p>Input <code>GetFileUploadsInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td>GetFileUploadsFilterInput</td>
+<td><code>acl</code>, <code>signedUrl</code>, <code>publicUrl</code>, <code>path</code>, <code>fileKey</code>, <code>fileName</code>, <code>contentType</code>, <code>authId</code>, <code>fileType</code></td>
+</tr>
+<tr>
+<td>search</td>
+<td>GetFileUploadsSearchInput</td>
+<td>ค้นหาบางส่วน: <code>path</code>, <code>fileKey</code>, <code>fileName</code>, <code>contentType</code></td>
+</tr>
+<tr>
+<td>sort</td>
+<td>GetFileUploadsSortInput</td>
+<td><code>sortBy</code> (ค่าเริ่มต้น <code>createdAt</code>), <code>sortOrder</code> ASC / DESC</td>
+</tr>
+<tr>
+<td>pagination</td>
+<td>CustomPaginateInput</td>
+<td><code>limit</code> (ค่าเริ่มต้น 10), <code>page</code> (ค่าเริ่มต้น 1)</td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>FileUploadsPagination</code> = <code>{ fileUploads: [FileUploads], pagination: CustomPaginate }</code></p>
+<p>FileUploads</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>acl</td>
+<td>ENUM</td>
+<td><code>PUBLIC</code>, <code>PRIVATE</code></td>
+</tr>
+<tr>
+<td>signedUrl</td>
+<td>String</td>
+<td>URL ที่ใช้อัปโหลดตอนสร้าง</td>
+</tr>
+<tr>
+<td>publicUrl</td>
+<td>String</td>
+<td>URL ของไฟล์</td>
+</tr>
+<tr>
+<td>path</td>
+<td>String</td>
+<td>หมวดของไฟล์ (รวม appKey นำหน้า)</td>
+</tr>
+<tr>
+<td>fileKey</td>
+<td>String</td>
+<td>key อ้างอิงไฟล์</td>
+</tr>
+<tr>
+<td>fileName</td>
+<td>String</td>
+<td>ชื่อไฟล์</td>
+</tr>
+<tr>
+<td>contentType</td>
+<td>String</td>
+<td>MIME type</td>
+</tr>
+<tr>
+<td>authId</td>
+<td>String</td>
+<td>user ที่อัปโหลด</td>
+</tr>
+<tr>
+<td>expired</td>
+<td>Date</td>
+<td>เวลาหมดอายุของ signedUrl ตอนอัปโหลด</td>
+</tr>
+<tr>
+<td>fileType</td>
+<td>ENUM</td>
+<td><code>INTERNAL</code>, <code>EXTERNAL</code></td>
+</tr>
+<tr>
+<td>createdBy, updatedBy</td>
+<td>String</td>
+<td>ผู้สร้าง / ผู้แก้ไข</td>
+</tr>
+<tr>
+<td>createdAt, updatedAt</td>
+<td>Date</td>
+<td>เวลาสร้าง / แก้ไขล่าสุด</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-file-upload-by-id">Get File Upload By ID<a class="headerlink" href="#get-file-upload-by-id" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูลไฟล์ตาม <code>_id</code> · permission: <code>getFileUploadById</code></p>
+<pre><code class="language-graphql">query {
+  getFileUploadById(fileUploadId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id fileKey fileName acl publicUrl }
+}
+</code></pre>
+<p>Response : <code>FileUploads</code></p>
+<hr />
+<h4 id="get-file-upload-by-file-key">Get File Upload By File Key<a class="headerlink" href="#get-file-upload-by-file-key" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูลไฟล์ตาม <code>fileKey</code> · permission: <code>getFileUploadByFileKey</code></p>
+<pre><code class="language-graphql">query {
+  getFileUploadByFileKey(fileKey: &quot;myApp/profile/6650f0c2a1b2c3d4e5f60718.png&quot;) { _id fileName acl publicUrl }
+}
+</code></pre>
+<p>Response : <code>FileUploads</code></p>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการแก้ไขข้อมูล</p>
+<h4 id="put-signed-upload-file">Put Signed Upload File<a class="headerlink" href="#put-signed-upload-file" title="Permanent link">&para;</a></h4>
+<p>ขอ presigned URL สำหรับอัปโหลดไฟล์ (อายุ 1 ชั่วโมง) แล้วบันทึกข้อมูลไฟล์สถานะ <code>UNKNOWN</code> และตั้งเวลาตรวจผลการอัปโหลดกับ schedule · ต้อง login · permission: <code>putSignedUploadFille</code></p>
+<pre><code class="language-graphql">mutation {
+  putSignedUploadFile(input: {
+    acl: PRIVATE
+    path: &quot;documents&quot;
+    fileName: &quot;invoice-2026-10.pdf&quot;
+    contentType: &quot;application/pdf&quot;
+  }) {
+    _id fileKey signedUrl publicUrl expired
+  }
+}
+</code></pre>
+<p>Input <code>CreateFileUploadsInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>acl</td>
+<td>ENUM</td>
+<td><code>PUBLIC</code> (ค่าเริ่มต้น) หรือ <code>PRIVATE</code></td>
+</tr>
+<tr>
+<td>path</td>
+<td>String</td>
+<td>หมวดของไฟล์ (ค่าเริ่มต้น <code>default</code>)</td>
+</tr>
+<tr>
+<td>fileName</td>
+<td>String!</td>
+<td>ชื่อไฟล์พร้อมนามสกุล (นามสกุลใช้ต่อท้าย fileKey)</td>
+</tr>
+<tr>
+<td>contentType</td>
+<td>String!</td>
+<td>MIME type ของไฟล์ ต้องตรงกับ header <code>Content-Type</code> ตอน <code>PUT</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>FileUploadsUrl</code></p>
+<hr />
+<h4 id="put-public-signed-upload-file">Put Public Signed Upload File<a class="headerlink" href="#put-public-signed-upload-file" title="Permanent link">&para;</a></h4>
+<p>ขอ presigned URL สำหรับอัปโหลดไฟล์โดยไม่ต้อง login (เช่น ฟอร์มสาธารณะ) · app credential · ไฟล์เป็น <code>acl: PUBLIC</code> เสมอ และบันทึกผู้อัปโหลดเป็น <code>SYSTEM</code> · ชื่อ API สะกด <code>Singed</code> ตามโค้ด</p>
+<pre><code class="language-graphql">mutation {
+  putPublicSingedUploadFile(input: {
+    path: &quot;public-form&quot;
+    fileName: &quot;photo.jpg&quot;
+    contentType: &quot;image/jpeg&quot;
+  }) {
+    _id fileKey signedUrl publicUrl expired
+  }
+}
+</code></pre>
+<p>Input <code>CreatePublicFileUploadsInput</code>: <code>path</code> (ค่าเริ่มต้น <code>default</code>), <code>fileName: String!</code>, <code>contentType: String!</code></p>
+<p>Response : <code>FileUploadsUrl</code></p>
+<hr />
+<h4 id="delete-file-upload">Delete File Upload<a class="headerlink" href="#delete-file-upload" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูลไฟล์และลบไฟล์ใน object storage ตาม <code>fileKey</code> (ได้หลายไฟล์) · permission: <code>deleteFileUpload</code></p>
+<pre><code class="language-graphql">mutation {
+  deleteFileUpload(fileKeys: [&quot;myApp/documents/6650f0c2a1b2c3d4e5f60718.pdf&quot;]) { _id fileKey }
+}
+</code></pre>
+<p>Response : <code>[FileUploads]</code> (ข้อมูลที่ถูกลบ)</p>
+<hr />
+<h3 id="rest">REST<a class="headerlink" href="#rest" title="Permanent link">&para;</a></h3>
+<h4 id="get-file">Get File<a class="headerlink" href="#get-file" title="Permanent link">&para;</a></h4>
+<pre><code>GET /file/&lt;fileKey&gt;
+</code></pre>
+<p>ส่งไฟล์แบบ stream ผ่าน storage service (<code>Content-Disposition: inline</code> พร้อม <code>Content-Type</code> ของไฟล์) · ใช้เป็น <code>publicUrl</code> เมื่อระบบตั้งค่าให้เปิดไฟล์ผ่าน storage · ไม่พบไฟล์ได้ HTTP 404</p>
+<hr />
+<h2 id="kafka-consume-reference">kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>topic ส่วนใหญ่ตรวจว่า storage มีสิทธิ์ในแอปตาม <code>appKey</code> (มี appCertificate ของแอปนั้น) ก่อนทำงาน</p>
+<h3 id="standard-topics">Standard topics<a class="headerlink" href="#standard-topics" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init-system</code></td>
+<td>ตั้งระบบจากศูนย์ (เฉพาะ core set)</td>
+</tr>
+<tr>
+<td><code>refresh-data</code></td>
+<td>ส่งข้อมูลที่ตัวเองถือขึ้นไปใหม่ (เช่น permission) และล้าง cache</td>
+</tr>
+<tr>
+<td><code>sync-app-certificate</code></td>
+<td>รับ appCertificate ของแอปที่ storage มีสิทธิ์</td>
+</tr>
+<tr>
+<td><code>sync-app-credential</code></td>
+<td>รับข้อมูลการเข้าใช้ของแอป (ใช้ตรวจ token และ app credential)</td>
+</tr>
+<tr>
+<td><code>sync-application</code></td>
+<td>รับข้อมูลแอป</td>
+</tr>
+<tr>
+<td><code>sync-user-policy</code></td>
+<td>รับ UserPolicy สำหรับตรวจ permission</td>
+</tr>
+<tr>
+<td><code>sync-service-setting</code></td>
+<td>รับค่าตั้งค่าเพิ่มเติมของ storage ระดับระบบ (header <code>serviceKey: storage</code>)</td>
+</tr>
+<tr>
+<td><code>sync-app-service-setting</code></td>
+<td>รับค่าตั้งค่าเพิ่มเติมของ storage เฉพาะแอป (header <code>serviceKey: storage</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-file-upload">Sync File Upload<a class="headerlink" href="#sync-file-upload" title="Permanent link">&para;</a></h3>
+<p>ลงทะเบียนไฟล์ที่ service อื่นสร้างไว้ใน object storage แล้ว ให้ storage รู้จักและเรียกดูผ่าน API ได้</p>
+<pre><code>topic: sync-file-upload
+header: appKey, serviceKey = storage
+Action: ADD
+</code></pre>
+<pre><code class="language-json">{
+  &quot;action&quot;: &quot;ADD&quot;,
+  &quot;fileUpload&quot;: {
+    &quot;appKey&quot;: &quot;myApp&quot;,
+    &quot;acl&quot;: &quot;PRIVATE&quot;,
+    &quot;publicUrl&quot;: null,
+    &quot;path&quot;: &quot;myApp/videos&quot;,
+    &quot;fileKey&quot;: &quot;myApp/videos/6650f0c2a1b2c3d4e5f60718/index.m3u8&quot;,
+    &quot;fileName&quot;: &quot;index.m3u8&quot;,
+    &quot;fileSize&quot;: 1024,
+    &quot;fileType&quot;: &quot;EXTERNAL&quot;,
+    &quot;contentType&quot;: &quot;application/vnd.apple.mpegurl&quot;,
+    &quot;authId&quot;: &quot;665000000000000000000030&quot;,
+    &quot;status&quot;: &quot;SUCCESS&quot;,
+    &quot;createdBy&quot;: &quot;665000000000000000000030&quot;,
+    &quot;updatedBy&quot;: &quot;665000000000000000000030&quot;
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td>แอปเจ้าของไฟล์</td>
+</tr>
+<tr>
+<td>acl</td>
+<td>ENUM</td>
+<td><code>PUBLIC</code>, <code>PRIVATE</code></td>
+</tr>
+<tr>
+<td>publicUrl</td>
+<td>string | null</td>
+<td>URL ของไฟล์ (ถ้ามี)</td>
+</tr>
+<tr>
+<td>path</td>
+<td>string</td>
+<td>หมวดของไฟล์</td>
+</tr>
+<tr>
+<td>fileKey</td>
+<td>string</td>
+<td>key ของไฟล์ใน object storage</td>
+</tr>
+<tr>
+<td>fileName</td>
+<td>string</td>
+<td>ชื่อไฟล์</td>
+</tr>
+<tr>
+<td>fileSize</td>
+<td>number | null</td>
+<td>ขนาดไฟล์ (byte)</td>
+</tr>
+<tr>
+<td>fileType</td>
+<td>string</td>
+<td>รูปแบบการจัดการไฟล์ เช่น <code>EXTERNAL</code></td>
+</tr>
+<tr>
+<td>contentType</td>
+<td>string</td>
+<td>MIME type</td>
+</tr>
+<tr>
+<td>authId</td>
+<td>string</td>
+<td>user เจ้าของไฟล์</td>
+</tr>
+<tr>
+<td>status</td>
+<td>ENUM</td>
+<td><code>UNKNOWN</code>, <code>SUCCESS</code>, <code>FAILED</code> (ค่าเริ่มต้น <code>SUCCESS</code>)</td>
+</tr>
+<tr>
+<td>createdBy, updatedBy</td>
+<td>string</td>
+<td>ผู้สร้าง / ผู้แก้ไข</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="schedule-alarm">Schedule Alarm<a class="headerlink" href="#schedule-alarm" title="Permanent link">&para;</a></h3>
+<p>รับ alarm จาก <a href="../scheduleService/#schedule-alarm">Schedule Service</a> เมื่อ signedUrl ของการอัปโหลดหมดอายุ · รับเฉพาะรายการที่ <code>scheduleAlarm.serviceKey = storage</code> แล้วใช้ <code>scheduleRefKey</code> (= <code>_id</code> ของไฟล์) ตรวจกับ object storage ว่ามีไฟล์จริงหรือไม่ จากนั้นอัปเดตสถานะเป็น <code>SUCCESS</code> (พร้อมขนาดไฟล์) หรือ <code>FAILED</code></p>
+<pre><code>topic: schedule-alarm
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scheduleAlarm.serviceKey</td>
+<td>string</td>
+<td><code>storage</code></td>
+</tr>
+<tr>
+<td>scheduleAlarm.scheduleRefKey</td>
+<td>string</td>
+<td><code>_id</code> ของไฟล์</td>
+</tr>
+<tr>
+<td>scheduleAlarm.scheduleRefType</td>
+<td>string</td>
+<td><code>fileUploads</code></td>
+</tr>
+<tr>
+<td>scheduleAlarm.alarmData</td>
+<td>object</td>
+<td><code>_id</code>, <code>description</code>, <code>timeStamp</code>, <code>expiredTime</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<h3 id="set-schedule">Set Schedule<a class="headerlink" href="#set-schedule" title="Permanent link">&para;</a></h3>
+<p>ลงทะเบียนเวลาตรวจผลการอัปโหลดกับ schedule ทุกครั้งที่ออก presigned URL สำหรับอัปโหลด (ครั้งเดียว ไม่วนซ้ำ ที่เวลาหมดอายุของ signedUrl)</p>
+<pre><code>topic: set-schedule
+header: appKey, serviceKey = schedule
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>schedule.appKey</td>
+<td>string</td>
+<td>แอปของไฟล์</td>
+</tr>
+<tr>
+<td>schedule.serviceKey</td>
+<td>string</td>
+<td><code>storage</code> (ผู้รับ alarm)</td>
+</tr>
+<tr>
+<td>schedule.scheduleRefKey</td>
+<td>string</td>
+<td><code>_id</code> ของไฟล์</td>
+</tr>
+<tr>
+<td>schedule.scheduleRefType</td>
+<td>string</td>
+<td><code>fileUploads</code></td>
+</tr>
+<tr>
+<td>schedule.alarmData</td>
+<td>object</td>
+<td><code>_id</code>, <code>description</code>, <code>timeStamp</code>, <code>expiredTime</code></td>
+</tr>
+<tr>
+<td>schedule.title / description</td>
+<td>string</td>
+<td><code>file upload</code> / <code>storage upload file: &lt;fileName&gt;</code></td>
+</tr>
+<tr>
+<td>schedule.isRecurring</td>
+<td>boolean</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>schedule.notificationAt</td>
+<td>Date</td>
+<td>เวลาหมดอายุของ signedUrl</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">Sync Permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>ส่ง permission ของ storage ให้ access-control เมื่อได้รับ <code>refresh-data</code> เพื่อนำไปผูกกับ role (<code>putSignedUploadFille</code>, <code>getSignedUrl</code>, <code>getFileUploads</code>, <code>getFileUploadById</code>, <code>getFileUploadByFileKey</code>, <code>deleteFileUpload</code>)</p>
+<pre><code>topic: sync-permission
+Action: ADD
+</code></pre>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-storage-service@3f02969 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

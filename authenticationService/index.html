@@ -1,0 +1,6599 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/authenticationService/">
+      
+      
+        <link rel="prev" href="../applicationService/">
+      
+      
+        <link rel="next" href="../aclService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Authentication Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#authentication-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Authentication Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#วธ-login-ทม" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        วิธี login ที่มี
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appcredential-และ-header-ทตองสง" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AppCredential และ header ที่ต้องส่ง
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#init-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init-system
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh-data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-service-setting-sync-app-service-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-service-setting / sync-app-service-setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-user-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-user-policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-organization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-invite-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-invite-code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync-auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-auth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create-notification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-mobile-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-mobile-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#วธ-login-ทม" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        วิธี login ที่มี
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appcredential-และ-header-ทตองสง" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AppCredential และ header ที่ต้องส่ง
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#init-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init-system
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh-data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-service-setting-sync-app-service-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-service-setting / sync-app-service-setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-user-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-user-policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-organization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-invite-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-invite-code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync-auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-auth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create-notification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-mobile-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-mobile-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="authentication-service">Authentication Service<a class="headerlink" href="#authentication-service" title="Permanent link">&para;</a></h1>
+<p>Service สำหรับยืนยันตัวตนผู้ใช้ เป็นเจ้าของบัญชีผู้ใช้ (แยกตามแอป), การสมัครและ login ทุกแบบ, session และ token, AppCredential (ตัวตนของแอปที่ใช้เรียก API) และข้อมูลอุปกรณ์มือถือ / push token</p>
+<pre><code>serviceKey: authentication
+</code></pre>
+<ul>
+<li>บัญชีผูกกับแอป (<code>appKey</code>) — คนเดียวกันใช้ 2 แอป จะมี 2 บัญชี</li>
+<li>ข้อมูลชื่อ-นามสกุลและโปรไฟล์อยู่ที่ <a href="../userService/">Profile Service</a> โดย authentication ส่งค่าเริ่มต้นไปให้ผ่าน topic <code>sync-auth</code></li>
+<li>สิทธิ์การใช้งาน (role / permission) อยู่ที่ <a href="../aclService/">ACL Service</a></li>
+</ul>
+<p><br></p>
+<ul>
+<li><a href="#login-methods">วิธี login ที่มี</a></li>
+<li><a href="#app-credential">AppCredential และ header ที่ต้องส่ง</a></li>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">Kafka Produce Reference</a></li>
+</ul>
+<hr />
+<p><a id="login-methods"></a></p>
+<h2 id="วธ-login-ทม">วิธี login ที่มี<a class="headerlink" href="#วธ-login-ทม" title="Permanent link">&para;</a></h2>
+<p>ทุกวิธีคืน token ให้โดยตรง (ไม่มี authorization-code flow)</p>
+<table>
+<thead>
+<tr>
+<th>วิธี</th>
+<th>API</th>
+<th>ผลลัพธ์</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username / email / เบอร์โทร + password</td>
+<td><code>loginWithAccessType</code>, <code>loginWithUserNameAccessType</code>, <code>loginWithEmailAccessType</code>, <code>loginWithPhoneNumberAccessType</code></td>
+<td>ได้ <code>token { accessToken refreshToken }</code> ทันที</td>
+</tr>
+<tr>
+<td>WebSocket</td>
+<td><code>getLoginSocketId</code> แล้ว <code>loginWithUserNameSocketType</code> / <code>loginWithEmailSocketType</code> / <code>loginWithPhoneNumberSocketType</code></td>
+<td>token ถูกส่งเข้า socket ที่ได้จาก <code>getLoginSocketId</code> (เหมาะกับหน้า login ที่แยกจากแอปปลายทาง)</td>
+</tr>
+<tr>
+<td>OTP ทาง email / SMS</td>
+<td><code>loginWithEmailOtpType</code> / <code>loginWithPhoneNumberOtpType</code> → <code>verifierOtp</code></td>
+<td>ขั้นแรกได้ <code>otpRef</code> แล้วยืนยัน OTP เพื่อรับ token</td>
+</tr>
+<tr>
+<td>Google</td>
+<td><code>loginWithGoogleOAuth</code>, <code>registerWithGoogleOAuth</code>, <code>linkAccountWithGoogleOAuth</code>, <code>unlinkAccountFromGoogleOAuth</code></td>
+<td>ส่ง <code>id_token</code> ของ Google</td>
+</tr>
+<tr>
+<td>Facebook</td>
+<td><code>loginWithFaceBookOAuth</code>, <code>registerWithFaceBookOAuth</code>, <code>linkAccountWithFaceBookOAuth</code>, <code>unlinkAccountFromFaceBookOAuth</code></td>
+<td>ส่ง <code>access_token</code> ของ Facebook</td>
+</tr>
+<tr>
+<td>Apple</td>
+<td><code>loginWithAppleOAuth</code>, <code>registerWithAppleOAuth</code>, <code>linkAccountWithAppleOAuth</code>, <code>unlinkAccountFromAppleOAuth</code></td>
+<td>ส่ง <code>id_token</code> ของ Apple</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>ลืมรหัสผ่าน: <code>resetPasswordWithEmail</code> / <code>resetPasswordWithPhoneNumber</code> → <code>verifierOtp</code> → <code>resetMyPasswordByOtpVerifierRef</code></li>
+<li>ต่ออายุ token: <code>refreshToken</code> (ได้ refreshToken ชุดใหม่ทุกครั้ง ชุดเดิมใช้ซ้ำไม่ได้) · ออกจากระบบ: <code>logout</code>, <code>logoutAll</code></li>
+<li>การ login ด้วย Google / Facebook / Apple ต้องตั้งค่า provider ต่อแอปก่อน ผ่าน App Service Setting ของ service <code>authentication</code> (topic <code>sync-app-service-setting</code>) ในรูป</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;googleOAuth&quot;:   { &quot;clientId&quot;: &quot;&lt;client id ของ Google, คั่นหลายค่าด้วย , ได้&gt;&quot; },
+  &quot;facebookOAuth&quot;: { &quot;appId&quot;: &quot;&lt;app id ของ Facebook&gt;&quot;, &quot;appSecret&quot;: &quot;&lt;app secret ของ Facebook&gt;&quot; },
+  &quot;appleOAuth&quot;:    { &quot;clientId&quot;: &quot;&lt;client id ของ Apple, คั่นหลายค่าด้วย , ได้&gt;&quot; }
+}
+</code></pre>
+<hr />
+<p><a id="app-credential"></a></p>
+<h2 id="appcredential-และ-header-ทตองสง">AppCredential และ header ที่ต้องส่ง<a class="headerlink" href="#appcredential-และ-header-ทตองสง" title="Permanent link">&para;</a></h2>
+<p>AppCredential คือตัวตนของ "ผู้เรียก API" ในแต่ละแอป สร้างด้วย <code>generateAppCredential</code> แต่ละตัวมี <code>clientId</code> และตั้งกฎได้ เช่น host ที่อนุญาต (<code>authorizedHosts</code>), redirect URL ที่อนุญาต (<code>authorizedRedirectUrls</code>), อายุ token (<code>jwtAccessExpireTime</code>, <code>jwtRefreshExpireTime</code> หน่วยวินาที), การล็อกบัญชีเมื่อ login ผิด (<code>numberOfFail</code>, <code>minutesTimeFail</code>, <code>minutesTimeLock</code>) และวันหมดอายุ (<code>expiryAt</code>)</p>
+<p>AppCredential มี 2 ประเภท (<code>appCredentialType</code>)</p>
+<table>
+<thead>
+<tr>
+<th>ประเภท</th>
+<th>ใช้กับ</th>
+<th>ข้อมูลที่ใช้</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>USER</code></td>
+<td>หน้าบ้าน (เว็บ / แอปมือถือ) ที่ผู้ใช้ login</td>
+<td><code>clientId</code></td>
+</tr>
+<tr>
+<td><code>SYSTEM</code></td>
+<td>ระบบภายนอก / server-to-server (ที่มักเรียกกันว่า <strong>apiKey</strong>)</td>
+<td><code>clientId</code> + <code>clientSecret</code> · <code>clientSecret</code> แสดงครั้งเดียวตอน <code>generateAppCredential</code> ถ้าทำหายต้องสร้างใหม่</td>
+</tr>
+</tbody>
+</table>
+<p>header ที่ service ทุกตัวใน Gumon ใช้ตรวจตัวตน (ตรวจได้เองในแต่ละ service เพราะ AppCredential ถูกส่งไปให้ทุก service ผ่าน topic <code>sync-app-credential</code>)</p>
+<table>
+<thead>
+<tr>
+<th>ผู้เรียก</th>
+<th>header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ผู้ใช้ที่ login แล้ว</td>
+<td><code>authorization: &lt;accessToken&gt;</code> (+ <code>X-APP-CLIENT-ID</code> ได้ ถ้าส่งต้องตรงกับ clientId ใน token)</td>
+</tr>
+<tr>
+<td>ระบบภายนอก (SYSTEM)</td>
+<td><code>X-APP-CLIENT-ID: &lt;clientId&gt;</code> + <code>X-APP-CLIENT-SECRET: &lt;clientSecret&gt;</code></td>
+</tr>
+<tr>
+<td>ระดับแอป ไม่ต้อง login (เช่น login / register)</td>
+<td><code>X-APP-CLIENT-ID: &lt;clientId&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>ใน API Reference ด้านล่าง "การยืนยันตัวตน" บอกว่า API นั้นต้องใช้ header แบบไหน และ "สิทธิ์" คือ permissionKey ของ service <code>authentication</code> ที่ผู้เรียกต้องได้รับผ่าน role ใน <a href="../aclService/">ACL Service</a></p>
+<hr />
+<p><br>
+<br></p>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<p><strong>สรุป API ทั้งหมด 78 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#getmysession">getMySession</a></td>
+<td>ดึงข้อมูล session ปัจจุบันของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmyallsessions">getMyAllSessions</a></td>
+<td>ดึงข้อมูล Session ทั้งหมดของผู้ใช้ปัจจุบัน</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getsessionbyauthid">getSessionByAuthId</a></td>
+<td>ดึงรายการ session ของผู้ใช้ตาม authId</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getappcredentials">getAppCredentials</a></td>
+<td>ดึงข้อมูล AppCredentials ทั้งหมดที่มีในระบบ สามารถจัดการข้าม app ได้</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getappcredentialbyid">getAppCredentialById</a></td>
+<td>ดึงข้อมูล AppCredentials ตาม id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getappcredentialbyclientid">getAppCredentialByClientId</a></td>
+<td>ดึงข้อมูล AppCredentials ตาม ClientId</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#checkmobileappupdate">checkMobileAppUpdate</a></td>
+<td>เช็กว่าแอปมือถือต้องอัปเดตหรือไม่ จาก clientId, platform และ appVersion</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getloginsocketid">getLoginSocketId</a></td>
+<td>ขอ socketId สำหรับ login แบบ WebSocket (ใช้คู่กับ <code>loginWith*SocketType</code>)</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmyaccount">getMyAccount</a></td>
+<td>ดึงข้อมูลบัญชีของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getaccountbyoauthprovider">getAccountByOAuthProvider</a></td>
+<td>ค้นบัญชีจาก OAuth provider (<code>GOOGLE</code>, <code>FACEBOOK</code>, <code>APPLE</code>) และ subject ของ provider</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getaccount">getAccount</a></td>
+<td>ค้นบัญชีตามเงื่อนไขใน input</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getaccountbyusername">getAccountByUsername</a></td>
+<td>ค้นบัญชีตาม username</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getaccountbyphonenumber">getAccountByPhoneNumber</a></td>
+<td>ค้นบัญชีตามเบอร์โทรศัพท์</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getaccountbyemail">getAccountByEmail</a></td>
+<td>ค้นบัญชีตาม email</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getemailsbyauthid">getEmailsByAuthId</a></td>
+<td>ดึง email ทั้งหมดของบัญชีตาม authId</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getphonenumbersbyauthid">getPhoneNumbersByAuthId</a></td>
+<td>ดึงเบอร์โทรศัพท์ทั้งหมดของบัญชีตาม authId</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getaccountsbyappkey">getAccountsByAppKey</a></td>
+<td>ดึงบัญชีทั้งหมดของแอปตาม appKey แบบแบ่งหน้า</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getlockaccountsbyappkey">getLockAccountsByAppKey</a></td>
+<td>ดึงบัญชีที่ถูกล็อก (login ผิดเกินกำหนด) ของแอปตาม appKey แบบแบ่งหน้า</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getsessionloggings">getSessionLoggings</a></td>
+<td>ดึงข้อมูล session logging แบบมีเงื่อนไข</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getsessionloggingbyid">getSessionLoggingById</a></td>
+<td>ดึงข้อมูล session logging โดยใช้ sessionLoggingId</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmymobiledevices">getMyMobileDevices</a></td>
+<td>ดึงอุปกรณ์ทั้งหมดของตัวเอง (ผู้ที่ login) แบบแบ่งหน้า — ไว้ให้ user มอนิเตอร์เครื่องของ…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmobiledevicesbyuser">getMobileDevicesByUser</a></td>
+<td>ดึงอุปกรณ์ของผู้ใช้ที่ระบุ แบบแบ่งหน้า (ภายใน app เดียวกับผู้เรียก) — ต้องมีสิทธิ์ getM…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmobiledevicesbyapp">getMobileDevicesByApp</a></td>
+<td>ดึงอุปกรณ์ทั้งหมดของ app ที่ระบุ แบบแบ่งหน้า — ต้องมีสิทธิ์ getMobileDevicesByApp (ข้าม…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerwithusername">registerWithUsername</a></td>
+<td>สมัครบัญชีด้วย username + password</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerwithemail">registerWithEmail</a></td>
+<td>สมัครบัญชีด้วย email + password</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerwithphonenumber">registerWithPhoneNumber</a></td>
+<td>สมัครบัญชีด้วยเบอร์โทรศัพท์ + password</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#register">register</a></td>
+<td>สมัครบัญชีด้วย username, email หรือเบอร์โทรศัพท์ (รวมทุกแบบไว้ใน mutation เดียว)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#setaccountdefaultorganization">setAccountDefaultOrganization</a></td>
+<td>กำหนด DefaultOrganization ของ Account ที่ระบุ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#useinvitecode">useInviteCode</a></td>
+<td>ใช้ InviteCodeKey ในการลงทะเบียน</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#addemailtoaccount">addEmailToAccount</a></td>
+<td>เพิ่ม email ให้บัญชี</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#addphonenumbertoaccount">addPhoneNumberToAccount</a></td>
+<td>เพิ่มเบอร์โทรศัพท์ให้บัญชี</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateaccount">updateAccount</a></td>
+<td>อัปเดตข้อมูล Account ที่ระบุ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateemail">updateEmail</a></td>
+<td>แก้ไข email ของบัญชี</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatephonenumber">updatePhoneNumber</a></td>
+<td>อัปเดต phone number ของ Account ที่ระบุ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#removeemailfromaccount">removeEmailFromAccount</a></td>
+<td>ลบ email ที่ระบุออกจาก Account ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#removephonenumberfromaccount">removePhoneNumberFromAccount</a></td>
+<td>ลบ phone number ที่ระบุออกจาก Account ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#generateappcredential">generateAppCredential</a></td>
+<td>สร้าง AppCredential ใหม่ขึ้นมาในระบบ โดยที่ถ้า AppCredentialType = SYSTEM จะทำการสร้าง…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateappcredential">updateAppCredential</a></td>
+<td>แก้ไขข้อมูล AppCredential โดยจะแก้ได้แค่ข้อมูลการตั้งค่าบางส่วนเท่านั้น</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#removeappcredential">removeAppCredential</a></td>
+<td>ลบ AppCredential นั้นออกจากระบบ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithaccesstype">loginWithAccessType</a></td>
+<td>login ด้วย username, email หรือเบอร์โทรศัพท์ + password แล้วได้ token กลับทันที · ถ้าใช…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithgoogleoauth">loginWithGoogleOAuth</a></td>
+<td>login ด้วย Google (ส่ง <code>id_token</code> จาก Google)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerwithgoogleoauth">registerWithGoogleOAuth</a></td>
+<td>สมัครบัญชีใหม่ด้วย Google (<code>id_token</code>) แล้วได้ token กลับ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#linkaccountwithgoogleoauth">linkAccountWithGoogleOAuth</a></td>
+<td>ผูกบัญชี Google เข้ากับบัญชีที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#unlinkaccountfromgoogleoauth">unlinkAccountFromGoogleOAuth</a></td>
+<td>ยกเลิกการผูกบัญชี Google ออกจากบัญชีที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithfacebookoauth">loginWithFaceBookOAuth</a></td>
+<td>login ด้วย Facebook (ส่ง <code>access_token</code> จาก Facebook)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerwithfacebookoauth">registerWithFaceBookOAuth</a></td>
+<td>สมัครบัญชีใหม่ด้วย Facebook (<code>access_token</code>) แล้วได้ token กลับ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#linkaccountwithfacebookoauth">linkAccountWithFaceBookOAuth</a></td>
+<td>ผูกบัญชี Facebook เข้ากับบัญชีที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#unlinkaccountfromfacebookoauth">unlinkAccountFromFaceBookOAuth</a></td>
+<td>ยกเลิกการผูกบัญชี Facebook ออกจากบัญชีที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithappleoauth">loginWithAppleOAuth</a></td>
+<td>login ด้วย Apple (ส่ง <code>id_token</code> จาก Apple)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerwithappleoauth">registerWithAppleOAuth</a></td>
+<td>สมัครบัญชีใหม่ด้วย Apple (<code>id_token</code>) แล้วได้ token กลับ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#linkaccountwithappleoauth">linkAccountWithAppleOAuth</a></td>
+<td>ผูกบัญชี Apple เข้ากับบัญชีที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#unlinkaccountfromappleoauth">unlinkAccountFromAppleOAuth</a></td>
+<td>ยกเลิกการผูกบัญชี Apple ออกจากบัญชีที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithusernameaccesstype">loginWithUserNameAccessType</a></td>
+<td>login ด้วย username + password แล้วได้ token กลับทันที</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithemailaccesstype">loginWithEmailAccessType</a></td>
+<td>login ด้วย email + password แล้วได้ token กลับทันที</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithphonenumberaccesstype">loginWithPhoneNumberAccessType</a></td>
+<td>login ด้วยเบอร์โทรศัพท์ + password แล้วได้ token กลับทันที</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithusernamesockettype">loginWithUserNameSocketType</a></td>
+<td>login ด้วย username + password แบบ WebSocket: token จะถูกส่งเข้า socket ที่ได้จาก `getL…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithemailsockettype">loginWithEmailSocketType</a></td>
+<td>login ด้วย email + password แบบ WebSocket</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithphonenumbersockettype">loginWithPhoneNumberSocketType</a></td>
+<td>login ด้วยเบอร์โทรศัพท์ + password แบบ WebSocket</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithemailotptype">loginWithEmailOtpType</a></td>
+<td>ขอ OTP ทาง email เพื่อ login · ได้ <code>otpRef</code> กลับ แล้วนำไปยืนยันด้วย <code>verifierOtp</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#loginwithphonenumberotptype">loginWithPhoneNumberOtpType</a></td>
+<td>ขอ OTP ทาง SMS เพื่อ login · ได้ <code>otpRef</code> กลับ แล้วนำไปยืนยันด้วย <code>verifierOtp</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#logout">logout</a></td>
+<td>ออกจากระบบ session ปัจจุบัน</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#logoutall">logoutAll</a></td>
+<td>ออกจากระบบทุก session ของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#logoutallbyauthid">logoutAllByAuthId</a></td>
+<td>ออกจากระบบทุก Session ตาม Auth ID</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#refreshtoken">refreshToken</a></td>
+<td>ขอ accessToken / refreshToken ชุดใหม่ด้วย refreshToken (refreshToken เดิมใช้ซ้ำไม่ได้)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#changepassword">changePassword</a></td>
+<td>เปลี่ยนรหัสผ่านของผู้ใช้ที่ login อยู่</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resetpassword">resetPassword</a></td>
+<td>ตั้งรหัสผ่านใหม่ให้บัญชี (ผู้ดูแล)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resetpasswordwithemail">resetPasswordWithEmail</a></td>
+<td>ขอ OTP ทาง email เพื่อรีเซ็ตรหัสผ่าน</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resetpasswordwithphonenumber">resetPasswordWithPhoneNumber</a></td>
+<td>ขอ OTP ทาง SMS เพื่อรีเซ็ตรหัสผ่าน</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#revoketoken">revokeToken</a></td>
+<td>ยกเลิก token ของผู้ใช้ที่ระบุ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#unlockaccountbyauthid">unlockAccountByAuthId</a></td>
+<td>ปลดล็อกบัญชีที่ถูกล็อกตาม authId</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteaccount">deleteAccount</a></td>
+<td>ลบบัญชี</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#verifierotp">verifierOtp</a></td>
+<td>ยืนยัน OTP ที่ได้จาก <code>loginWith*OtpType</code> หรือ <code>resetPasswordWith*</code> · กรณี login ได้ tok…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resetmypasswordbyotpverifierref">resetMyPasswordByOtpVerifierRef</a></td>
+<td>ตั้งรหัสผ่านใหม่หลังยืนยัน OTP สำเร็จ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#syncmobiledevice">syncMobileDevice</a></td>
+<td>ลงทะเบียน/อัปเดตอุปกรณ์ของผู้ใช้ (เรียกหลัง login) — upsert ตาม installationId + user ท…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerpushtoken">registerPushToken</a></td>
+<td>ลงทะเบียน Expo push token ให้เครื่องนี้ (เรียกหลังได้ token จาก OS) — ย้าย token ออกจาก…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatemobiledevicesetting">updateMobileDeviceSetting</a></td>
+<td>อัปเดตการตั้งค่าการแจ้งเตือนของเครื่อง (เปิด/ปิด, ภาษา, ระดับความสำคัญ)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deactivatemobiledevice">deactivateMobileDevice</a></td>
+<td>ปิดการใช้งานเครื่องนี้ (เรียกตอน logout) — set inactive + ปิด push (ไม่ลบ document)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#removemymobiledevice">removeMyMobileDevice</a></td>
+<td>ลบอุปกรณ์ของตัวเองออกถาวร (hard delete) — สำหรับเครื่องที่ไม่ใช้แล้ว</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการ Query ข้อมูลออกมา ไม่มีการแก้ไข Data</p>
+<hr />
+<h4 id="getmysession">getMySession<a class="headerlink" href="#getmysession" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล session ปัจจุบันของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetMySession {
+  getMySession {
+    _id
+    authId
+    appCredentialId
+    appCredential { _id appKey clientId description validateAuthorizedHosts validateAuthorizedRedirectUrls }
+    clientId
+    host
+    ipAddress
+    userAgent
+    cookie
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p>Response: <code>AccountSession</code></p>
+<hr />
+<h4 id="getmyallsessions">getMyAllSessions<a class="headerlink" href="#getmyallsessions" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล Session ทั้งหมดของผู้ใช้ปัจจุบัน</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getMyAllSessions</code></li>
+</ul>
+<pre><code class="language-graphql">query GetMyAllSessions($getInput: GetAccountSessionByAuthIdInput) {
+  getMyAllSessions(getInput: $getInput) {
+    sessions { _id authId appCredentialId clientId host ipAddress }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetAccountSessionByAuthIdInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetAccountSessionByAuthIdFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetAccountSessionByAuthIdSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetAccountSessionByAuthIdSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AccountSessionPagination</code></p>
+<hr />
+<h4 id="getsessionbyauthid">getSessionByAuthId<a class="headerlink" href="#getsessionbyauthid" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ session ของผู้ใช้ตาม authId</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getSessionByAuthId</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetSessionByAuthId($authId: String!, $getInput: GetAccountSessionByAuthIdInput, $appKey: String) {
+  getSessionByAuthId(authId: $authId, getInput: $getInput, appKey: $appKey) {
+    sessions { _id authId appCredentialId clientId host ipAddress }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetAccountSessionByAuthIdInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetAccountSessionByAuthIdFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetAccountSessionByAuthIdSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetAccountSessionByAuthIdSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>authId: String!</code>, <code>appKey: String</code></p>
+<p>Response: <code>AccountSessionPagination</code></p>
+<hr />
+<h4 id="getappcredentials">getAppCredentials<a class="headerlink" href="#getappcredentials" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล AppCredentials ทั้งหมดที่มีในระบบ สามารถจัดการข้าม app ได้</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getAppCredentials</code></li>
+</ul>
+<pre><code class="language-graphql">query GetAppCredentials($input: GetAppCredentialsInput) {
+  getAppCredentials(input: $input) {
+    appCredentials { _id appKey clientId description validateAuthorizedHosts validateAuthorizedRedirectUrls }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetAppCredentialsInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetAppCredentialsFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetAppCredentialsSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetAppCredentialsSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppCredentialPagination!</code></p>
+<hr />
+<h4 id="getappcredentialbyid">getAppCredentialById<a class="headerlink" href="#getappcredentialbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล AppCredentials ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getAppCredentialById</code></li>
+</ul>
+<pre><code class="language-graphql">query GetAppCredentialById($appCredentialId: ID!) {
+  getAppCredentialById(appCredentialId: $appCredentialId) {
+    _id
+    appKey
+    clientId
+    description
+    authorizedHosts { _id hostName description isActive }
+    validateAuthorizedHosts
+    authorizedRedirectUrls { _id redirectUrl description isActive }
+    validateAuthorizedRedirectUrls
+    minutesTimeLock
+    numberOfFail
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appCredentialId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppCredential!</code></p>
+<hr />
+<h4 id="getappcredentialbyclientid">getAppCredentialByClientId<a class="headerlink" href="#getappcredentialbyclientid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล AppCredentials ตาม ClientId</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getAppCredentialByClientId</code></li>
+</ul>
+<pre><code class="language-graphql">query GetAppCredentialByClientId($clientId: String!) {
+  getAppCredentialByClientId(clientId: $clientId) {
+    _id
+    appKey
+    clientId
+    description
+    authorizedHosts { _id hostName description isActive }
+    validateAuthorizedHosts
+    authorizedRedirectUrls { _id redirectUrl description isActive }
+    validateAuthorizedRedirectUrls
+    minutesTimeLock
+    numberOfFail
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clientId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppCredential!</code></p>
+<hr />
+<h4 id="checkmobileappupdate">checkMobileAppUpdate<a class="headerlink" href="#checkmobileappupdate" title="Permanent link">&para;</a></h4>
+<p>เช็กว่าแอปมือถือต้องอัปเดตหรือไม่ จาก clientId, platform และ appVersion</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query CheckMobileAppUpdate($input: CheckMobileAppUpdateInput!) {
+  checkMobileAppUpdate(input: $input) {
+    clientId
+    platform
+    appVersion
+    minimumAppVersion
+    shouldUpdate
+    forceUpdate
+    appUpdateUrl
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>CheckMobileAppUpdateInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clientId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>platform</td>
+<td><code>EnumMobilePlatform!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>appVersion</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CheckMobileAppUpdateResult!</code></p>
+<hr />
+<h4 id="getloginsocketid">getLoginSocketId<a class="headerlink" href="#getloginsocketid" title="Permanent link">&para;</a></h4>
+<p>ขอ socketId สำหรับ login แบบ WebSocket (ใช้คู่กับ <code>loginWith*SocketType</code>)</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetLoginSocketId($redirectURL: String, $socketId: String) {
+  getLoginSocketId(redirectURL: $redirectURL, socketId: $socketId) {
+    socketId
+    redirectURL
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>socketId</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>GetLoginSocketIdType!</code></p>
+<hr />
+<h4 id="getmyaccount">getMyAccount<a class="headerlink" href="#getmyaccount" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูลบัญชีของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMyAccount {
+  getMyAccount {
+    authId
+    username
+    emails
+    phoneNumbers { countryCode phoneNumber }
+    oauthProviders { provider providerSubject linkedAt additionalFields }
+    defaultOrganizationKey
+    isActive
+  }
+}
+</code></pre>
+<p>Response: <code>AccountLogin</code></p>
+<hr />
+<h4 id="getaccountbyoauthprovider">getAccountByOAuthProvider<a class="headerlink" href="#getaccountbyoauthprovider" title="Permanent link">&para;</a></h4>
+<p>ค้นบัญชีจาก OAuth provider (<code>GOOGLE</code>, <code>FACEBOOK</code>, <code>APPLE</code>) และ subject ของ provider</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetAccountByOAuthProvider($provider: String!, $providerSubject: String!) {
+  getAccountByOAuthProvider(provider: $provider, providerSubject: $providerSubject) {
+    authId
+    username
+    emails
+    phoneNumbers { countryCode phoneNumber }
+    oauthProviders { provider providerSubject linkedAt additionalFields }
+    defaultOrganizationKey
+    isActive
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>provider</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>providerSubject</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AccountLogin</code></p>
+<hr />
+<h4 id="getaccount">getAccount<a class="headerlink" href="#getaccount" title="Permanent link">&para;</a></h4>
+<p>ค้นบัญชีตามเงื่อนไขใน input</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetAccount($getAccountInput: GetAccountInput) {
+  getAccount(getAccountInput: $getAccountInput) {
+    authId
+    username
+    emails
+    phoneNumbers { countryCode phoneNumber }
+    isActive
+  }
+}
+</code></pre>
+<p><code>getAccountInput</code>: <code>GetAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Account</code></p>
+<hr />
+<h4 id="getaccountbyusername">getAccountByUsername<a class="headerlink" href="#getaccountbyusername" title="Permanent link">&para;</a></h4>
+<p>ค้นบัญชีตาม username</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetAccountByUsername($getAccountByUsernameInput: GetAccountByUsernameInput) {
+  getAccountByUsername(getAccountByUsernameInput: $getAccountByUsernameInput) {
+    authId
+    username
+    isActive
+  }
+}
+</code></pre>
+<p><code>getAccountByUsernameInput</code>: <code>GetAccountByUsernameInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AccountUsername</code></p>
+<hr />
+<h4 id="getaccountbyphonenumber">getAccountByPhoneNumber<a class="headerlink" href="#getaccountbyphonenumber" title="Permanent link">&para;</a></h4>
+<p>ค้นบัญชีตามเบอร์โทรศัพท์</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetAccountByPhoneNumber($getAccountByPhoneNumberInput: GetAccountByPhoneNumberInput) {
+  getAccountByPhoneNumber(getAccountByPhoneNumberInput: $getAccountByPhoneNumberInput) {
+    authId
+    username
+    countryCode
+    phoneNumber
+    verifyStatus
+    isActive
+  }
+}
+</code></pre>
+<p><code>getAccountByPhoneNumberInput</code>: <code>GetAccountByPhoneNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AccountPhoneNumber</code></p>
+<hr />
+<h4 id="getaccountbyemail">getAccountByEmail<a class="headerlink" href="#getaccountbyemail" title="Permanent link">&para;</a></h4>
+<p>ค้นบัญชีตาม email</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetAccountByEmail($getAccountByEmailInput: GetAccountByEmailInput) {
+  getAccountByEmail(getAccountByEmailInput: $getAccountByEmailInput) {
+    authId
+    username
+    email
+    verifyStatus
+    isActive
+  }
+}
+</code></pre>
+<p><code>getAccountByEmailInput</code>: <code>GetAccountByEmailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AccountEmail</code></p>
+<hr />
+<h4 id="getemailsbyauthid">getEmailsByAuthId<a class="headerlink" href="#getemailsbyauthid" title="Permanent link">&para;</a></h4>
+<p>ดึง email ทั้งหมดของบัญชีตาม authId</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetEmailsByAuthId($authId: String!, $getInput: GetEmailsByAccountInput) {
+  getEmailsByAuthId(authId: $authId, getInput: $getInput) {
+    emails { authId username email verifyStatus isActive }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetEmailsByAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetEmailsByAccountFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetEmailsByAccountSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetEmailsByAccountSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>authId: String!</code></p>
+<p>Response: <code>EmailAccountPagination</code></p>
+<hr />
+<h4 id="getphonenumbersbyauthid">getPhoneNumbersByAuthId<a class="headerlink" href="#getphonenumbersbyauthid" title="Permanent link">&para;</a></h4>
+<p>ดึงเบอร์โทรศัพท์ทั้งหมดของบัญชีตาม authId</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetPhoneNumbersByAuthId($authId: String!, $getInput: GetPhoneNumbersByAccountInput) {
+  getPhoneNumbersByAuthId(authId: $authId, getInput: $getInput) {
+    phoneNumbers { authId username countryCode phoneNumber verifyStatus isActive }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetPhoneNumbersByAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetPhoneNumbersByAccountFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetPhoneNumbersByAccountSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetPhoneNumbersByAccountSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>authId: String!</code></p>
+<p>Response: <code>PhoneNumberAccountPagination</code></p>
+<hr />
+<h4 id="getaccountsbyappkey">getAccountsByAppKey<a class="headerlink" href="#getaccountsbyappkey" title="Permanent link">&para;</a></h4>
+<p>ดึงบัญชีทั้งหมดของแอปตาม appKey แบบแบ่งหน้า</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetAccountsByAppKey($appKey: String!, $getInput: GetAccountByAppKeyInput) {
+  getAccountsByAppKey(appKey: $appKey, getInput: $getInput) {
+    accounts { authId username emails isActive }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetAccountByAppKeyInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetAccountByAppKeyFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetAccountByAppKeySearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetAccountByAppKeySortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appKey: String!</code></p>
+<p>Response: <code>AccountPagination</code></p>
+<hr />
+<h4 id="getlockaccountsbyappkey">getLockAccountsByAppKey<a class="headerlink" href="#getlockaccountsbyappkey" title="Permanent link">&para;</a></h4>
+<p>ดึงบัญชีที่ถูกล็อก (login ผิดเกินกำหนด) ของแอปตาม appKey แบบแบ่งหน้า</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getLockAccountsByAppKey</code></li>
+</ul>
+<pre><code class="language-graphql">query GetLockAccountsByAppKey($appKey: String!, $getInput: GetAccountByAppKeyInput) {
+  getLockAccountsByAppKey(appKey: $appKey, getInput: $getInput) {
+    locks { authId username startDate endDate }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetAccountByAppKeyInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetAccountByAppKeyFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetAccountByAppKeySearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetAccountByAppKeySortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appKey: String!</code></p>
+<p>Response: <code>AccountLockPagination</code></p>
+<hr />
+<h4 id="getsessionloggings">getSessionLoggings<a class="headerlink" href="#getsessionloggings" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล session logging แบบมีเงื่อนไข</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getSessionLoggings</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetSessionLoggings($input: GetSessionLoggingInput) {
+  getSessionLoggings(input: $input) {
+    sessionLoggings { _id appKey clientId totalSession startTime endTime }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetSessionLoggingInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetSessionLoggingFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetSessionLoggingSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetSessionLoggingSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>SessionLoggingPagination!</code></p>
+<hr />
+<h4 id="getsessionloggingbyid">getSessionLoggingById<a class="headerlink" href="#getsessionloggingbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล session logging โดยใช้ sessionLoggingId</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getSessionLoggingById</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetSessionLoggingById($sessionLoggingId: ID!) {
+  getSessionLoggingById(sessionLoggingId: $sessionLoggingId) {
+    _id
+    appKey
+    clientId
+    totalSession
+    startTime
+    endTime
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sessionLoggingId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>SessionLogging</code></p>
+<hr />
+<h4 id="getmymobiledevices">getMyMobileDevices<a class="headerlink" href="#getmymobiledevices" title="Permanent link">&para;</a></h4>
+<p>ดึงอุปกรณ์ทั้งหมดของตัวเอง (ผู้ที่ login) แบบแบ่งหน้า — ไว้ให้ user มอนิเตอร์เครื่องของตัวเอง</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">query GetMyMobileDevices($input: GetMyMobileDevicesInput) {
+  getMyMobileDevices(input: $input) {
+    userMobileDevices { _id appKey installationId userId platform deviceName }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetMyMobileDevicesInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>status</td>
+<td><code>EnumDeviceStatus</code></td>
+<td></td>
+<td>กรองตามสถานะเครื่อง (ถ้าไม่ระบุ = ทั้งหมด)</td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td>แบ่งหน้า</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevicePagination!</code></p>
+<hr />
+<h4 id="getmobiledevicesbyuser">getMobileDevicesByUser<a class="headerlink" href="#getmobiledevicesbyuser" title="Permanent link">&para;</a></h4>
+<p>ดึงอุปกรณ์ของผู้ใช้ที่ระบุ แบบแบ่งหน้า (ภายใน app เดียวกับผู้เรียก) — ต้องมีสิทธิ์ getMobileDevicesByUser</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getMobileDevicesByUser</code></li>
+</ul>
+<pre><code class="language-graphql">query GetMobileDevicesByUser($input: GetMobileDevicesByUserInput!) {
+  getMobileDevicesByUser(input: $input) {
+    userMobileDevices { _id appKey installationId userId platform deviceName }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetMobileDevicesByUserInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>userId</td>
+<td><code>ID!</code></td>
+<td>ใช่</td>
+<td>authId ของผู้ใช้ที่จะดึงอุปกรณ์</td>
+</tr>
+<tr>
+<td>status</td>
+<td><code>EnumDeviceStatus</code></td>
+<td></td>
+<td>กรองตามสถานะเครื่อง (ถ้าไม่ระบุ = ทั้งหมด)</td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td>แบ่งหน้า</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevicePagination!</code></p>
+<hr />
+<h4 id="getmobiledevicesbyapp">getMobileDevicesByApp<a class="headerlink" href="#getmobiledevicesbyapp" title="Permanent link">&para;</a></h4>
+<p>ดึงอุปกรณ์ทั้งหมดของ app ที่ระบุ แบบแบ่งหน้า — ต้องมีสิทธิ์ getMobileDevicesByApp (ข้าม app ต้องมี systemApp)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getMobileDevicesByApp</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetMobileDevicesByApp($input: GetMobileDevicesByAppInput!) {
+  getMobileDevicesByApp(input: $input) {
+    userMobileDevices { _id appKey installationId userId platform deviceName }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetMobileDevicesByAppInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>appKey ของ app ที่จะดึงอุปกรณ์ (ข้าม app ที่ login ต้องมีสิทธิ์ systemApp)</td>
+</tr>
+<tr>
+<td>status</td>
+<td><code>EnumDeviceStatus</code></td>
+<td></td>
+<td>กรองตามสถานะเครื่อง (ถ้าไม่ระบุ = ทั้งหมด)</td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td>แบ่งหน้า</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevicePagination!</code></p>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการแก้ไขข้อมูล</p>
+<hr />
+<h4 id="registerwithusername">registerWithUsername<a class="headerlink" href="#registerwithusername" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีด้วย username + password</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterWithUsername($registerUsernameInput: RegisterUsernameInput) {
+  registerWithUsername(registerUsernameInput: $registerUsernameInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>registerUsernameInput</code>: <code>RegisterUsernameInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>roleKey</td>
+<td><code>RoleKeyEnum</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>inviteCodeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>firstName</td>
+<td><code>String</code></td>
+<td></td>
+<td>firstName: ชื่อ</td>
+</tr>
+<tr>
+<td>middleName</td>
+<td><code>String</code></td>
+<td></td>
+<td>middleName: ชื่อกลาง</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td><code>String</code></td>
+<td></td>
+<td>lastName: ชื่อสกุล</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td><code>String</code></td>
+<td></td>
+<td>displayName: ชื่อที่ใช้แสดงผล</td>
+</tr>
+<tr>
+<td>gender</td>
+<td><code>String</code></td>
+<td></td>
+<td>gender: เพศ</td>
+</tr>
+<tr>
+<td>profileImage</td>
+<td><code>String</code></td>
+<td></td>
+<td>profileImage: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+<tr>
+<td>electronicSignatureKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>electronicSignatureKey: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="registerwithemail">registerWithEmail<a class="headerlink" href="#registerwithemail" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีด้วย email + password</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterWithEmail($registerEmailInput: RegisterEmailInput) {
+  registerWithEmail(registerEmailInput: $registerEmailInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>registerEmailInput</code>: <code>RegisterEmailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>roleKey</td>
+<td><code>RoleKeyEnum</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>inviteCodeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>firstName</td>
+<td><code>String</code></td>
+<td></td>
+<td>firstName: ชื่อ</td>
+</tr>
+<tr>
+<td>middleName</td>
+<td><code>String</code></td>
+<td></td>
+<td>middleName: ชื่อกลาง</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td><code>String</code></td>
+<td></td>
+<td>lastName: ชื่อสกุล</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td><code>String</code></td>
+<td></td>
+<td>displayName: ชื่อที่ใช้แสดงผล</td>
+</tr>
+<tr>
+<td>gender</td>
+<td><code>String</code></td>
+<td></td>
+<td>gender: เพศ</td>
+</tr>
+<tr>
+<td>profileImage</td>
+<td><code>String</code></td>
+<td></td>
+<td>profileImage: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+<tr>
+<td>electronicSignatureKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>electronicSignatureKey: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="registerwithphonenumber">registerWithPhoneNumber<a class="headerlink" href="#registerwithphonenumber" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีด้วยเบอร์โทรศัพท์ + password</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterWithPhoneNumber($registerPhoneNumberInput: RegisterPhoneNumberInput) {
+  registerWithPhoneNumber(registerPhoneNumberInput: $registerPhoneNumberInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>registerPhoneNumberInput</code>: <code>RegisterPhoneNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>roleKey</td>
+<td><code>RoleKeyEnum</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>inviteCodeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>firstName</td>
+<td><code>String</code></td>
+<td></td>
+<td>firstName: ชื่อ</td>
+</tr>
+<tr>
+<td>middleName</td>
+<td><code>String</code></td>
+<td></td>
+<td>middleName: ชื่อกลาง</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td><code>String</code></td>
+<td></td>
+<td>lastName: ชื่อสกุล</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td><code>String</code></td>
+<td></td>
+<td>displayName: ชื่อที่ใช้แสดงผล</td>
+</tr>
+<tr>
+<td>gender</td>
+<td><code>String</code></td>
+<td></td>
+<td>gender: เพศ</td>
+</tr>
+<tr>
+<td>profileImage</td>
+<td><code>String</code></td>
+<td></td>
+<td>profileImage: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+<tr>
+<td>electronicSignatureKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>electronicSignatureKey: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="register">register<a class="headerlink" href="#register" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีด้วย username, email หรือเบอร์โทรศัพท์ (รวมทุกแบบไว้ใน mutation เดียว)</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation Register($registerInput: RegisterInput) {
+  register(registerInput: $registerInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>registerInput</code>: <code>RegisterInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>roleKey</td>
+<td><code>RoleKeyEnum</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>inviteCodeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>firstName</td>
+<td><code>String</code></td>
+<td></td>
+<td>firstName: ชื่อ</td>
+</tr>
+<tr>
+<td>middleName</td>
+<td><code>String</code></td>
+<td></td>
+<td>middleName: ชื่อกลาง</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td><code>String</code></td>
+<td></td>
+<td>lastName: ชื่อสกุล</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td><code>String</code></td>
+<td></td>
+<td>displayName: ชื่อที่ใช้แสดงผล</td>
+</tr>
+<tr>
+<td>gender</td>
+<td><code>String</code></td>
+<td></td>
+<td>gender: เพศ</td>
+</tr>
+<tr>
+<td>profileImage</td>
+<td><code>String</code></td>
+<td></td>
+<td>profileImage: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+<tr>
+<td>electronicSignatureKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>electronicSignatureKey: fileKey ที่ได้จากการอัปโหลดไฟล์ไปยัง File Service</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="setaccountdefaultorganization">setAccountDefaultOrganization<a class="headerlink" href="#setaccountdefaultorganization" title="Permanent link">&para;</a></h4>
+<p>กำหนด DefaultOrganization ของ Account ที่ระบุ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation SetAccountDefaultOrganization($input: [SetAccountDefaultOrganizationInput]!) {
+  setAccountDefaultOrganization(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>SetAccountDefaultOrganizationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="useinvitecode">useInviteCode<a class="headerlink" href="#useinvitecode" title="Permanent link">&para;</a></h4>
+<p>ใช้ InviteCodeKey ในการลงทะเบียน</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UseInviteCode($input: UseInviteCodeInput!) {
+  useInviteCode(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>UseInviteCodeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inviteCodeKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="addemailtoaccount">addEmailToAccount<a class="headerlink" href="#addemailtoaccount" title="Permanent link">&para;</a></h4>
+<p>เพิ่ม email ให้บัญชี</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation AddEmailToAccount($input: AddEmailToAccountInput!) {
+  addEmailToAccount(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>AddEmailToAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="addphonenumbertoaccount">addPhoneNumberToAccount<a class="headerlink" href="#addphonenumbertoaccount" title="Permanent link">&para;</a></h4>
+<p>เพิ่มเบอร์โทรศัพท์ให้บัญชี</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation AddPhoneNumberToAccount($input: AddPhoneNumberToAccountInput!) {
+  addPhoneNumberToAccount(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>AddPhoneNumberToAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="updateaccount">updateAccount<a class="headerlink" href="#updateaccount" title="Permanent link">&para;</a></h4>
+<p>อัปเดตข้อมูล Account ที่ระบุ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateAccount</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateAccount($input: UpdateAccountInput!) {
+  updateAccount(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>UpdateAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="updateemail">updateEmail<a class="headerlink" href="#updateemail" title="Permanent link">&para;</a></h4>
+<p>แก้ไข email ของบัญชี</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateEmail</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateEmail($input: UpdateEmailInput!) {
+  updateEmail(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>UpdateEmailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="updatephonenumber">updatePhoneNumber<a class="headerlink" href="#updatephonenumber" title="Permanent link">&para;</a></h4>
+<p>อัปเดต phone number ของ Account ที่ระบุ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updatePhoneNumber</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdatePhoneNumber($input: UpdatePhoneNumberInput!) {
+  updatePhoneNumber(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>UpdatePhoneNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="removeemailfromaccount">removeEmailFromAccount<a class="headerlink" href="#removeemailfromaccount" title="Permanent link">&para;</a></h4>
+<p>ลบ email ที่ระบุออกจาก Account ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>removeEmailFromAccount</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation RemoveEmailFromAccount($input: RemoveEmailInput!) {
+  removeEmailFromAccount(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>RemoveEmailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="removephonenumberfromaccount">removePhoneNumberFromAccount<a class="headerlink" href="#removephonenumberfromaccount" title="Permanent link">&para;</a></h4>
+<p>ลบ phone number ที่ระบุออกจาก Account ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>removePhoneNumberFromAccount</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation RemovePhoneNumberFromAccount($input: RemovePhoneNumberInput!) {
+  removePhoneNumberFromAccount(input: $input) {
+    status
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>RemovePhoneNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RegisterStatus</code></p>
+<hr />
+<h4 id="generateappcredential">generateAppCredential<a class="headerlink" href="#generateappcredential" title="Permanent link">&para;</a></h4>
+<p>สร้าง AppCredential ใหม่ขึ้นมาในระบบ โดยที่ถ้า AppCredentialType = SYSTEM จะทำการสร้าง clientAuthId สำหรับ AppCredential นั้นด้วย</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>generateAppCredential</code></li>
+</ul>
+<pre><code class="language-graphql">mutation GenerateAppCredential($input: GenerateAppCredentialInput!) {
+  generateAppCredential(input: $input) {
+    appCredential { _id appKey clientId description validateAuthorizedHosts validateAuthorizedRedirectUrls }
+    clientSecret
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GenerateAppCredentialInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>appKey ไว้ใช้ในการบอกว่าอยู่ app ใด ถ้าไม่ระบุจะใช้ app ที่ login อยู่</td>
+</tr>
+<tr>
+<td>clientId</td>
+<td><code>String</code></td>
+<td></td>
+<td>clientId ไว้ใช้ในการใส่ไว้ใน headers เพื่อใช้งาน 'X-APP-CLIENT-ID' ถ้าไม่ระบุ ระบบ จะ auto gen ให้</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>authorizedHosts</td>
+<td><code>[AppCredentialAuthorizedHostInput]</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้สามารถใช้งานผ่าน hosts ใดได้บ้าง</td>
+</tr>
+<tr>
+<td>validateAuthorizedHosts</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้จะตรวจสอบการใช้งานผ่าน hosts</td>
+</tr>
+<tr>
+<td>authorizedRedirectUrls</td>
+<td><code>[AppCredentialAuthorizedRedirectUrlInput]</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้ยอมรับการ RedirectUrl ใดบ้าง</td>
+</tr>
+<tr>
+<td>validateAuthorizedRedirectUrls</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้จะตรวจสอบการ RedirectUrl</td>
+</tr>
+<tr>
+<td>minutesTimeLock</td>
+<td><code>Int</code></td>
+<td></td>
+<td>จำนวนนาที ที่ lock เมื่อ login ผิด</td>
+</tr>
+<tr>
+<td>numberOfFail</td>
+<td><code>Int</code></td>
+<td></td>
+<td>จำนวนครั้งที่ login ผิด แล้วจะ lock</td>
+</tr>
+<tr>
+<td>minutesTimeFail</td>
+<td><code>Int</code></td>
+<td></td>
+<td>จำนวนนาที ที่เมื่อ login ผิด แล้วจะไม่ให้ login ซ้ำ ก่อนจะ lock</td>
+</tr>
+<tr>
+<td>jwtAccessExpireTime</td>
+<td><code>Int</code></td>
+<td></td>
+<td>เวลาหมดอายุของ Access token (วินาที) ถ้าเป็น 0 คือไม่มีวันหมดอายุ</td>
+</tr>
+<tr>
+<td>jwtRefreshExpireTime</td>
+<td><code>Int</code></td>
+<td></td>
+<td>เวลาหมดอายุของ Refresh token (วินาที) ถ้าเป็น 0 คือไม่มีวันหมดอายุ</td>
+</tr>
+<tr>
+<td>expiryAt</td>
+<td><code>Date</code></td>
+<td></td>
+<td>เวลาหมดอายุของ AppCredential นี้(ถ้ามี)</td>
+</tr>
+<tr>
+<td>appCredentialType</td>
+<td><code>EnumAppCredentialType</code></td>
+<td></td>
+<td>ประเภทของ appCredential</td>
+</tr>
+<tr>
+<td>minimumAppVersion</td>
+<td><code>String</code></td>
+<td></td>
+<td>เวอร์ชันขั้นต่ำของ mobile app ที่อนุญาตให้ใช้งาน</td>
+</tr>
+<tr>
+<td>appUpdateUrlAndroid</td>
+<td><code>String</code></td>
+<td></td>
+<td>ลิงก์อัปเดตแอปสำหรับ Android</td>
+</tr>
+<tr>
+<td>appUpdateUrlIos</td>
+<td><code>String</code></td>
+<td></td>
+<td>ลิงก์อัปเดตแอปสำหรับ iOS</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td>(มีอีก 4 ฟิลด์ ดู schema)</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>GenerateAppCredential!</code></p>
+<hr />
+<h4 id="updateappcredential">updateAppCredential<a class="headerlink" href="#updateappcredential" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล AppCredential โดยจะแก้ได้แค่ข้อมูลการตั้งค่าบางส่วนเท่านั้น</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateAppCredential</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateAppCredential($appCredentialId: ID!, $input: UpdateAppCredentialInput!) {
+  updateAppCredential(appCredentialId: $appCredentialId, input: $input) {
+    _id
+    appKey
+    clientId
+    description
+    authorizedHosts { _id hostName description isActive }
+    validateAuthorizedHosts
+    authorizedRedirectUrls { _id redirectUrl description isActive }
+    validateAuthorizedRedirectUrls
+    minutesTimeLock
+    numberOfFail
+    # ...
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>UpdateAppCredentialInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>authorizedHosts</td>
+<td><code>[AppCredentialAuthorizedHostInput]</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้สามารถใช้งานผ่าน hosts ใดได้บ้าง</td>
+</tr>
+<tr>
+<td>validateAuthorizedHosts</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้จะตรวจสอบการใช้งานผ่าน hosts</td>
+</tr>
+<tr>
+<td>authorizedRedirectUrls</td>
+<td><code>[AppCredentialAuthorizedRedirectUrlInput]</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้ยอมรับการ RedirectUrl ใดบ้าง</td>
+</tr>
+<tr>
+<td>validateAuthorizedRedirectUrls</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>ตั้งค่าว่า AppCredential นี้จะตรวจสอบการ RedirectUrl</td>
+</tr>
+<tr>
+<td>minutesTimeLock</td>
+<td><code>Int</code></td>
+<td></td>
+<td>จำนวนนาที ที่ lock เมื่อ login ผิด</td>
+</tr>
+<tr>
+<td>numberOfFail</td>
+<td><code>Int</code></td>
+<td></td>
+<td>จำนวนครั้งที่ login ผิด แล้วจะ lock</td>
+</tr>
+<tr>
+<td>minutesTimeFail</td>
+<td><code>Int</code></td>
+<td></td>
+<td>จำนวนนาที ที่เมื่อ login ผิด แล้วจะไม่ให้ login ซ้ำ ก่อนจะ lock</td>
+</tr>
+<tr>
+<td>jwtAccessExpireTime</td>
+<td><code>Int</code></td>
+<td></td>
+<td>เวลาหมดอายุของ Access token (วินาที) ถ้าเป็น 0 คือไม่มีวันหมดอายุ</td>
+</tr>
+<tr>
+<td>jwtRefreshExpireTime</td>
+<td><code>Int</code></td>
+<td></td>
+<td>เวลาหมดอายุของ Refresh token (วินาที) ถ้าเป็น 0 คือไม่มีวันหมดอายุ</td>
+</tr>
+<tr>
+<td>expiryAt</td>
+<td><code>Date</code></td>
+<td></td>
+<td>เวลาหมดอายุของ AppCredential นี้(ถ้ามี)</td>
+</tr>
+<tr>
+<td>minimumAppVersion</td>
+<td><code>String</code></td>
+<td></td>
+<td>เวอร์ชันขั้นต่ำของ mobile app ที่อนุญาตให้ใช้งาน</td>
+</tr>
+<tr>
+<td>appUpdateUrlAndroid</td>
+<td><code>String</code></td>
+<td></td>
+<td>ลิงก์อัปเดตแอปสำหรับ Android</td>
+</tr>
+<tr>
+<td>appUpdateUrlIos</td>
+<td><code>String</code></td>
+<td></td>
+<td>ลิงก์อัปเดตแอปสำหรับ iOS</td>
+</tr>
+<tr>
+<td>forceUpdate</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>บังคับอัปเดตเมื่อเวอร์ชันต่ำกว่า minimumAppVersion</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appCredentialId: ID!</code></p>
+<p>Response: <code>AppCredential!</code></p>
+<hr />
+<h4 id="removeappcredential">removeAppCredential<a class="headerlink" href="#removeappcredential" title="Permanent link">&para;</a></h4>
+<p>ลบ AppCredential นั้นออกจากระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>removeAppCredential</code></li>
+</ul>
+<pre><code class="language-graphql">mutation RemoveAppCredential($appCredentialId: ID!) {
+  removeAppCredential(appCredentialId: $appCredentialId) {
+    _id
+    appKey
+    clientId
+    description
+    authorizedHosts { _id hostName description isActive }
+    validateAuthorizedHosts
+    authorizedRedirectUrls { _id redirectUrl description isActive }
+    validateAuthorizedRedirectUrls
+    minutesTimeLock
+    numberOfFail
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appCredentialId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppCredential!</code></p>
+<hr />
+<h4 id="loginwithaccesstype">loginWithAccessType<a class="headerlink" href="#loginwithaccesstype" title="Permanent link">&para;</a></h4>
+<p>login ด้วย username, email หรือเบอร์โทรศัพท์ + password แล้วได้ token กลับทันที · ถ้าใช้เบอร์โทรศัพท์ ควรส่ง <code>countryCode</code> (เช่น <code>+66</code>) หรือใส่เบอร์ในรูป <code>+66...</code></p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithAccessType($loginWithAccessTypeInput: LoginWithAccessTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithAccessType(loginWithAccessTypeInput: $loginWithAccessTypeInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithAccessTypeInput</code>: <code>LoginWithAccessTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="loginwithgoogleoauth">loginWithGoogleOAuth<a class="headerlink" href="#loginwithgoogleoauth" title="Permanent link">&para;</a></h4>
+<p>login ด้วย Google (ส่ง <code>id_token</code> จาก Google)</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithGoogleOAuth($loginWithGoogleOAuthInput: LoginWithGoogleOAuthInput, $sessionInfo: SessionInfoInput) {
+  loginWithGoogleOAuth(loginWithGoogleOAuthInput: $loginWithGoogleOAuthInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithGoogleOAuthInput</code>: <code>LoginWithGoogleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="registerwithgoogleoauth">registerWithGoogleOAuth<a class="headerlink" href="#registerwithgoogleoauth" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีใหม่ด้วย Google (<code>id_token</code>) แล้วได้ token กลับ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterWithGoogleOAuth($registerWithGoogleOAuthInput: RegisterWithGoogleOAuthInput, $sessionInfo: SessionInfoInput) {
+  registerWithGoogleOAuth(registerWithGoogleOAuthInput: $registerWithGoogleOAuthInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>registerWithGoogleOAuthInput</code>: <code>RegisterWithGoogleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="linkaccountwithgoogleoauth">linkAccountWithGoogleOAuth<a class="headerlink" href="#linkaccountwithgoogleoauth" title="Permanent link">&para;</a></h4>
+<p>ผูกบัญชี Google เข้ากับบัญชีที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation LinkAccountWithGoogleOAuth($linkAccountWithGoogleOAuthInput: LinkAccountWithGoogleOAuthInput) {
+  linkAccountWithGoogleOAuth(linkAccountWithGoogleOAuthInput: $linkAccountWithGoogleOAuthInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>linkAccountWithGoogleOAuthInput</code>: <code>LinkAccountWithGoogleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LinkAccountWithGoogleOAuthStatus</code></p>
+<hr />
+<h4 id="unlinkaccountfromgoogleoauth">unlinkAccountFromGoogleOAuth<a class="headerlink" href="#unlinkaccountfromgoogleoauth" title="Permanent link">&para;</a></h4>
+<p>ยกเลิกการผูกบัญชี Google ออกจากบัญชีที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UnlinkAccountFromGoogleOAuth($unlinkAccountFromGoogleOAuthInput: UnlinkAccountFromGoogleOAuthInput) {
+  unlinkAccountFromGoogleOAuth(unlinkAccountFromGoogleOAuthInput: $unlinkAccountFromGoogleOAuthInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>unlinkAccountFromGoogleOAuthInput</code>: <code>UnlinkAccountFromGoogleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UnlinkAccountFromGoogleOAuthStatus</code></p>
+<hr />
+<h4 id="loginwithfacebookoauth">loginWithFaceBookOAuth<a class="headerlink" href="#loginwithfacebookoauth" title="Permanent link">&para;</a></h4>
+<p>login ด้วย Facebook (ส่ง <code>access_token</code> จาก Facebook)</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithFaceBookOAuth($loginWithFaceBookOAuthInput: LoginWithFaceBookOAuthInput, $sessionInfo: SessionInfoInput) {
+  loginWithFaceBookOAuth(loginWithFaceBookOAuthInput: $loginWithFaceBookOAuthInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithFaceBookOAuthInput</code>: <code>LoginWithFaceBookOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="registerwithfacebookoauth">registerWithFaceBookOAuth<a class="headerlink" href="#registerwithfacebookoauth" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีใหม่ด้วย Facebook (<code>access_token</code>) แล้วได้ token กลับ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterWithFaceBookOAuth($registerWithFaceBookOAuthInput: RegisterWithFaceBookOAuthInput, $sessionInfo: SessionInfoInput) {
+  registerWithFaceBookOAuth(registerWithFaceBookOAuthInput: $registerWithFaceBookOAuthInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>registerWithFaceBookOAuthInput</code>: <code>RegisterWithFaceBookOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="linkaccountwithfacebookoauth">linkAccountWithFaceBookOAuth<a class="headerlink" href="#linkaccountwithfacebookoauth" title="Permanent link">&para;</a></h4>
+<p>ผูกบัญชี Facebook เข้ากับบัญชีที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation LinkAccountWithFaceBookOAuth($linkAccountWithFaceBookOAuthInput: LinkAccountWithFaceBookOAuthInput) {
+  linkAccountWithFaceBookOAuth(linkAccountWithFaceBookOAuthInput: $linkAccountWithFaceBookOAuthInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>linkAccountWithFaceBookOAuthInput</code>: <code>LinkAccountWithFaceBookOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LinkAccountWithFaceBookOAuthStatus</code></p>
+<hr />
+<h4 id="unlinkaccountfromfacebookoauth">unlinkAccountFromFaceBookOAuth<a class="headerlink" href="#unlinkaccountfromfacebookoauth" title="Permanent link">&para;</a></h4>
+<p>ยกเลิกการผูกบัญชี Facebook ออกจากบัญชีที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UnlinkAccountFromFaceBookOAuth($unlinkAccountFromFaceBookOAuthInput: UnlinkAccountFromFaceBookOAuthInput) {
+  unlinkAccountFromFaceBookOAuth(unlinkAccountFromFaceBookOAuthInput: $unlinkAccountFromFaceBookOAuthInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>unlinkAccountFromFaceBookOAuthInput</code>: <code>UnlinkAccountFromFaceBookOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UnlinkAccountFromFaceBookOAuthStatus</code></p>
+<hr />
+<h4 id="loginwithappleoauth">loginWithAppleOAuth<a class="headerlink" href="#loginwithappleoauth" title="Permanent link">&para;</a></h4>
+<p>login ด้วย Apple (ส่ง <code>id_token</code> จาก Apple)</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithAppleOAuth($loginWithAppleOAuthInput: LoginWithAppleOAuthInput, $sessionInfo: SessionInfoInput) {
+  loginWithAppleOAuth(loginWithAppleOAuthInput: $loginWithAppleOAuthInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithAppleOAuthInput</code>: <code>LoginWithAppleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="registerwithappleoauth">registerWithAppleOAuth<a class="headerlink" href="#registerwithappleoauth" title="Permanent link">&para;</a></h4>
+<p>สมัครบัญชีใหม่ด้วย Apple (<code>id_token</code>) แล้วได้ token กลับ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterWithAppleOAuth($registerWithAppleOAuthInput: RegisterWithAppleOAuthInput, $sessionInfo: SessionInfoInput) {
+  registerWithAppleOAuth(registerWithAppleOAuthInput: $registerWithAppleOAuthInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>registerWithAppleOAuthInput</code>: <code>RegisterWithAppleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="linkaccountwithappleoauth">linkAccountWithAppleOAuth<a class="headerlink" href="#linkaccountwithappleoauth" title="Permanent link">&para;</a></h4>
+<p>ผูกบัญชี Apple เข้ากับบัญชีที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation LinkAccountWithAppleOAuth($linkAccountWithAppleOAuthInput: LinkAccountWithAppleOAuthInput) {
+  linkAccountWithAppleOAuth(linkAccountWithAppleOAuthInput: $linkAccountWithAppleOAuthInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>linkAccountWithAppleOAuthInput</code>: <code>LinkAccountWithAppleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LinkAccountWithAppleOAuthStatus</code></p>
+<hr />
+<h4 id="unlinkaccountfromappleoauth">unlinkAccountFromAppleOAuth<a class="headerlink" href="#unlinkaccountfromappleoauth" title="Permanent link">&para;</a></h4>
+<p>ยกเลิกการผูกบัญชี Apple ออกจากบัญชีที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UnlinkAccountFromAppleOAuth($unlinkAccountFromAppleOAuthInput: UnlinkAccountFromAppleOAuthInput) {
+  unlinkAccountFromAppleOAuth(unlinkAccountFromAppleOAuthInput: $unlinkAccountFromAppleOAuthInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>unlinkAccountFromAppleOAuthInput</code>: <code>UnlinkAccountFromAppleOAuthInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UnlinkAccountFromAppleOAuthStatus</code></p>
+<hr />
+<h4 id="loginwithusernameaccesstype">loginWithUserNameAccessType<a class="headerlink" href="#loginwithusernameaccesstype" title="Permanent link">&para;</a></h4>
+<p>login ด้วย username + password แล้วได้ token กลับทันที</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithUserNameAccessType($loginWithUsernameAccessTypeInput: LoginWithUsernameAccessTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithUserNameAccessType(loginWithUsernameAccessTypeInput: $loginWithUsernameAccessTypeInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithUsernameAccessTypeInput</code>: <code>LoginWithUsernameAccessTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="loginwithemailaccesstype">loginWithEmailAccessType<a class="headerlink" href="#loginwithemailaccesstype" title="Permanent link">&para;</a></h4>
+<p>login ด้วย email + password แล้วได้ token กลับทันที</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithEmailAccessType($loginWithEmailAccessTypeInput: LoginWithEmailAccessTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithEmailAccessType(loginWithEmailAccessTypeInput: $loginWithEmailAccessTypeInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithEmailAccessTypeInput</code>: <code>LoginWithEmailAccessTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="loginwithphonenumberaccesstype">loginWithPhoneNumberAccessType<a class="headerlink" href="#loginwithphonenumberaccesstype" title="Permanent link">&para;</a></h4>
+<p>login ด้วยเบอร์โทรศัพท์ + password แล้วได้ token กลับทันที</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithPhoneNumberAccessType($loginWithPhoneNumberAccessTypeInput: LoginWithPhoneNumberAccessTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithPhoneNumberAccessType(loginWithPhoneNumberAccessTypeInput: $loginWithPhoneNumberAccessTypeInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+  }
+}
+</code></pre>
+<p><code>loginWithPhoneNumberAccessTypeInput</code>: <code>LoginWithPhoneNumberAccessTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectURL</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginAccessType</code></p>
+<hr />
+<h4 id="loginwithusernamesockettype">loginWithUserNameSocketType<a class="headerlink" href="#loginwithusernamesockettype" title="Permanent link">&para;</a></h4>
+<p>login ด้วย username + password แบบ WebSocket: token จะถูกส่งเข้า socket ที่ได้จาก <code>getLoginSocketId</code></p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithUserNameSocketType($loginWithUsernameSocketTypeInput: LoginWithUsernameSocketTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithUserNameSocketType(loginWithUsernameSocketTypeInput: $loginWithUsernameSocketTypeInput, sessionInfo: $sessionInfo) {
+    status
+  }
+}
+</code></pre>
+<p><code>loginWithUsernameSocketTypeInput</code>: <code>LoginWithUsernameSocketTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>socketId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginSocketType!</code></p>
+<hr />
+<h4 id="loginwithemailsockettype">loginWithEmailSocketType<a class="headerlink" href="#loginwithemailsockettype" title="Permanent link">&para;</a></h4>
+<p>login ด้วย email + password แบบ WebSocket</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithEmailSocketType($loginWithEmailSocketTypeInput: LoginWithEmailSocketTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithEmailSocketType(loginWithEmailSocketTypeInput: $loginWithEmailSocketTypeInput, sessionInfo: $sessionInfo) {
+    status
+  }
+}
+</code></pre>
+<p><code>loginWithEmailSocketTypeInput</code>: <code>LoginWithEmailSocketTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>socketId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginSocketType!</code></p>
+<hr />
+<h4 id="loginwithphonenumbersockettype">loginWithPhoneNumberSocketType<a class="headerlink" href="#loginwithphonenumbersockettype" title="Permanent link">&para;</a></h4>
+<p>login ด้วยเบอร์โทรศัพท์ + password แบบ WebSocket</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithPhoneNumberSocketType($loginWithPhoneNumberSocketType: LoginWithPhoneNumberSocketTypeInput, $sessionInfo: SessionInfoInput) {
+  loginWithPhoneNumberSocketType(loginWithPhoneNumberSocketType: $loginWithPhoneNumberSocketType, sessionInfo: $sessionInfo) {
+    status
+  }
+}
+</code></pre>
+<p><code>loginWithPhoneNumberSocketType</code>: <code>LoginWithPhoneNumberSocketTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>password</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>socketId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginSocketType!</code></p>
+<hr />
+<h4 id="loginwithemailotptype">loginWithEmailOtpType<a class="headerlink" href="#loginwithemailotptype" title="Permanent link">&para;</a></h4>
+<p>ขอ OTP ทาง email เพื่อ login · ได้ <code>otpRef</code> กลับ แล้วนำไปยืนยันด้วย <code>verifierOtp</code></p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithEmailOtpType($loginWithEmailOtpTypeInput: LoginWithEmailOtpTypeInput) {
+  loginWithEmailOtpType(loginWithEmailOtpTypeInput: $loginWithEmailOtpTypeInput) {
+    redirectURL
+    otpRef
+  }
+}
+</code></pre>
+<p><code>loginWithEmailOtpTypeInput</code>: <code>LoginWithEmailOtpTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>socketId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginOtpType!</code></p>
+<hr />
+<h4 id="loginwithphonenumberotptype">loginWithPhoneNumberOtpType<a class="headerlink" href="#loginwithphonenumberotptype" title="Permanent link">&para;</a></h4>
+<p>ขอ OTP ทาง SMS เพื่อ login · ได้ <code>otpRef</code> กลับ แล้วนำไปยืนยันด้วย <code>verifierOtp</code></p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation LoginWithPhoneNumberOtpType($loginWithPhoneNumberOtpTypeInput: LoginWithPhoneNumberOtpTypeInput) {
+  loginWithPhoneNumberOtpType(loginWithPhoneNumberOtpTypeInput: $loginWithPhoneNumberOtpTypeInput) {
+    redirectURL
+    otpRef
+  }
+}
+</code></pre>
+<p><code>loginWithPhoneNumberOtpTypeInput</code>: <code>LoginWithPhoneNumberOtpTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>socketId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LoginOtpType!</code></p>
+<hr />
+<h4 id="logout">logout<a class="headerlink" href="#logout" title="Permanent link">&para;</a></h4>
+<p>ออกจากระบบ session ปัจจุบัน</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation Logout {
+  logout {
+    status
+  }
+}
+</code></pre>
+<p>Response: <code>LogoutStatus</code></p>
+<hr />
+<h4 id="logoutall">logoutAll<a class="headerlink" href="#logoutall" title="Permanent link">&para;</a></h4>
+<p>ออกจากระบบทุก session ของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation LogoutAll {
+  logoutAll {
+    status
+  }
+}
+</code></pre>
+<p>Response: <code>LogoutStatus</code></p>
+<hr />
+<h4 id="logoutallbyauthid">logoutAllByAuthId<a class="headerlink" href="#logoutallbyauthid" title="Permanent link">&para;</a></h4>
+<p>ออกจากระบบทุก Session ตาม Auth ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>logoutAllByAuthId</code></li>
+</ul>
+<pre><code class="language-graphql">mutation LogoutAllByAuthId($authId: String!) {
+  logoutAllByAuthId(authId: $authId) {
+    status
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>LogoutStatus</code></p>
+<hr />
+<h4 id="refreshtoken">refreshToken<a class="headerlink" href="#refreshtoken" title="Permanent link">&para;</a></h4>
+<p>ขอ accessToken / refreshToken ชุดใหม่ด้วย refreshToken (refreshToken เดิมใช้ซ้ำไม่ได้)</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation RefreshToken($refreshTokenInput: RefreshTokenInput) {
+  refreshToken(refreshTokenInput: $refreshTokenInput) {
+    accessToken
+    refreshToken
+  }
+}
+</code></pre>
+<p><code>refreshTokenInput</code>: <code>RefreshTokenInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>refreshToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Token</code></p>
+<hr />
+<h4 id="changepassword">changePassword<a class="headerlink" href="#changepassword" title="Permanent link">&para;</a></h4>
+<p>เปลี่ยนรหัสผ่านของผู้ใช้ที่ login อยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation ChangePassword($changePasswordInput: ChangePasswordInput) {
+  changePassword(changePasswordInput: $changePasswordInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>changePasswordInput</code>: <code>ChangePasswordInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>currentPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>newPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmNewPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>ChangePasswordStatus</code></p>
+<hr />
+<h4 id="resetpassword">resetPassword<a class="headerlink" href="#resetpassword" title="Permanent link">&para;</a></h4>
+<p>ตั้งรหัสผ่านใหม่ให้บัญชี (ผู้ดูแล)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation ResetPassword($resetPasswordInput: ResetPasswordInput) {
+  resetPassword(resetPasswordInput: $resetPasswordInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>resetPasswordInput</code>: <code>ResetPasswordInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>newPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmNewPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>ResetPasswordStatus</code></p>
+<hr />
+<h4 id="resetpasswordwithemail">resetPasswordWithEmail<a class="headerlink" href="#resetpasswordwithemail" title="Permanent link">&para;</a></h4>
+<p>ขอ OTP ทาง email เพื่อรีเซ็ตรหัสผ่าน</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation ResetPasswordWithEmail($resetPasswordWithEmailInput: ResetPasswordWithEmailInput) {
+  resetPasswordWithEmail(resetPasswordWithEmailInput: $resetPasswordWithEmailInput) {
+    otpRef
+  }
+}
+</code></pre>
+<p><code>resetPasswordWithEmailInput</code>: <code>ResetPasswordWithEmailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>ResetPasswordOtp</code></p>
+<hr />
+<h4 id="resetpasswordwithphonenumber">resetPasswordWithPhoneNumber<a class="headerlink" href="#resetpasswordwithphonenumber" title="Permanent link">&para;</a></h4>
+<p>ขอ OTP ทาง SMS เพื่อรีเซ็ตรหัสผ่าน</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation ResetPasswordWithPhoneNumber($resetPasswordWithPhoneNumberInput: ResetPasswordWithPhoneNumberInput) {
+  resetPasswordWithPhoneNumber(resetPasswordWithPhoneNumberInput: $resetPasswordWithPhoneNumberInput) {
+    otpRef
+  }
+}
+</code></pre>
+<p><code>resetPasswordWithPhoneNumberInput</code>: <code>ResetPasswordWithPhoneNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>countryCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>ResetPasswordOtp</code></p>
+<hr />
+<h4 id="revoketoken">revokeToken<a class="headerlink" href="#revoketoken" title="Permanent link">&para;</a></h4>
+<p>ยกเลิก token ของผู้ใช้ที่ระบุ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation RevokeToken($revokeTokenInput: RevokeTokenInput) {
+  revokeToken(revokeTokenInput: $revokeTokenInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>revokeTokenInput</code>: <code>RevokeTokenInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>RevokeTokenStatus</code></p>
+<hr />
+<h4 id="unlockaccountbyauthid">unlockAccountByAuthId<a class="headerlink" href="#unlockaccountbyauthid" title="Permanent link">&para;</a></h4>
+<p>ปลดล็อกบัญชีที่ถูกล็อกตาม authId</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getLockAccountsByAppKey</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UnlockAccountByAuthId($appKey: String!, $authId: String!) {
+  unlockAccountByAuthId(appKey: $appKey, authId: $authId) {
+    status
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>DeleteAccountStatus</code></p>
+<hr />
+<h4 id="deleteaccount">deleteAccount<a class="headerlink" href="#deleteaccount" title="Permanent link">&para;</a></h4>
+<p>ลบบัญชี</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteAccount($deleteAccountInput: DeleteAccountInput) {
+  deleteAccount(deleteAccountInput: $deleteAccountInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>deleteAccountInput</code>: <code>DeleteAccountInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>authId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>DeleteAccountStatus</code></p>
+<hr />
+<h4 id="verifierotp">verifierOtp<a class="headerlink" href="#verifierotp" title="Permanent link">&para;</a></h4>
+<p>ยืนยัน OTP ที่ได้จาก <code>loginWith*OtpType</code> หรือ <code>resetPasswordWith*</code> · กรณี login ได้ token กลับ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation VerifierOtp($verifierOtpInput: VerifierOtpInput, $sessionInfo: SessionInfoInput) {
+  verifierOtp(verifierOtpInput: $verifierOtpInput, sessionInfo: $sessionInfo) {
+    redirectURL
+    token { accessToken refreshToken }
+    otpVerifierRef
+    status
+  }
+}
+</code></pre>
+<p><code>verifierOtpInput</code>: <code>VerifierOtpInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>otpRef</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>otpCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>sessionInfo</code>: <code>SessionInfoInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ipAddress</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>userAgent</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>VerifierOtp</code></p>
+<hr />
+<h4 id="resetmypasswordbyotpverifierref">resetMyPasswordByOtpVerifierRef<a class="headerlink" href="#resetmypasswordbyotpverifierref" title="Permanent link">&para;</a></h4>
+<p>ตั้งรหัสผ่านใหม่หลังยืนยัน OTP สำเร็จ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">mutation ResetMyPasswordByOtpVerifierRef($resetPasswordOtpInput: ResetPasswordOtpInput) {
+  resetMyPasswordByOtpVerifierRef(resetPasswordOtpInput: $resetPasswordOtpInput) {
+    status
+  }
+}
+</code></pre>
+<p><code>resetPasswordOtpInput</code>: <code>ResetPasswordOtpInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>otpVerifierRef</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>newPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>confirmNewPassword</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>ResetPasswordStatus</code></p>
+<hr />
+<h4 id="syncmobiledevice">syncMobileDevice<a class="headerlink" href="#syncmobiledevice" title="Permanent link">&para;</a></h4>
+<p>ลงทะเบียน/อัปเดตอุปกรณ์ของผู้ใช้ (เรียกหลัง login) — upsert ตาม installationId + user ที่ login</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation SyncMobileDevice($input: SyncMobileDeviceInput!) {
+  syncMobileDevice(input: $input) {
+    _id
+    appKey
+    installationId
+    userId
+    platform
+    deviceName
+    appVersion
+    pushProvider
+    pushEnabled
+    pushPermissionStatus
+    # ...
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>SyncMobileDeviceInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>installationId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>installationId ที่ mobile gen</td>
+</tr>
+<tr>
+<td>platform</td>
+<td><code>EnumMobilePlatform!</code></td>
+<td>ใช่</td>
+<td>แพลตฟอร์มของเครื่อง</td>
+</tr>
+<tr>
+<td>deviceName</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อเครื่อง</td>
+</tr>
+<tr>
+<td>appVersion</td>
+<td><code>String</code></td>
+<td></td>
+<td>เวอร์ชันแอป</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevice!</code></p>
+<hr />
+<h4 id="registerpushtoken">registerPushToken<a class="headerlink" href="#registerpushtoken" title="Permanent link">&para;</a></h4>
+<p>ลงทะเบียน Expo push token ให้เครื่องนี้ (เรียกหลังได้ token จาก OS) — ย้าย token ออกจากเครื่องอื่นที่ถืออยู่</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation RegisterPushToken($input: RegisterPushTokenInput!) {
+  registerPushToken(input: $input) {
+    _id
+    appKey
+    installationId
+    userId
+    platform
+    deviceName
+    appVersion
+    pushProvider
+    pushEnabled
+    pushPermissionStatus
+    # ...
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>RegisterPushTokenInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>installationId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>installationId ที่ mobile gen</td>
+</tr>
+<tr>
+<td>pushToken</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>Expo push token</td>
+</tr>
+<tr>
+<td>pushProvider</td>
+<td><code>EnumPushProvider</code></td>
+<td></td>
+<td>ผู้ให้บริการ push</td>
+</tr>
+<tr>
+<td>pushPermissionStatus</td>
+<td><code>EnumPushPermissionStatus</code></td>
+<td></td>
+<td>สถานะสิทธิ์การแจ้งเตือนจาก OS</td>
+</tr>
+<tr>
+<td>pushLanguage</td>
+<td><code>String</code></td>
+<td></td>
+<td>ภาษาของการแจ้งเตือน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevice!</code></p>
+<hr />
+<h4 id="updatemobiledevicesetting">updateMobileDeviceSetting<a class="headerlink" href="#updatemobiledevicesetting" title="Permanent link">&para;</a></h4>
+<p>อัปเดตการตั้งค่าการแจ้งเตือนของเครื่อง (เปิด/ปิด, ภาษา, ระดับความสำคัญ)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateMobileDeviceSetting($input: UpdateMobileDeviceSettingInput!) {
+  updateMobileDeviceSetting(input: $input) {
+    _id
+    appKey
+    installationId
+    userId
+    platform
+    deviceName
+    appVersion
+    pushProvider
+    pushEnabled
+    pushPermissionStatus
+    # ...
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>UpdateMobileDeviceSettingInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>installationId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>installationId ที่ mobile gen</td>
+</tr>
+<tr>
+<td>pushEnabled</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เปิด/ปิดการแจ้งเตือน</td>
+</tr>
+<tr>
+<td>pushLanguage</td>
+<td><code>String</code></td>
+<td></td>
+<td>ภาษาของการแจ้งเตือน</td>
+</tr>
+<tr>
+<td>minimumSeverity</td>
+<td><code>EnumPushSeverity</code></td>
+<td></td>
+<td>ระดับความสำคัญขั้นต่ำที่จะรับการแจ้งเตือน</td>
+</tr>
+<tr>
+<td>pushPermissionStatus</td>
+<td><code>EnumPushPermissionStatus</code></td>
+<td></td>
+<td>สถานะสิทธิ์การแจ้งเตือนจาก OS (กรณีผู้ใช้เปลี่ยนใน setting ของเครื่อง)</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevice!</code></p>
+<hr />
+<h4 id="deactivatemobiledevice">deactivateMobileDevice<a class="headerlink" href="#deactivatemobiledevice" title="Permanent link">&para;</a></h4>
+<p>ปิดการใช้งานเครื่องนี้ (เรียกตอน logout) — set inactive + ปิด push (ไม่ลบ document)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation DeactivateMobileDevice($input: DeactivateMobileDeviceInput!) {
+  deactivateMobileDevice(input: $input) {
+    _id
+    appKey
+    installationId
+    userId
+    platform
+    deviceName
+    appVersion
+    pushProvider
+    pushEnabled
+    pushPermissionStatus
+    # ...
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>DeactivateMobileDeviceInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>installationId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>installationId ที่ mobile gen</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevice!</code></p>
+<hr />
+<h4 id="removemymobiledevice">removeMyMobileDevice<a class="headerlink" href="#removemymobiledevice" title="Permanent link">&para;</a></h4>
+<p>ลบอุปกรณ์ของตัวเองออกถาวร (hard delete) — สำหรับเครื่องที่ไม่ใช้แล้ว</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+</ul>
+<pre><code class="language-graphql">mutation RemoveMyMobileDevice($installationId: String!) {
+  removeMyMobileDevice(installationId: $installationId) {
+    _id
+    appKey
+    installationId
+    userId
+    platform
+    deviceName
+    appVersion
+    pushProvider
+    pushEnabled
+    pushPermissionStatus
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>installationId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserMobileDevice!</code></p>
+<hr />
+<p><br>
+<br></p>
+<h2 id="kafka-consume-reference">Kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>ทุกข้อความมี header <code>appKey</code> และ <code>serviceKey</code> (service ปลายทาง) · payload อยู่ในรูป <code>{ &lt;ข้อมูล&gt;: {...}, action: "ADD" | "REMOVE" | ... }</code> · ข้อความของแอปที่ service นี้ไม่มี AppCertificate จะถูกข้าม</p>
+<hr />
+<h3 id="init-system">init-system<a class="headerlink" href="#init-system" title="Permanent link">&para;</a></h3>
+<p>ตั้งระบบจากศูนย์ (เฉพาะ core set) — สร้างแอป SYSTEM, AppCredential เริ่มต้น และบัญชีผู้ดูแลระบบ</p>
+<pre><code>topic: init-system
+</code></pre>
+<hr />
+<h3 id="refresh-data">refresh-data<a class="headerlink" href="#refresh-data" title="Permanent link">&para;</a></h3>
+<p>core สั่งให้ส่งข้อมูลที่ตัวเองถืออยู่ขึ้น Kafka ใหม่ (ใช้ตอนมี service ใหม่เข้าแอป) และล้าง cache ของตัวเอง · รับเฉพาะข้อความที่ header <code>serviceKey</code> = <code>authentication</code></p>
+<pre><code>topic: refresh-data
+</code></pre>
+<p>เมื่อได้รับจะส่ง <code>sync-app-credential</code> ของแอปนั้นให้ทุก service และส่ง <code>sync-permission</code> ของตัวเองให้ ACL</p>
+<hr />
+<h3 id="sync-app-certificate">sync-app-certificate<a class="headerlink" href="#sync-app-certificate" title="Permanent link">&para;</a></h3>
+<p>รับ AppCertificate (กุญแจของ service ต่อแอป) จาก core — บอกว่า service ใดอยู่ในแอปใด</p>
+<pre><code>topic: sync-app-certificate
+</code></pre>
+<hr />
+<h3 id="sync-service-setting-sync-app-service-setting">sync-service-setting / sync-app-service-setting<a class="headerlink" href="#sync-service-setting-sync-app-service-setting" title="Permanent link">&para;</a></h3>
+<p>รับค่าตั้งค่าเพิ่มเติมแบบ JSON ของ service นี้ ทั้งระบบ (<code>sync-service-setting</code>) และรายแอป (<code>sync-app-service-setting</code>) จาก core · ค่า OAuth ของ Google / Facebook / Apple ตั้งผ่าน <code>sync-app-service-setting</code> (ดู <a href="#login-methods">วิธี login ที่มี</a>)</p>
+<pre><code>topic: sync-service-setting
+topic: sync-app-service-setting
+</code></pre>
+<hr />
+<h3 id="sync-application">sync-application<a class="headerlink" href="#sync-application" title="Permanent link">&para;</a></h3>
+<p>รับข้อมูลแอปจาก Application Service</p>
+<pre><code>topic: sync-application
+</code></pre>
+<hr />
+<h3 id="sync-user-policy">sync-user-policy<a class="headerlink" href="#sync-user-policy" title="Permanent link">&para;</a></h3>
+<p>รับ UserPolicy ที่ ACL คอมไพล์แล้ว เฉพาะ permission ของ <code>authentication</code> ใช้ตรวจสิทธิ์ตอนเรียก API</p>
+<pre><code>topic: sync-user-policy
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>userPolicy.userPolicyKey</td>
+<td>string</td>
+<td><code>authentication::&lt;permissionKey&gt;:&lt;appKey&gt;::&lt;authId&gt;</code> หรือ <code>authentication::&lt;permissionKey&gt;:&lt;appKey&gt;:&lt;organizationId&gt;:&lt;authId&gt;</code></td>
+</tr>
+<tr>
+<td>userPolicy.permissionKey</td>
+<td>string</td>
+<td>permission</td>
+</tr>
+<tr>
+<td>userPolicy.authId</td>
+<td>string</td>
+<td>ผู้ใช้</td>
+</tr>
+<tr>
+<td>userPolicy.organizationId</td>
+<td>string</td>
+<td>องค์กร (ถ้าเป็นสิทธิ์ระดับองค์กร)</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code>, <code>REMOVE_APP</code>, <code>REMOVE_PERMISSION</code>, <code>REMOVE_USER</code>, <code>REMOVE_ORGANIZATION</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-organization">sync-organization<a class="headerlink" href="#sync-organization" title="Permanent link">&para;</a></h3>
+<p>รับข้อมูลองค์กรจาก <a href="../unitService/">Unit Service</a> (ใช้กับ default organization ของบัญชี)</p>
+<pre><code>topic: sync-organization
+</code></pre>
+<hr />
+<h3 id="sync-invite-code">sync-invite-code<a class="headerlink" href="#sync-invite-code" title="Permanent link">&para;</a></h3>
+<p>รับข้อมูล invite code จาก <a href="../aclService/">ACL Service</a> ใช้ตอนสมัครด้วย <code>inviteCodeKey</code> หรือ <code>useInviteCode</code></p>
+<pre><code>topic: sync-invite-code
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inviteCode.id</td>
+<td>string</td>
+<td>id</td>
+</tr>
+<tr>
+<td>inviteCode.inviteCodeKey</td>
+<td>string</td>
+<td>รหัสเชิญ</td>
+</tr>
+<tr>
+<td>inviteCode.defaultOrganizationId / defaultOrganizationKey</td>
+<td>string</td>
+<td>องค์กรเริ่มต้นที่จะตั้งให้ผู้ใช้</td>
+</tr>
+<tr>
+<td>inviteCode.maxUses / currentUses</td>
+<td>number</td>
+<td>จำนวนครั้งที่ใช้ได้ / ใช้ไปแล้ว</td>
+</tr>
+<tr>
+<td>inviteCode.validStartTime / validEndTime</td>
+<td>Date</td>
+<td>ช่วงเวลาที่ใช้ได้</td>
+</tr>
+<tr>
+<td>inviteCode.appRoleIds / orgRoleIds</td>
+<td>string[]</td>
+<td>role ที่จะได้รับ</td>
+</tr>
+<tr>
+<td>inviteCode.isActive</td>
+<td>boolean</td>
+<td>เปิดใช้งาน</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="sync-auth">sync-auth<a class="headerlink" href="#sync-auth" title="Permanent link">&para;</a></h3>
+<p>ส่งข้อมูลบัญชีเมื่อมีการสมัคร (รวมสมัครผ่าน OAuth), ตั้ง default organization หรือลบบัญชี — <strong>กระจายถึงทุก service ในแอป</strong> service ไหนต้องใช้ชื่อ / อีเมล / เบอร์โทรของผู้ใช้ (เช่น ส่ง SMS) รับ topic นี้แล้วเก็บสำเนาไว้ได้เลย · ผู้รับปัจจุบัน: Profile, ACL</p>
+<pre><code>topic: sync-auth
+header: appKey (ไม่มี serviceKey = กระจายทั้งแอป · ผู้รับห้ามกรองด้วย serviceKey)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>account.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>account.authId</td>
+<td>string</td>
+<td>id ของบัญชี</td>
+</tr>
+<tr>
+<td>account.username</td>
+<td>string</td>
+<td>username</td>
+</tr>
+<tr>
+<td>account.emails / phoneNumber</td>
+<td>array</td>
+<td>email / เบอร์โทรของบัญชี</td>
+</tr>
+<tr>
+<td>account.roleKey</td>
+<td>string</td>
+<td><code>ADMIN</code>, <code>NONE</code></td>
+</tr>
+<tr>
+<td>account.inviteCodeId / inviteCodeKey</td>
+<td>string</td>
+<td>invite code ที่ใช้สมัคร (ถ้ามี)</td>
+</tr>
+<tr>
+<td>account.userType</td>
+<td>string</td>
+<td>ประเภทผู้ใช้</td>
+</tr>
+<tr>
+<td>account.defaultOrganizationId / defaultOrganizationKey</td>
+<td>string</td>
+<td>องค์กรเริ่มต้น</td>
+</tr>
+<tr>
+<td>account.firstName, middleName, lastName, displayName, gender, profileImage, electronicSignatureKey</td>
+<td>string</td>
+<td>ข้อมูลโปรไฟล์เริ่มต้น</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>ค่า message ของ topic นี้ถูกห่อเป็น <code>{ "value": "&lt;JSON string&gt;" }</code> ผู้รับต้อง <code>JSON.parse</code> ค่า <code>value</code> อีกชั้นเพื่อได้ object ข้างบน</p>
+</blockquote>
+<hr />
+<h3 id="sync-app-credential">sync-app-credential<a class="headerlink" href="#sync-app-credential" title="Permanent link">&para;</a></h3>
+<p>กระจาย AppCredential ของแอปไปให้ทุก service ที่อยู่ในแอปนั้น (ส่งแยกทีละ service, header <code>serviceKey</code> = service ปลายทาง) เพื่อให้แต่ละ service ตรวจ token และ header ของผู้เรียกได้เอง · ข้อมูลลับในข้อความถูกเข้ารหัสด้วยกุญแจของ service ปลายทาง</p>
+<pre><code>topic: sync-app-credential
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appCredential.clientId</td>
+<td>string</td>
+<td>clientId</td>
+</tr>
+<tr>
+<td>appCredential.appCredentialType</td>
+<td>string</td>
+<td><code>USER</code>, <code>SYSTEM</code></td>
+</tr>
+<tr>
+<td>appCredential.authorizedHosts / authorizedRedirectUrls</td>
+<td>array</td>
+<td>host / redirect URL ที่อนุญาต</td>
+</tr>
+<tr>
+<td>appCredential.jwtAccessExpireTime / jwtRefreshExpireTime</td>
+<td>number</td>
+<td>อายุ token (วินาที)</td>
+</tr>
+<tr>
+<td>appCredential.numberOfFail / minutesTimeFail / minutesTimeLock</td>
+<td>number</td>
+<td>กฎการล็อกบัญชี</td>
+</tr>
+<tr>
+<td>appCredential.expiryAt</td>
+<td>Date</td>
+<td>วันหมดอายุของ AppCredential</td>
+</tr>
+<tr>
+<td>appCredential.minimumAppVersion, appUpdateUrl*, forceUpdate</td>
+<td></td>
+<td>การบังคับอัปเดตแอปมือถือ</td>
+</tr>
+<tr>
+<td>appCredential.(กุญแจตรวจ token / clientSecret)</td>
+<td>string</td>
+<td>เข้ารหัสถึง service ปลายทาง</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="create-notification">create-notification<a class="headerlink" href="#create-notification" title="Permanent link">&para;</a></h3>
+<p>ส่งคำขอแจ้งเตือนไปที่ Notification Service เช่น OTP ทาง SMS หรือ email</p>
+<pre><code>topic: create-notification
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>notification.isSchedule</td>
+<td>boolean</td>
+<td><code>false</code> = ส่งทันที</td>
+</tr>
+<tr>
+<td>notification.sms</td>
+<td>object</td>
+<td><code>msisdn</code>, <code>message</code>, <code>sender</code>, <code>expire</code></td>
+</tr>
+<tr>
+<td>notification.email</td>
+<td>object</td>
+<td><code>to</code>, <code>subject</code>, <code>text</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-mobile-device">sync-mobile-device<a class="headerlink" href="#sync-mobile-device" title="Permanent link">&para;</a></h3>
+<p>ส่งข้อมูลอุปกรณ์มือถือ / push token ที่เปลี่ยนแปลงไปให้ Notification Service</p>
+<pre><code>topic: sync-mobile-device
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mobileDevice.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>mobileDevice.installationId</td>
+<td>string</td>
+<td>id ของการติดตั้งแอปบนเครื่อง</td>
+</tr>
+<tr>
+<td>mobileDevice.userId</td>
+<td>string</td>
+<td>ผู้ใช้</td>
+</tr>
+<tr>
+<td>mobileDevice.platform</td>
+<td>string</td>
+<td>แพลตฟอร์ม</td>
+</tr>
+<tr>
+<td>mobileDevice.deviceName</td>
+<td>string</td>
+<td>ชื่อเครื่อง</td>
+</tr>
+<tr>
+<td>mobileDevice.appVersion</td>
+<td>string</td>
+<td>เวอร์ชันแอป</td>
+</tr>
+<tr>
+<td>mobileDevice.pushToken / pushProvider / pushEnabled / pushPermissionStatus</td>
+<td></td>
+<td>push token และสถานะการแจ้งเตือน</td>
+</tr>
+<tr>
+<td>mobileDevice.pushLanguage / minimumSeverity</td>
+<td>string</td>
+<td>ภาษา / ระดับความสำคัญขั้นต่ำที่ต้องการรับ</td>
+</tr>
+<tr>
+<td>mobileDevice.status</td>
+<td>string</td>
+<td>สถานะเครื่อง</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code>, <code>REMOVE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">sync-permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>ส่ง permission ทั้งหมดของ <code>authentication</code> ให้ <a href="../aclService/">ACL Service</a> (ส่งตอนได้ <code>refresh-data</code>)</p>
+<pre><code>topic: sync-permission
+</code></pre>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-authentication-service@833b687 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2501 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/coreService/">
+      
+      
+        <link rel="prev" href="../gumoncli/">
+      
+      
+        <link rel="next" href="../applicationService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Core Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#core-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Core Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#แนวคดสำคญ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        แนวคิดสำคัญ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="แนวคิดสำคัญ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ถอดเขาถอดออก-2-ระดบ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ถอดเข้าถอดออก 2 ระดับ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#กญแจ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        กุญแจ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register-service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hand-check-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hand-check-result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh-data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-user-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-user-policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#init-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init-system
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-data_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh-data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hand-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hand-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-service-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-service-setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-service-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-service-setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-admin-app-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add-admin-app-role
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#แนวคดสำคญ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        แนวคิดสำคัญ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="แนวคิดสำคัญ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ถอดเขาถอดออก-2-ระดบ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ถอดเข้าถอดออก 2 ระดับ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#กญแจ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        กุญแจ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register-service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hand-check-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hand-check-result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh-data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-user-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-user-policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#init-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init-system
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-data_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh-data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hand-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hand-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-service-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-service-setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-app-service-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-app-service-setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-admin-app-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add-admin-app-role
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="core-service">Core Service<a class="headerlink" href="#core-service" title="Permanent link">&para;</a></h1>
+<p>Core Service คือทะเบียนกลางของ service ทั้งระบบและเป็นผู้ออกกุญแจ ทำหน้าที่</p>
+<ul>
+<li>ลงทะเบียน / ถอด service ออกจากระบบ (ระดับระบบ) และเพิ่ม / ถอด service ออกจากแอป (ระดับแอป)</li>
+<li>ออก <strong>System Certificate</strong> (กุญแจระดับ service) และ <strong>App Certificate</strong> (กุญแจระดับ service × แอป)</li>
+<li>เก็บค่าตั้งค่าของ service ทั้งระบบ (service setting) และค่าตั้งค่าต่อแอป (app service setting)</li>
+<li>สั่ง <code>refresh-data</code> ให้ service ส่งข้อมูลที่ตัวเองถืออยู่ขึ้น Kafka ใหม่</li>
+<li>ตรวจว่า service ปลายทางถือกุญแจถูกต้อง (hand-check)</li>
+<li>ตั้งระบบจากศูนย์ (<code>init-system</code>) ครั้งแรก</li>
+</ul>
+<p>serviceKey: <code>core</code> · เป็นส่วนหนึ่งของ core set</p>
+<ul>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">Kafka Produce Reference</a></li>
+<li>ดูเพิ่ม: <a href="../serviceX/">สิ่งที่ Service ต้องมี</a> · <a href="../createService/">สร้าง Service ใหม่</a></li>
+</ul>
+<hr />
+<h2 id="แนวคดสำคญ">แนวคิดสำคัญ<a class="headerlink" href="#แนวคดสำคญ" title="Permanent link">&para;</a></h2>
+<h3 id="core-set">core set<a class="headerlink" href="#core-set" title="Permanent link">&para;</a></h3>
+<p>service ที่ระบบต้องมีเพื่อให้ทำงานได้โดยยังไม่มีธุรกิจเกี่ยว (<code>isCoreSet: true</code>):
+<code>core</code> · <code>authentication</code> · <code>application</code> · <code>access-control</code> · <code>unit</code> · <code>profile</code> · <code>notification</code> · <code>schedule</code> · <code>storage</code></p>
+<p>service ธุรกิจที่ลงทะเบียนภายหลังเป็น <code>isCoreSet: false</code> (ค่า default ของ <code>registerService</code>)</p>
+<h3 id="ถอดเขาถอดออก-2-ระดบ">ถอดเข้าถอดออก 2 ระดับ<a class="headerlink" href="#ถอดเขาถอดออก-2-ระดบ" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ระดับ</th>
+<th>เข้า</th>
+<th>ออก</th>
+<th>ผล</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ระบบ</td>
+<td><code>registerService</code></td>
+<td><code>resignService</code></td>
+<td>register ออก System Certificate ใหม่ให้ service · resign ลบข้อมูลของ service นั้น ไม่ส่งข้อมูลให้อีก ถ้าจะกลับมาต้อง register ใหม่ด้วยกุญแจใหม่</td>
+</tr>
+<tr>
+<td>แอป</td>
+<td><code>addServiceToApp</code></td>
+<td><code>removeServiceFromApp</code></td>
+<td>จัดการ App Certificate ของ service ในแอปนั้น · ไม่มี App Certificate ในแอปไหน = รับข้อมูลของแอปนั้นไม่ได้ ใช้ข้ามแอปไม่ได้</td>
+</tr>
+</tbody>
+</table>
+<p>แอปที่สร้างใหม่ (ผ่าน <code>sync-application</code>) จะถูกผูก service core set ทุกตัวเข้าให้อัตโนมัติ</p>
+<h3 id="กญแจ">กุญแจ<a class="headerlink" href="#กญแจ" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>System Certificate</strong> — ออกตอน <code>registerService</code> · service เก็บไว้ใน <code>.gumon/certificates/&lt;serviceKey&gt;/</code> ของตัวเอง (ห้าม commit) · ใช้ถอดข้อมูลที่ core ส่งถึง service นั้นโดยเฉพาะ (hand-check, App Certificate)</li>
+<li><strong>App Certificate</strong> — คู่กุญแจ RSA ต่อ (appKey, serviceKey) · core ส่งผ่าน <code>sync-app-certificate</code> โดย privateKey ถูกเข้ารหัสด้วย System Certificate ของ service เจ้าของ ⇒ มีแต่ service นั้นถอดได้ · ทุก service ใน app เก็บ publicKey ของกันและกัน ⇒ ตารางนี้ตารางเดียวบอกได้ว่า service ไหนมีสิทธิ์ในแอปไหน</li>
+</ul>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>endpoint: <code>POST /graphql</code></p>
+<p>ทุก operation ต้องส่ง header <code>Authorization: Bearer &lt;accessToken&gt;</code> และผู้เรียกต้องมี permission ชื่อเดียวกับ operation (serviceKey <code>core</code>) เว้นแต่ระบุไว้เป็นอย่างอื่น</p>
+<p>query ที่เป็นรายการรับ input รูปเดียวกัน <code>{ filter, search, sort: { sortBy, sortOrder }, pagination }</code> และคืน <code>{ &lt;รายการ&gt;[], pagination }</code></p>
+<hr />
+<p><strong>สรุป API ทั้งหมด 23 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#getservices">getServices</a></td>
+<td>ดึงรายการ service ทั้งหมดในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getservicebyid">getServiceById</a></td>
+<td>permission: <code>getServiceById</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getservicebyservicekey">getServiceByServiceKey</a></td>
+<td>permission: <code>getServiceByServiceKey</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getservicesinapp">getServicesInApp</a></td>
+<td>รายการ service ที่อยู่ในแอป (<code>AppService</code>: <code>appKey</code>, <code>serviceKey</code>)</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getmyservicesinapp">getMyServicesInApp</a></td>
+<td>รายการ service ในแอปของผู้ที่ login อยู่ (input เหมือน <code>getServicesInApp</code>) · ต้อง login</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getserviceinappbyid">getServiceInAppById</a></td>
+<td>permission: <code>getServiceInAppById</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getsystemcertificates-getsystemcertificatebyid">getSystemCertificates / getSystemCertificateById</a></td>
+<td>ดูรายการ System Certificate ของแต่ละ service (<code>serviceId</code>, <code>serviceKey</code>, <code>createdAt</code>)</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getappcertificates-getappcertificatebyid">getAppCertificates / getAppCertificateById</a></td>
+<td>ดู App Certificate (<code>appKey</code>, <code>serviceKey</code>, <code>publicKey</code>)</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getservicesettings-getservicesettingbyservicekey">getServiceSettings / getServiceSettingByServiceKey</a></td>
+<td>ค่าตั้งค่าทั้งระบบของ service (<code>setting</code>: JSON) — ใช้ตั้งค่าเพิ่มเติมผ่าน core แทนการแก…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getappservicesettings-getappservicesetting-getappservicesettingbyid">getAppServiceSettings / getAppServiceSetting / getAppServiceSettingById</a></td>
+<td>ค่าตั้งค่าเฉพาะแอปของ service (<code>appKey</code>, <code>serviceKey</code>, <code>setting</code>: JSON)</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getservicehandchecks-getservicehandcheckbyid-getservicehandcheckbyhandcheckrefid">getServiceHandChecks / getServiceHandCheckById / getServiceHandCheckByHandCheckRefId</a></td>
+<td>ประวัติการ hand-check (<code>handCheckRefId</code>, <code>systemCertificateId</code>, <code>serviceKey</code>, <code>start</code>,…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getserviceready-getservicereadybyid">getServiceReady / getServiceReadyById</a></td>
+<td>สถานะความพร้อมของ service (<code>serviceKey</code>, <code>isHandCheck</code>, <code>lastHandCheckAt</code>)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#registerservice">registerService</a></td>
+<td>ลงทะเบียน service ใหม่เข้าระบบ (ระดับระบบ) และออก System Certificate ให้</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateservice">updateService</a></td>
+<td>permission: <code>updateService</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resignservice">resignService</a></td>
+<td>ถอด service ออกจากระบบ · ต้องถอดออกจากทุกแอปก่อน (<code>removeServiceFromApp</code>) และถอด servic…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#addservicetoapp">addServiceToApp</a></td>
+<td>เพิ่ม service เข้าแอป (ระดับแอป) · สร้าง App Certificate (ส่ง <code>sync-app-certificate</code>) แ…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#removeservicefromapp">removeServiceFromApp</a></td>
+<td>ถอด service ออกจากแอป · ลบ App Certificate (ส่ง <code>sync-app-certificate</code> REMOVE) และ app…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#refreshdata">refreshData</a></td>
+<td>สั่งให้ service ในแอปส่งข้อมูลที่ตัวเองถือขึ้น Kafka ใหม่ (<code>type: ALL</code> ทุก service · `S…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#generatesystemcertificate-resetsystemcertificate-revokedsystemcertificate">generateSystemCertificate / resetSystemCertificate / revokedSystemCertificate</a></td>
+<td>ออกใหม่ / รีเซ็ต / เพิกถอน System Certificate ของ service · <code>generate</code> และ <code>reset</code> คืน…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#resetappcertificate-resetappcertificatebyservicekey-revokeappcertificatebyservicekey">resetAppCertificate / resetAppCertificateByServiceKey / revokeAppCertificateByServiceKey</a></td>
+<td>ออก App Certificate ใหม่ทั้งแอป / เฉพาะ service / เพิกถอนของ service ในแอป (1 แอป × 1 s…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateservicesetting-resetservicesetting">updateServiceSetting / resetServiceSetting</a></td>
+<td>แก้ / คืนค่าเริ่มต้นของ service setting แล้วส่ง <code>sync-service-setting</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateappservicesetting-resetappservicesetting">updateAppServiceSetting / resetAppServiceSetting</a></td>
+<td>แก้ / คืนค่าเริ่มต้นของ app service setting แล้วส่ง <code>sync-app-service-setting</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#handcheckservice">handCheckService</a></td>
+<td>สั่ง hand-check ใหม่ (<code>type: ALL</code> ทุก service · <code>SELECT</code> เฉพาะ <code>serviceKeys</code>) · core ส่…</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<hr />
+<h4 id="getservices">getServices<a class="headerlink" href="#getservices" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ service ทั้งหมดในระบบ</p>
+<pre><code class="language-graphql">query {
+  getServices(getServicesInput: { filter: { isCoreSet: false }, pagination: { page: 1, limit: 20 } }) {
+    services { _id serviceKey name description version author isCoreSet isActive type urlFrontend urlGetMetaData createdAt }
+    pagination { totalItems page limit }
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>field ของ Service</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>serviceKey</td>
+<td>String!</td>
+<td>key ของ service (ไม่ซ้ำ)</td>
+</tr>
+<tr>
+<td>name / description / version / author</td>
+<td>String</td>
+<td>ข้อมูลแสดงผล</td>
+</tr>
+<tr>
+<td>isCoreSet</td>
+<td>Boolean</td>
+<td>เป็น core set หรือไม่</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean</td>
+<td>สถานะใช้งาน</td>
+</tr>
+<tr>
+<td>type</td>
+<td><code>BACKEND</code> | <code>MAIN_FRONTEND</code> | <code>MICRO_FRONTEND</code> | <code>OTHER</code></td>
+<td>ชนิดของ service</td>
+</tr>
+<tr>
+<td>urlFrontend</td>
+<td>String</td>
+<td>URL หน้าบ้าน (กรณีเป็นหน้า admin ย่อย)</td>
+</tr>
+<tr>
+<td>urlGetMetaData</td>
+<td>String</td>
+<td>URL ที่คืนเมนู (<code>CustomMenu[]</code>) ของหน้า admin ย่อย ให้ access-control ดึงไปสร้างเมนู</td>
+</tr>
+</tbody>
+</table>
+<p>permission: <code>getServices</code></p>
+<hr />
+<h4 id="getservicebyid">getServiceById<a class="headerlink" href="#getservicebyid" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query { getServiceById(serviceId: &quot;&lt;id&gt;&quot;) { _id serviceKey name type } }
+</code></pre>
+<p>permission: <code>getServiceById</code></p>
+<hr />
+<h4 id="getservicebyservicekey">getServiceByServiceKey<a class="headerlink" href="#getservicebyservicekey" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query { getServiceByServiceKey(serviceKey: &quot;storage&quot;) { _id serviceKey name isCoreSet } }
+</code></pre>
+<p>permission: <code>getServiceByServiceKey</code></p>
+<hr />
+<h4 id="getservicesinapp">getServicesInApp<a class="headerlink" href="#getservicesinapp" title="Permanent link">&para;</a></h4>
+<p>รายการ service ที่อยู่ในแอป (<code>AppService</code>: <code>appKey</code>, <code>serviceKey</code>)</p>
+<pre><code class="language-graphql">query {
+  getServicesInApp(getInput: { filter: { appKey: &quot;my-app&quot; } }) {
+    appServices { _id appKey serviceKey createdAt }
+    pagination { totalItems }
+  }
+}
+</code></pre>
+<p>permission: <code>getServicesInApp</code></p>
+<hr />
+<h4 id="getmyservicesinapp">getMyServicesInApp<a class="headerlink" href="#getmyservicesinapp" title="Permanent link">&para;</a></h4>
+<p>รายการ service ในแอปของผู้ที่ login อยู่ (input เหมือน <code>getServicesInApp</code>) · ต้อง login</p>
+<hr />
+<h4 id="getserviceinappbyid">getServiceInAppById<a class="headerlink" href="#getserviceinappbyid" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query { getServiceInAppById(id: &quot;&lt;id&gt;&quot;) { appKey serviceKey } }
+</code></pre>
+<p>permission: <code>getServiceInAppById</code></p>
+<hr />
+<h4 id="getsystemcertificates-getsystemcertificatebyid">getSystemCertificates / getSystemCertificateById<a class="headerlink" href="#getsystemcertificates-getsystemcertificatebyid" title="Permanent link">&para;</a></h4>
+<p>ดูรายการ System Certificate ของแต่ละ service (<code>serviceId</code>, <code>serviceKey</code>, <code>createdAt</code>)</p>
+<pre><code class="language-graphql">query {
+  getSystemCertificates(getSystemCertificatesInput: { filter: { serviceKey: &quot;storage&quot; } }) {
+    systemCertificates { _id serviceId serviceKey createdAt }
+  }
+}
+</code></pre>
+<p>permission: <code>getSystemCertificates</code> · <code>getSystemCertificateById</code></p>
+<hr />
+<h4 id="getappcertificates-getappcertificatebyid">getAppCertificates / getAppCertificateById<a class="headerlink" href="#getappcertificates-getappcertificatebyid" title="Permanent link">&para;</a></h4>
+<p>ดู App Certificate (<code>appKey</code>, <code>serviceKey</code>, <code>publicKey</code>)</p>
+<pre><code class="language-graphql">query {
+  getAppCertificates(input: { filter: { appKey: &quot;my-app&quot; } }) {
+    appCertificates { _id appKey serviceKey publicKey }
+  }
+}
+</code></pre>
+<p>permission: <code>getAppCertificates</code> · <code>getAppCertificateById</code></p>
+<hr />
+<h4 id="getservicesettings-getservicesettingbyservicekey">getServiceSettings / getServiceSettingByServiceKey<a class="headerlink" href="#getservicesettings-getservicesettingbyservicekey" title="Permanent link">&para;</a></h4>
+<p>ค่าตั้งค่าทั้งระบบของ service (<code>setting</code>: JSON) — ใช้ตั้งค่าเพิ่มเติมผ่าน core แทนการแก้ env</p>
+<pre><code class="language-graphql">query { getServiceSettingByServiceKey(serviceKey: &quot;notification&quot;) { serviceKey setting } }
+</code></pre>
+<p>permission: <code>getServiceSettings</code> · <code>getServiceSettingByServiceKey</code></p>
+<hr />
+<h4 id="getappservicesettings-getappservicesetting-getappservicesettingbyid">getAppServiceSettings / getAppServiceSetting / getAppServiceSettingById<a class="headerlink" href="#getappservicesettings-getappservicesetting-getappservicesettingbyid" title="Permanent link">&para;</a></h4>
+<p>ค่าตั้งค่าเฉพาะแอปของ service (<code>appKey</code>, <code>serviceKey</code>, <code>setting</code>: JSON)</p>
+<pre><code class="language-graphql">query { getAppServiceSetting(serviceKey: &quot;authentication&quot;, appKey: &quot;my-app&quot;) { appKey serviceKey setting } }
+</code></pre>
+<p>permission: <code>getAppServiceSettings</code> · <code>getAppServiceSetting</code> · <code>getAppServiceSettingById</code></p>
+<hr />
+<h4 id="getservicehandchecks-getservicehandcheckbyid-getservicehandcheckbyhandcheckrefid">getServiceHandChecks / getServiceHandCheckById / getServiceHandCheckByHandCheckRefId<a class="headerlink" href="#getservicehandchecks-getservicehandcheckbyid-getservicehandcheckbyhandcheckrefid" title="Permanent link">&para;</a></h4>
+<p>ประวัติการ hand-check (<code>handCheckRefId</code>, <code>systemCertificateId</code>, <code>serviceKey</code>, <code>start</code>, <code>end</code>, <code>isSuccess</code>)</p>
+<pre><code class="language-graphql">query {
+  getServiceHandChecks(input: { filter: { serviceKey: &quot;storage&quot; } }) {
+    serviceHandChecks { handCheckRefId serviceKey start end isSuccess }
+  }
+}
+</code></pre>
+<p>permission: <code>getServiceHandChecks</code> · <code>getServiceHandCheckById</code> · <code>getServiceHandCheckByHandCheckRefId</code></p>
+<hr />
+<h4 id="getserviceready-getservicereadybyid">getServiceReady / getServiceReadyById<a class="headerlink" href="#getserviceready-getservicereadybyid" title="Permanent link">&para;</a></h4>
+<p>สถานะความพร้อมของ service (<code>serviceKey</code>, <code>isHandCheck</code>, <code>lastHandCheckAt</code>)</p>
+<pre><code class="language-graphql">query { getServiceReady(input: {}) { serviceReady { serviceKey isHandCheck lastHandCheckAt } } }
+</code></pre>
+<p>permission: <code>getServiceReady</code> · <code>getServiceReadyById</code></p>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<hr />
+<h4 id="registerservice">registerService<a class="headerlink" href="#registerservice" title="Permanent link">&para;</a></h4>
+<p>ลงทะเบียน service ใหม่เข้าระบบ (ระดับระบบ) และออก System Certificate ให้</p>
+<pre><code class="language-graphql">mutation {
+  registerService(registerServiceInput: {
+    name: &quot;My Service&quot;
+    serviceKey: &quot;my-service&quot;
+    description: &quot;...&quot;
+    version: &quot;1.0.0&quot;
+    type: BACKEND
+    urlFrontend: null
+    urlGetMetaData: null
+  }) {
+    service { _id serviceKey isCoreSet }
+    systemCertificateId
+    publicKey
+    privateKey
+    hashKey
+    symmetricKey
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>input</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>String!</td>
+<td>ชื่อ service</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>String!</td>
+<td>key ของ service ห้ามซ้ำ</td>
+</tr>
+<tr>
+<td>description / version / author</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>isCoreSet</td>
+<td>Boolean = false</td>
+<td>service ธุรกิจใช้ false</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean = true</td>
+<td></td>
+</tr>
+<tr>
+<td>type</td>
+<td>EnumServiceType = BACKEND</td>
+<td></td>
+</tr>
+<tr>
+<td>urlFrontend / urlGetMetaData</td>
+<td>String</td>
+<td>สำหรับหน้า admin ย่อย</td>
+</tr>
+</tbody>
+</table>
+<p>ผลลัพธ์มีกุญแจที่ service ต้องเก็บไว้ใน <code>.gumon/certificates/&lt;serviceKey&gt;/</code> ของตัวเอง (ได้ครั้งเดียว เก็บให้ดี ห้าม commit):</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>ไฟล์</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>systemCertificateId</td>
+<td><code>certificate-id.key</code></td>
+</tr>
+<tr>
+<td>privateKey</td>
+<td><code>certificate</code></td>
+</tr>
+<tr>
+<td>publicKey</td>
+<td><code>certificate.pub</code></td>
+</tr>
+<tr>
+<td>hashKey</td>
+<td><code>hash.key</code></td>
+</tr>
+<tr>
+<td>symmetricKey</td>
+<td><code>symmetric.key</code></td>
+</tr>
+</tbody>
+</table>
+<p>หลังลงทะเบียน core จะส่ง <code>sync-service</code> และ <code>sync-service-setting</code> ออกไป</p>
+<p>permission: <code>registerService</code></p>
+<hr />
+<h4 id="updateservice">updateService<a class="headerlink" href="#updateservice" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">mutation { updateService(serviceId: &quot;&lt;id&gt;&quot;, update: { name: &quot;New name&quot;, urlGetMetaData: &quot;https://.../api/menuMetaData&quot; }) { _id name } }
+</code></pre>
+<p>permission: <code>updateService</code></p>
+<hr />
+<h4 id="resignservice">resignService<a class="headerlink" href="#resignservice" title="Permanent link">&para;</a></h4>
+<p>ถอด service ออกจากระบบ · ต้องถอดออกจากทุกแอปก่อน (<code>removeServiceFromApp</code>) และถอด service ที่เป็น core set ไม่ได้</p>
+<pre><code class="language-graphql">mutation { resignService(serviceKey: &quot;my-service&quot;) { serviceKey } }
+</code></pre>
+<p>permission: <code>resignService</code></p>
+<hr />
+<h4 id="addservicetoapp">addServiceToApp<a class="headerlink" href="#addservicetoapp" title="Permanent link">&para;</a></h4>
+<p>เพิ่ม service เข้าแอป (ระดับแอป) · สร้าง App Certificate (ส่ง <code>sync-app-certificate</code>) และ app service setting (คัดลอกจาก service setting ส่ง <code>sync-app-service-setting</code>) · ถ้า <code>refreshData: true</code> จะส่ง <code>refresh-data</code> ให้ทุก service ในแอป เพื่อให้ service ใหม่ได้ข้อมูลเดิมครบ</p>
+<pre><code class="language-graphql">mutation {
+  addServiceToApp(input: { appKey: &quot;my-app&quot;, serviceKeys: [&quot;my-service&quot;], refreshData: true }) {
+    appKey serviceKey
+  }
+}
+</code></pre>
+<p>permission: <code>addServiceToApp</code></p>
+<hr />
+<h4 id="removeservicefromapp">removeServiceFromApp<a class="headerlink" href="#removeservicefromapp" title="Permanent link">&para;</a></h4>
+<p>ถอด service ออกจากแอป · ลบ App Certificate (ส่ง <code>sync-app-certificate</code> REMOVE) และ app service setting</p>
+<pre><code class="language-graphql">mutation { removeServiceFromApp(input: { appKey: &quot;my-app&quot;, serviceKeys: [&quot;my-service&quot;] }) { appKey serviceKey } }
+</code></pre>
+<p>permission: <code>removeServiceFromApp</code></p>
+<hr />
+<h4 id="refreshdata">refreshData<a class="headerlink" href="#refreshdata" title="Permanent link">&para;</a></h4>
+<p>สั่งให้ service ในแอปส่งข้อมูลที่ตัวเองถือขึ้น Kafka ใหม่ (<code>type: ALL</code> ทุก service · <code>SELECT</code> เฉพาะที่ระบุใน <code>serviceKeys</code>)</p>
+<pre><code class="language-graphql">mutation { refreshData(input: { appKey: &quot;my-app&quot;, type: SELECT, serviceKeys: [&quot;access-control&quot;] }) { serviceKey } }
+</code></pre>
+<p>permission: <code>refreshData</code></p>
+<hr />
+<h4 id="generatesystemcertificate-resetsystemcertificate-revokedsystemcertificate">generateSystemCertificate / resetSystemCertificate / revokedSystemCertificate<a class="headerlink" href="#generatesystemcertificate-resetsystemcertificate-revokedsystemcertificate" title="Permanent link">&para;</a></h4>
+<p>ออกใหม่ / รีเซ็ต / เพิกถอน System Certificate ของ service · <code>generate</code> และ <code>reset</code> คืน <code>publicKey</code>, <code>privateKey</code>, <code>systemCertificateId</code> ให้นำไปแทนไฟล์ใน <code>.gumon</code> ของ service</p>
+<pre><code class="language-graphql">mutation {
+  resetSystemCertificate(resetSystemCertificateInput: { serviceKey: &quot;my-service&quot;, systemCertificateId: &quot;&lt;id&gt;&quot; }) {
+    systemCertificateId publicKey privateKey
+  }
+}
+</code></pre>
+<p>permission: <code>generateSystemCertificate</code> · <code>resetSystemCertificate</code> · <code>revokedSystemCertificate</code></p>
+<hr />
+<h4 id="resetappcertificate-resetappcertificatebyservicekey-revokeappcertificatebyservicekey">resetAppCertificate / resetAppCertificateByServiceKey / revokeAppCertificateByServiceKey<a class="headerlink" href="#resetappcertificate-resetappcertificatebyservicekey-revokeappcertificatebyservicekey" title="Permanent link">&para;</a></h4>
+<p>ออก App Certificate ใหม่ทั้งแอป / เฉพาะ service / เพิกถอนของ service ในแอป (1 แอป × 1 service มี App Certificate เดียว) · ผลถูกส่งออกทาง <code>sync-app-certificate</code></p>
+<pre><code class="language-graphql">mutation { resetAppCertificateByServiceKey(appKey: &quot;my-app&quot;, serviceKey: &quot;my-service&quot;) { appKey serviceKey publicKey } }
+</code></pre>
+<p>permission: <code>resetAppCertificate</code> · <code>resetAppCertificateByServiceKey</code> · <code>revokeAppCertificateByServiceKey</code></p>
+<hr />
+<h4 id="updateservicesetting-resetservicesetting">updateServiceSetting / resetServiceSetting<a class="headerlink" href="#updateservicesetting-resetservicesetting" title="Permanent link">&para;</a></h4>
+<p>แก้ / คืนค่าเริ่มต้นของ service setting แล้วส่ง <code>sync-service-setting</code></p>
+<pre><code class="language-graphql">mutation { updateServiceSetting(serviceKey: &quot;notification&quot;, update: { setting: { exampleKey: &quot;value&quot; } }) { setting } }
+</code></pre>
+<p>permission: <code>updateServiceSetting</code> · <code>resetServiceSetting</code></p>
+<hr />
+<h4 id="updateappservicesetting-resetappservicesetting">updateAppServiceSetting / resetAppServiceSetting<a class="headerlink" href="#updateappservicesetting-resetappservicesetting" title="Permanent link">&para;</a></h4>
+<p>แก้ / คืนค่าเริ่มต้นของ app service setting แล้วส่ง <code>sync-app-service-setting</code></p>
+<pre><code class="language-graphql">mutation { updateAppServiceSetting(appKey: &quot;my-app&quot;, serviceKey: &quot;authentication&quot;, update: { setting: { exampleKey: &quot;value&quot; } }) { setting } }
+</code></pre>
+<p>permission: <code>updateAppServiceSetting</code> · <code>resetAppServiceSetting</code></p>
+<hr />
+<h4 id="handcheckservice">handCheckService<a class="headerlink" href="#handcheckservice" title="Permanent link">&para;</a></h4>
+<p>สั่ง hand-check ใหม่ (<code>type: ALL</code> ทุก service · <code>SELECT</code> เฉพาะ <code>serviceKeys</code>) · core ส่ง <code>hand-check</code> ให้ service ปลายทาง</p>
+<pre><code class="language-graphql">mutation { handCheckService(input: { type: SELECT, serviceKeys: [&quot;my-service&quot;] }) { handCheckRefId serviceKey start } }
+</code></pre>
+<p>permission: <code>handCheckService</code></p>
+<hr />
+<h2 id="kafka-consume-reference">kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>ทุกข้อความมี header <code>appKey</code> (ถ้าเกี่ยวกับแอป) และ <code>serviceKey</code> = service <strong>ปลายทาง</strong> · payload รูป <code>{ action, &lt;entity&gt;: {...} }</code></p>
+<hr />
+<h3 id="register-service">register-service<a class="headerlink" href="#register-service" title="Permanent link">&para;</a></h3>
+<p>service ประกาศตัวกับ core ตอนเริ่มทำงาน → core เริ่ม hand-check (ส่ง <code>hand-check</code>)</p>
+<pre><code>topic: register-service
+header: serviceKey = core
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>registerService</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>systemCertificateId</td>
+<td>string</td>
+<td>id ของ System Certificate (จากไฟล์ <code>certificate-id.key</code>)</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td>key ของ service ผู้ประกาศ</td>
+</tr>
+<tr>
+<td>encryptData</td>
+<td>string</td>
+<td>systemCertificateId ที่เข้ารหัสด้วย <code>certificate.pub</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="hand-check-result">hand-check-result<a class="headerlink" href="#hand-check-result" title="Permanent link">&para;</a></h3>
+<p>คำตอบของ <code>hand-check</code> · core ถือว่าผ่านเมื่อ <code>resultData</code> ตรงกับ <code>handCheckRefId</code> แล้วอัปเดตสถานะ service ready</p>
+<pre><code>topic: hand-check-result
+header: serviceKey = core
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>serviceHandCheckResult</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>handCheckRefId</td>
+<td>string</td>
+<td>id อ้างอิงที่ core สร้าง</td>
+</tr>
+<tr>
+<td>systemCertificateId</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td>service ผู้ตอบ</td>
+</tr>
+<tr>
+<td>encryptData</td>
+<td>string</td>
+<td>ข้อมูลเข้ารหัสที่ได้รับจาก core</td>
+</tr>
+<tr>
+<td>resultData</td>
+<td>string</td>
+<td>ผลถอดรหัส (ถอดไม่ได้ให้ส่ง <code>""</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="refresh-data">refresh-data<a class="headerlink" href="#refresh-data" title="Permanent link">&para;</a></h3>
+<p>เมื่อปลายทางเป็น <code>core</code>: ส่ง <code>sync-app-certificate</code>, <code>sync-service-setting</code>, <code>sync-app-service-setting</code>, <code>sync-service</code> และ <code>sync-permission</code> ของแอปนั้นออกไปใหม่ แล้วล้าง cache ของตัวเอง</p>
+<pre><code>topic: refresh-data
+header: appKey, serviceKey = core
+</code></pre>
+<p>payload ดูที่ <a href="#refresh-data_1">refresh-data</a> ในหัวข้อ produce</p>
+<hr />
+<h3 id="sync-application">sync-application<a class="headerlink" href="#sync-application" title="Permanent link">&para;</a></h3>
+<p>รับข้อมูลแอปจาก application service · ถ้าเป็นแอปใหม่ที่ active core จะผูก service core set ทุกตัวเข้าแอปให้อัตโนมัติ (สร้าง App Certificate + app service setting) แล้วส่ง <code>add-admin-app-role</code></p>
+<pre><code>topic: sync-application
+header: appKey
+Action: ADD | REMOVE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>application</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>appName</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>boolean</td>
+<td></td>
+</tr>
+<tr>
+<td>isSystem</td>
+<td>boolean</td>
+<td>แอป SYSTEM</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-app-credential">sync-app-credential<a class="headerlink" href="#sync-app-credential" title="Permanent link">&para;</a></h3>
+<p>รับข้อมูลการเข้าใช้ของแอป (clientId, กุญแจตรวจ JWT, กฎของ token) จาก authentication service · ค่าลับถูกเข้ารหัสด้วย App Certificate ของปลายทาง · credential ชนิด <code>SYSTEM</code> (clientId + clientSecret) คือ apiKey สำหรับระบบภายนอก</p>
+<pre><code>topic: sync-app-credential
+header: appKey, serviceKey = core
+Action: ADD | REMOVE
+</code></pre>
+<p>field ดูที่ <a href="../serviceX/">สิ่งที่ Service ต้องมี › sync-app-credential</a></p>
+<hr />
+<h3 id="sync-user-policy">sync-user-policy<a class="headerlink" href="#sync-user-policy" title="Permanent link">&para;</a></h3>
+<p>รับ UserPolicy พร้อมใช้จาก access-control เพื่อใช้ตรวจสิทธิ์ของ API ใน core</p>
+<pre><code>topic: sync-user-policy
+header: appKey, serviceKey = core
+Action: ADD | REMOVE | REMOVE_APP | REMOVE_PERMISSION | REMOVE_USER | REMOVE_ORGANIZATION
+</code></pre>
+<p>field ดูที่ <a href="../serviceX/">สิ่งที่ Service ต้องมี › sync-user-policy</a></p>
+<hr />
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="init-system">init-system<a class="headerlink" href="#init-system" title="Permanent link">&para;</a></h3>
+<p>ส่งครั้งเดียวตอนตั้งระบบจากศูนย์ (<code>GUMON_INIT_SYSTEM=true</code>) · <strong>เฉพาะ core set</strong> · ให้ core set ตัวอื่นสร้างข้อมูลตั้งต้นของแอป SYSTEM (แอป, App Certificate, app credential, ผู้ดูแลระบบ, app role)</p>
+<pre><code>topic: init-system
+</code></pre>
+<hr />
+<h3 id="refresh-data_1">refresh-data<a class="headerlink" href="#refresh-data_1" title="Permanent link">&para;</a></h3>
+<p>สั่งให้ service ปลายทางส่งข้อมูลที่ตัวเองถือขึ้นไปใหม่ (ให้ service ใหม่ในแอปทำงานต่อได้) และล้าง cache Redis ของตัวเอง · ส่งจาก <code>refreshData</code> หรือ <code>addServiceToApp(refreshData: true)</code></p>
+<pre><code>topic: refresh-data
+header: appKey, serviceKey = service ปลายทาง
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>refreshData</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>refreshDataId</td>
+<td>string</td>
+<td>id ของรอบ refresh (ใช้กันทำซ้ำ)</td>
+</tr>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td>service ปลายทาง</td>
+</tr>
+<tr>
+<td>note</td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="hand-check">hand-check<a class="headerlink" href="#hand-check" title="Permanent link">&para;</a></h3>
+<p>ถามว่า service ปลายทางยังถือกุญแจถูกต้องไหม · ส่งเมื่อได้รับ <code>register-service</code> หรือสั่ง <code>handCheckService</code> · ปลายทางถอด <code>encryptData</code> ด้วยไฟล์ <code>certificate</code> แล้วตอบ <code>hand-check-result</code></p>
+<pre><code>topic: hand-check
+header: serviceKey = service ปลายทาง
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>handCheck</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>handCheckRefId</td>
+<td>string</td>
+<td>id อ้างอิงที่ core สุ่ม</td>
+</tr>
+<tr>
+<td>systemCertificateId</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>encryptData</td>
+<td>string</td>
+<td>handCheckRefId ที่เข้ารหัสด้วย System Certificate ของปลายทาง</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-app-certificate">sync-app-certificate<a class="headerlink" href="#sync-app-certificate" title="Permanent link">&para;</a></h3>
+<p>แจก App Certificate ของ service ในแอป · ส่งเมื่อ add / remove service ในแอป, reset / revoke app certificate, แอปใหม่ และ refresh-data</p>
+<pre><code>topic: sync-app-certificate
+header: appKey, serviceKey = service ปลายทาง
+Action: ADD | REMOVE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>appCertificate</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td>service เจ้าของ certificate</td>
+</tr>
+<tr>
+<td>publicKey</td>
+<td>string</td>
+<td>ใช้เข้ารหัสข้อมูลที่ส่งถึง service เจ้าของในแอปนี้</td>
+</tr>
+<tr>
+<td>privateKeyRsaEncrypt</td>
+<td>string</td>
+<td>privateKey ที่ถูกเข้ารหัส (ADD เท่านั้น)</td>
+</tr>
+<tr>
+<td>symmetricKeyEncrypt</td>
+<td>string</td>
+<td>กุญแจถอด <code>privateKeyRsaEncrypt</code> เข้ารหัสด้วย System Certificate ของเจ้าของ (ADD เท่านั้น)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-service">sync-service<a class="headerlink" href="#sync-service" title="Permanent link">&para;</a></h3>
+<p>ทะเบียน service · access-control ใช้ <code>urlGetMetaData</code> ดึงเมนูของหน้า admin ย่อย</p>
+<pre><code>topic: sync-service
+header: serviceKey = service ปลายทาง
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>service</code></th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id, serviceKey, name, description, version, author</td>
+<td>string</td>
+</tr>
+<tr>
+<td>isCoreSet, isActive</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>type</td>
+<td><code>BACKEND</code> | <code>MAIN_FRONTEND</code> | <code>MICRO_FRONTEND</code> | <code>OTHER</code></td>
+</tr>
+<tr>
+<td>urlFrontend, urlGetMetaData</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-service-setting">sync-service-setting<a class="headerlink" href="#sync-service-setting" title="Permanent link">&para;</a></h3>
+<p>JSON ตั้งค่าทั้งระบบของ service</p>
+<pre><code>topic: sync-service-setting
+header: serviceKey = service ปลายทาง
+Action: ADD | REMOVE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>serviceSetting</code></th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+</tr>
+<tr>
+<td>setting</td>
+<td>JSON</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-app-service-setting">sync-app-service-setting<a class="headerlink" href="#sync-app-service-setting" title="Permanent link">&para;</a></h3>
+<p>JSON ตั้งค่าเฉพาะแอปของ service</p>
+<pre><code>topic: sync-app-service-setting
+header: appKey, serviceKey = service ปลายทาง
+Action: ADD | REMOVE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>appServiceSetting</code></th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+</tr>
+<tr>
+<td>appKey</td>
+<td>string</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+</tr>
+<tr>
+<td>setting</td>
+<td>JSON</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">sync-permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>permission ของ API ใน core ส่งให้ access-control เพื่อผูกกับ role (ตอบ refresh-data)</p>
+<pre><code>topic: sync-permission
+header: appKey, serviceKey = access-control
+Action: ADD
+</code></pre>
+<p>payload ดูที่ <a href="../serviceX/">สิ่งที่ Service ต้องมี › sync-permission</a></p>
+<hr />
+<h3 id="add-admin-app-role">add-admin-app-role<a class="headerlink" href="#add-admin-app-role" title="Permanent link">&para;</a></h3>
+<p>แอปใหม่ถูกสร้าง ⇒ ให้สร้าง app role ผู้ดูแล (<code>admin</code>) ของแอปนั้น</p>
+<pre><code>topic: add-admin-app-role
+header: appKey, serviceKey = unit
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>adminAppRole</code></th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-core-service@d872cc3 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1474 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/gumoncli/">
+      
+      
+        <link rel="prev" href="../createService/">
+      
+      
+        <link rel="next" href="../coreService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Gumon CLI - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gumon-cli" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Gumon CLI
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#สงทตองม" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        สิ่งที่ต้องมี
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ตดตง" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ติดตั้ง
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ใชงานประจำวน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ใช้งานประจำวัน
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ใช้งานประจำวัน">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        down
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ตวเลอกรวม" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ตัวเลือกรวม
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#โฟลเดอร-gumon-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        โฟลเดอร์ .gumon-stack/
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#คำสงทงหมด" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        คำสั่งทั้งหมด
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#เมอมปญหา" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        เมื่อมีปัญหา
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#สงทตองม" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        สิ่งที่ต้องมี
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ตดตง" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ติดตั้ง
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ใชงานประจำวน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ใช้งานประจำวัน
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ใช้งานประจำวัน">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        down
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ตวเลอกรวม" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ตัวเลือกรวม
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#โฟลเดอร-gumon-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        โฟลเดอร์ .gumon-stack/
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#คำสงทงหมด" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        คำสั่งทั้งหมด
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#เมอมปญหา" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        เมื่อมีปัญหา
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="gumon-cli">Gumon CLI<a class="headerlink" href="#gumon-cli" title="Permanent link">&para;</a></h1>
+<p><code>gumon</code> เป็นเครื่องมือบรรทัดคำสั่งสำหรับ <strong>ตั้งและรันระบบ Gumon บนเครื่องนักพัฒนา</strong> ด้วยคำสั่งเดียว — ขึ้นฐานข้อมูล ตั้งระบบครั้งแรก (init) และขึ้น core set ให้พร้อมใช้ โดย <strong>ไม่ต้อง init ใหม่ทุกครั้งที่เปิดเครื่อง</strong></p>
+<p>CLI ตัวนี้เขียนใหม่ทั้งหมดในปี 2026 (TypeScript บน Node) มาแทน CLI รุ่นเดิมที่มีแค่ <code>gumon init</code> และแทนชุด docker compose ที่เคยแยกเป็นสองรีโป</p>
+<div class="admonition note">
+<p class="admonition-title">สถานะ</p>
+<p>ใช้ได้แล้ว 11 คำสั่ง — ดูตาราง "คำสั่งทั้งหมด" ข้างล่าง · <code>gumon --help</code> บอกสถานะล่าสุดของทุกคำสั่งเสมอ (ตัวที่มี <code>·</code> นำหน้า = ยังไม่ทำ)</p>
+</div>
+<hr />
+<h2 id="สงทตองม">สิ่งที่ต้องมี<a class="headerlink" href="#สงทตองม" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Docker พร้อม <code>docker compose</code> รุ่น 2</li>
+<li>Node.js 20 ขึ้นไป และ <code>pnpm</code></li>
+<li>สิทธิ์ดึง image ของ core set จาก registry ของทีม (login ด้วย <code>docker login</code> ไว้ก่อน)</li>
+<li>RAM ว่างราว 4 GB สำหรับทั้งชุด (ฐานข้อมูล + core set 9 service + หน้า system admin)</li>
+</ul>
+<h2 id="ตดตง">ติดตั้ง<a class="headerlink" href="#ตดตง" title="Permanent link">&para;</a></h2>
+<p>source อยู่ในรีโป <code>gumon-cli</code></p>
+<pre><code class="language-bash">git clone &lt;รีโป gumon-cli&gt;
+cd gumon-cli
+pnpm install
+pnpm run check            # build + ทดสอบ
+node dist/cli.js --help   # หรือ pnpm link --global แล้วเรียก gumon ได้ทุกที่
+</code></pre>
+<p>ตัวอย่างในหน้านี้เขียนเป็น <code>gumon …</code> — ถ้ายังไม่ได้ link ให้แทนด้วย <code>node &lt;ที่อยู่ gumon-cli&gt;/dist/cli.js …</code></p>
+<hr />
+<h2 id="ใชงานประจำวน">ใช้งานประจำวัน<a class="headerlink" href="#ใชงานประจำวน" title="Permanent link">&para;</a></h2>
+<pre><code class="language-bash">mkdir my-gumon &amp;&amp; cd my-gumon   # โฟลเดอร์ทำงาน — สถานะของ stack เก็บที่นี่
+gumon up                        # ขึ้นทั้งชุด
+gumon status                    # ดูว่าอะไรพร้อมแล้ว
+gumon down                      # หยุด (ข้อมูลยังอยู่)
+</code></pre>
+<p>สั่ง <code>gumon up</code> จากโฟลเดอร์เดิมทุกครั้ง — ทั้งเครื่องมี stack ได้ชุดเดียว</p>
+<h3 id="up">up<a class="headerlink" href="#up" title="Permanent link">&para;</a></h3>
+<p><code>gumon up</code> ทำตามลำดับ และหยุดพร้อมบอกเหตุถ้าขั้นใดไม่ผ่าน</p>
+<ol>
+<li>ขึ้นฐานข้อมูล: MongoDB (replica set), Kafka, Redis และที่เก็บไฟล์แบบ S3 — แล้วรอจนทุกตัวพร้อม</li>
+<li>ตรวจว่า <strong>ระบบนี้เคย init แล้วหรือยัง</strong> (ดูทั้งไฟล์กุญแจของ core และข้อมูลในฐาน ไม่เชื่อฝั่งเดียว)<ul>
+<li>ยังไม่เคย → ให้ Core Service รัน init-system หนึ่งครั้ง (ดู <a href="../serviceLifecycle/">วงจรของ Service</a>)</li>
+<li>เคยแล้ว → ข้ามขั้นนี้</li>
+</ul>
+</li>
+<li>ขึ้น core set ทุกตัวและหน้า system admin แล้วรอจนตอบได้</li>
+</ol>
+<p>ครั้งแรกจากศูนย์ใช้เวลาราว 2–3 นาที (ไม่รวมเวลาดึง image) · ครั้งถัดไปไม่ถึงนาที เพราะไม่ init ซ้ำ</p>
+<div class="admonition warning">
+<p class="admonition-title">ยังต้องทำเองหลัง <code>up</code> ครั้งแรก</p>
+<p><code>up</code> ยังไม่สั่ง refresh-data ให้ — permission ของแต่ละ service จะยังไม่ถึง Access Control จนกว่าจะสั่ง refresh-data ของแต่ละ service จากหน้า system admin (เมนู refresh data) หรือ GraphQL ของ <a href="../coreService/">Core Service</a> · คำสั่ง <code>gumon refresh-all</code> ที่จะทำขั้นนี้ให้อยู่ในแผน</p>
+</div>
+<h3 id="status">status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h3>
+<p>แสดงสถานะของฐานข้อมูลแต่ละตัว, ระบบ init แล้วหรือยัง และ service ใดตอบได้แล้ว</p>
+<h3 id="down">down<a class="headerlink" href="#down" title="Permanent link">&para;</a></h3>
+<p>หยุดและลบ container ทั้งชุด <strong>โดยเก็บข้อมูลไว้ครบ</strong> (ฐานข้อมูล, ข้อความใน Kafka, ไฟล์, กุญแจ) — <code>gumon up</code> รอบถัดไปกลับมาที่สถานะเดิม</p>
+<h3 id="ตวเลอกรวม">ตัวเลือกรวม<a class="headerlink" href="#ตวเลอกรวม" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ตัวเลือก</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>รายการคำสั่งพร้อมสถานะ</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td>รุ่นของ CLI</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>ผลลัพธ์เป็น JSON สำหรับสคริปต์และ AI</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="โฟลเดอร-gumon-stack">โฟลเดอร์ <code>.gumon-stack/</code><a class="headerlink" href="#โฟลเดอร-gumon-stack" title="Permanent link">&para;</a></h2>
+<p>CLI สร้างโฟลเดอร์นี้ในโฟลเดอร์ทำงานตอน <code>up</code> ครั้งแรก</p>
+<table>
+<thead>
+<tr>
+<th>ที่</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.gumon/login.txt</code></td>
+<td>ข้อมูลเข้าระบบของผู้ดูแลระบบคนแรก — ใช้เข้าหน้า system admin · เก็บเป็นความลับ</td>
+</tr>
+<tr>
+<td><code>.gumon/certificates/&lt;serviceKey&gt;/</code></td>
+<td>กุญแจของแต่ละ service ที่ Core Service ออกให้ตอน init</td>
+</tr>
+<tr>
+<td><code>infra.env</code></td>
+<td>รหัสผ่านของฐานข้อมูลที่ CLI สุ่มให้ครั้งแรก</td>
+</tr>
+</tbody>
+</table>
+<p>ห้าม commit โฟลเดอร์นี้ลง git และห้ามส่งต่อให้ผู้อื่น — ลบโฟลเดอร์นี้โดยไม่ล้างฐานข้อมูลจะทำให้กุญแจกับข้อมูลไม่ตรงกัน</p>
+<hr />
+<h2 id="คำสงทงหมด">คำสั่งทั้งหมด<a class="headerlink" href="#คำสงทงหมด" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>คำสั่ง</th>
+<th>ทำอะไร</th>
+<th>สถานะ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gumon up</code></td>
+<td>ขึ้นฐานข้อมูล → init เฉพาะถ้ายังไม่เคย → ขึ้น core set · <code>--only a,b</code> ขึ้นเฉพาะที่ระบุ</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon status</code></td>
+<td>สถานะของทั้งชุด และ RAM ที่แต่ละตัวใช้</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon down</code></td>
+<td>หยุด เก็บข้อมูลครบ</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon snapshot [ชื่อ]</code></td>
+<td>เก็บสถานะปัจจุบันทั้งชุดเป็นไฟล์เดียว</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon restore &lt;ชื่อ&gt;</code></td>
+<td>กลับสู่สถานะที่เก็บไว้โดยไม่ต้อง init ใหม่ (ต้องยืนยัน)</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon reset</code></td>
+<td>ล้างทั้งหมดเพื่อเริ่มจากศูนย์ (ต้องยืนยัน)</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon dev &lt;service&gt; [path]</code></td>
+<td>สลับ service ตัวเดียวไปรันจากโค้ดในเครื่อง ตัวอื่นยังรันจาก image · <code>--stop</code> สลับกลับ</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon enable</code> / <code>disable &lt;service&gt;</code></td>
+<td>เปิด/ปิด service ที่งานนี้ไม่ใช้ เพื่อประหยัด RAM (จำค่า)</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon update [service…]</code></td>
+<td>ดึง image รุ่นใหม่แล้วสร้าง container ใหม่ · <code>up</code> บอกให้เองว่าตัวใดล้าหลัง</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon service register &lt;path&gt;</code></td>
+<td>ลงทะเบียน service ใหม่กับ Core Service วางกุญแจ และผูกเข้าแอประบบ</td>
+<td>ใช้ได้</td>
+</tr>
+<tr>
+<td><code>gumon refresh-all</code></td>
+<td>สั่ง refresh-data ทุกแอปและทุก service</td>
+<td>อยู่ในแผน</td>
+</tr>
+<tr>
+<td><code>gumon logs</code> · <code>gumon doctor</code></td>
+<td>ดู log · ตรวจ docker, พอร์ต และ env ที่ขาด</td>
+<td>อยู่ในแผน</td>
+</tr>
+<tr>
+<td><code>gumon app create</code></td>
+<td>ขึ้นแอปใหม่ครบขั้นในคำสั่งเดียว</td>
+<td>อยู่ในแผน</td>
+</tr>
+</tbody>
+</table>
+<p>งานที่ยังไม่มีคำสั่ง เช่น เพิ่ม service เข้าแอปอื่นหรือถอด service ออก ทำผ่านหน้า system admin หรือ GraphQL ของ <a href="../coreService/">Core Service</a> (<code>registerService</code>, <code>addServiceToApp</code>, <code>removeServiceFromApp</code>, <code>resignService</code>) ดูขั้นตอนที่ <a href="../createService/">สร้าง Service ใหม่</a></p>
+<hr />
+<h2 id="เมอมปญหา">เมื่อมีปัญหา<a class="headerlink" href="#เมอมปญหา" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>อาการ</th>
+<th>ทำอย่างไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up</code> หยุดที่ขั้นฐานข้อมูล</td>
+<td>ดู <code>gumon status</code> ว่าตัวใดไม่พร้อม · ตรวจว่าไม่มีโปรแกรมอื่นใช้พอร์ตของ MongoDB, Kafka หรือ Redis อยู่</td>
+</tr>
+<tr>
+<td>ดึง image ไม่ได้</td>
+<td>ตรวจ <code>docker login</code> กับ registry ของทีม</td>
+</tr>
+<tr>
+<td><code>up</code> แจ้งว่า init ค้างครึ่งทาง (มีกุญแจแต่ฐานว่าง หรือกลับกัน)</td>
+<td>CLI จะไม่ init ทับให้เอง — ล้างแล้วเริ่มใหม่ด้วย <code>gumon reset</code> (ข้อมูลใน stack หายทั้งหมด · เก็บ <code>gumon snapshot</code> ไว้ก่อนถ้ายังต้องใช้)</td>
+</tr>
+<tr>
+<td>เข้าหน้า system admin ไม่ได้</td>
+<td>ใช้ข้อมูลใน <code>.gumon-stack/.gumon/login.txt</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-cli@bc19acf · 2026-10-10</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

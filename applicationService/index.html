@@ -1,0 +1,1775 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/applicationService/">
+      
+      
+        <link rel="prev" href="../coreService/">
+      
+      
+        <link rel="next" href="../authenticationService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Application Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#application-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Application Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sync-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync-permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="application-service">Application Service<a class="headerlink" href="#application-service" title="Permanent link">&para;</a></h1>
+<p>Application Service เป็นเจ้าของข้อมูลแอป (Application) และ theme ของระบบ</p>
+<ul>
+<li><strong>Application</strong> — แอปในระบบ (appKey, ชื่อ, รูป, สถานะ) · การสร้างแอปที่นี่จะส่ง <code>sync-application</code> ให้ core ผูก service core set ทุกตัวเข้าแอปใหม่โดยอัตโนมัติ</li>
+<li><strong>Theme</strong> — theme กลางของทั้งระบบ (ต้นไม้ parent/child ผ่าน <code>themeKeyPath</code>)</li>
+<li><strong>AppTheme</strong> — theme ที่แอปเลือกใช้</li>
+<li><strong>CredentialAppTheme</strong> — theme ต่อ app credential (clientId)</li>
+<li><strong>HostTheme</strong> — ผูก hostName → แอป + app credential + theme ให้หน้าบ้านรู้ว่าโดเมนนี้คือแอปไหน ใช้ clientId ไหน และใช้ theme อะไร</li>
+</ul>
+<p>serviceKey: <code>application</code> · เป็นส่วนหนึ่งของ core set</p>
+<ul>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">Kafka Produce Reference</a></li>
+<li>ดูเพิ่ม: <a href="../coreService/">Core Service</a> · <a href="../serviceX/">สิ่งที่ Service ต้องมี</a></li>
+</ul>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>endpoint: <code>POST /graphql</code></p>
+<p>การยืนยันตัวตนที่ใช้ในหน้านี้</p>
+<table>
+<thead>
+<tr>
+<th>ชนิด</th>
+<th>header</th>
+<th>ใช้กับ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>login</td>
+<td><code>Authorization: Bearer &lt;accessToken&gt;</code> + permission ตามที่ระบุ</td>
+<td>mutation ทั้งหมด และ query ที่ระบุ permission</td>
+</tr>
+<tr>
+<td>app credential</td>
+<td><code>X-APP-CLIENT-ID: &lt;clientId&gt;</code> (หรือ <code>Authorization</code>)</td>
+<td>query อ่านข้อมูลแอป / theme ก่อน login</td>
+</tr>
+<tr>
+<td>ไม่ต้องยืนยัน</td>
+<td>–</td>
+<td>ค้นหา HostTheme เพื่อ resolve โดเมน</td>
+</tr>
+</tbody>
+</table>
+<p>query ที่เป็นรายการรับ input รูป <code>{ filter, search, sort: { sortBy, sortOrder }, pagination: { page, limit } }</code> และคืน <code>{ &lt;รายการ&gt;[], pagination }</code></p>
+<hr />
+<p><strong>สรุป API ทั้งหมด 15 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#getapplications">getApplications</a></td>
+<td>ยืนยันตัวตน: app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getapplicationbyid-getapplicationbyappkey">getApplicationById / getApplicationByAppKey</a></td>
+<td>ยืนยันตัวตน: app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getthemes-getthemebyid-getthemebythemekey">getThemes / getThemeById / getThemeByThemeKey</a></td>
+<td>ยืนยันตัวตน: app credential</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getappthemes">getAppThemes</a></td>
+<td>permission: <code>getAppThemes</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcredentialappthemes-getcredentialappthemebyid">getCredentialAppThemes / getCredentialAppThemeById</a></td>
+<td>theme ต่อ app credential (<code>appKey</code>, <code>credentialId</code>, <code>themeKey</code>, <code>isDefault</code>, <code>theme</code>)</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getconfigbyhost">getConfigByHost</a></td>
+<td>ค่าตั้งต้นของหน้าบ้านตาม host: credentialId, theme และ app service setting ของแอป</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#gethostthemes">getHostThemes</a></td>
+<td>permission: <code>getHostThemes</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#gethostthemebyhostname-gethostthemebyid-gethostthemebykey">getHostThemeByHostName / getHostThemeById / getHostThemeByKey</a></td>
+<td>หน้าบ้านเรียกตอนเปิดเว็บเพื่อรู้ว่าโดเมนนี้คือแอปไหน ใช้ clientId ไหน และ theme อะไร (เ…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createapplication">createApplication</a></td>
+<td>สร้างแอปใหม่ แล้วส่ง <code>sync-application</code> (ADD) ⇒ core ผูก service core set ทุกตัวเข้าแอป…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateapplication">updateApplication</a></td>
+<td>แก้ข้อมูลแอป (<code>appName</code>, รูป, <code>isActive</code>) แล้วส่ง <code>sync-application</code> (ADD)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteapplication">deleteApplication</a></td>
+<td>ลบแอป แล้วส่ง <code>sync-application</code> (REMOVE)</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createtheme-updatetheme-deletetheme-resettheme">createTheme / updateTheme / deleteTheme / resetTheme</a></td>
+<td>จัดการ theme กลาง · <code>parentThemeId</code> ทำให้ theme สืบค่าจาก theme แม่ · <code>resetTheme</code> คำนว…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createapptheme-deleteapptheme">createAppTheme / deleteAppTheme</a></td>
+<td>เลือก theme ให้แอป</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createcredentialapptheme-deletecredentialapptheme">createCredentialAppTheme / deleteCredentialAppTheme</a></td>
+<td>เลือก theme ให้ app credential</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createhosttheme-updatedhosttheme-deletehosttheme">createHostTheme / updatedHostTheme / deleteHostTheme</a></td>
+<td>ผูกโดเมนกับแอป + app credential + theme</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<hr />
+<h4 id="getapplications">getApplications<a class="headerlink" href="#getapplications" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getApplications(getAppInput: { filter: { isActive: true }, pagination: { page: 1, limit: 20 } }) {
+    applications { _id appKey appName iconImageKey logoImageKey backgroundImageKey isActive isSystem createdAt }
+    pagination { totalItems page limit }
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>field ของ Application</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>String</td>
+<td>key ของแอป (ไม่ซ้ำ)</td>
+</tr>
+<tr>
+<td>appName</td>
+<td>String</td>
+<td>ชื่อแอป</td>
+</tr>
+<tr>
+<td>iconImageKey / logoImageKey / backgroundImageKey</td>
+<td>String</td>
+<td>key ไฟล์รูปใน storage</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean</td>
+<td></td>
+</tr>
+<tr>
+<td>isSystem</td>
+<td>Boolean</td>
+<td>แอป SYSTEM (สร้างตอนตั้งระบบ)</td>
+</tr>
+</tbody>
+</table>
+<p>ยืนยันตัวตน: app credential</p>
+<hr />
+<h4 id="getapplicationbyid-getapplicationbyappkey">getApplicationById / getApplicationByAppKey<a class="headerlink" href="#getapplicationbyid-getapplicationbyappkey" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query { getApplicationByAppKey(appKey: &quot;my-app&quot;) { _id appKey appName isActive } }
+</code></pre>
+<p>ยืนยันตัวตน: app credential</p>
+<hr />
+<h4 id="getthemes-getthemebyid-getthemebythemekey">getThemes / getThemeById / getThemeByThemeKey<a class="headerlink" href="#getthemes-getthemebyid-getthemebythemekey" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getThemes(getThemeInput: { filter: { isDefault: true } }) {
+    themes { _id themeKey themeKeyPath themeName isDefault variable calVariable description }
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>field ของ Theme</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>themeKey</td>
+<td>String</td>
+<td>key ของ theme</td>
+</tr>
+<tr>
+<td>themeKeyPath</td>
+<td>String</td>
+<td>เส้นทาง parent ของ theme</td>
+</tr>
+<tr>
+<td>themeName</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>isDefault</td>
+<td>Boolean</td>
+<td></td>
+</tr>
+<tr>
+<td>variable</td>
+<td>JSON</td>
+<td>ค่าที่ theme นี้กำหนดเอง</td>
+</tr>
+<tr>
+<td>calVariable</td>
+<td>JSON</td>
+<td>ค่าที่คำนวณรวมกับ theme แม่แล้ว (หน้าบ้านใช้ค่านี้)</td>
+</tr>
+</tbody>
+</table>
+<p>ยืนยันตัวตน: app credential</p>
+<hr />
+<h4 id="getappthemes">getAppThemes<a class="headerlink" href="#getappthemes" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query { getAppThemes(getAppThemeInput: { filter: { appKey: &quot;my-app&quot; } }) { appThemes { _id appKey themeKey isDefault theme { themeName } } } }
+</code></pre>
+<p>permission: <code>getAppThemes</code></p>
+<hr />
+<h4 id="getcredentialappthemes-getcredentialappthemebyid">getCredentialAppThemes / getCredentialAppThemeById<a class="headerlink" href="#getcredentialappthemes-getcredentialappthemebyid" title="Permanent link">&para;</a></h4>
+<p>theme ต่อ app credential (<code>appKey</code>, <code>credentialId</code>, <code>themeKey</code>, <code>isDefault</code>, <code>theme</code>)</p>
+<pre><code class="language-graphql">query { getCredentialAppThemes(getCredentialAppThemeInput: { filter: { appKey: &quot;my-app&quot; } }) { credentialAppThemes { credentialId themeKey isDefault } } }
+</code></pre>
+<p>ยืนยันตัวตน: app credential</p>
+<hr />
+<h4 id="getconfigbyhost">getConfigByHost<a class="headerlink" href="#getconfigbyhost" title="Permanent link">&para;</a></h4>
+<p>ค่าตั้งต้นของหน้าบ้านตาม host: credentialId, theme และ app service setting ของแอป</p>
+<pre><code class="language-graphql">query { getConfigByHost(getConfigByHostInput: { host: &quot;admin.example.com&quot; }) { credentialId theme { themeKey calVariable } appServiceSetting { serviceKey setting } } }
+</code></pre>
+<p>ยืนยันตัวตน: app credential</p>
+<hr />
+<h4 id="gethostthemes">getHostThemes<a class="headerlink" href="#gethostthemes" title="Permanent link">&para;</a></h4>
+<pre><code class="language-graphql">query {
+  getHostThemes(getHostThemeInput: { filter: { appKey: &quot;my-app&quot; } }) {
+    hostThemes { _id hostThemeKey hostName appKey clientId themeKey isDefault isActive }
+  }
+}
+</code></pre>
+<p>permission: <code>getHostThemes</code></p>
+<hr />
+<h4 id="gethostthemebyhostname-gethostthemebyid-gethostthemebykey">getHostThemeByHostName / getHostThemeById / getHostThemeByKey<a class="headerlink" href="#gethostthemebyhostname-gethostthemebyid-gethostthemebykey" title="Permanent link">&para;</a></h4>
+<p>หน้าบ้านเรียกตอนเปิดเว็บเพื่อรู้ว่าโดเมนนี้คือแอปไหน ใช้ clientId ไหน และ theme อะไร (เรียกได้ก่อน login)</p>
+<pre><code class="language-graphql">query {
+  getHostThemeByHostName(hostName: &quot;admin.example.com&quot;) {
+    appKey clientId hostThemeKey
+    application { appKey appName }
+    appCredential { clientId appCredentialType }
+    theme { themeKey calVariable }
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>field ของ HostTheme</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hostThemeKey</td>
+<td>String</td>
+<td>key ของ host theme</td>
+</tr>
+<tr>
+<td>hostName</td>
+<td>String</td>
+<td>โดเมน</td>
+</tr>
+<tr>
+<td>appKey / applicationId / application</td>
+<td></td>
+<td>แอปที่ผูก</td>
+</tr>
+<tr>
+<td>appCredentialId / clientId / appCredential</td>
+<td></td>
+<td>app credential ที่หน้าบ้านต้องใช้</td>
+</tr>
+<tr>
+<td>themeId / themeKey / themeKeyPath / theme</td>
+<td></td>
+<td>theme ที่ใช้</td>
+</tr>
+<tr>
+<td>isDefault / isActive</td>
+<td>Boolean</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<hr />
+<h4 id="createapplication">createApplication<a class="headerlink" href="#createapplication" title="Permanent link">&para;</a></h4>
+<p>สร้างแอปใหม่ แล้วส่ง <code>sync-application</code> (ADD) ⇒ core ผูก service core set ทุกตัวเข้าแอป และสร้าง app role ผู้ดูแลให้อัตโนมัติ</p>
+<pre><code class="language-graphql">mutation {
+  createApplication(createApplicationInput: { appKey: &quot;my-app&quot;, appName: &quot;My App&quot;, isActive: true }) {
+    _id appKey appName
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>input</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>String!</td>
+<td>ห้ามซ้ำ</td>
+</tr>
+<tr>
+<td>appName</td>
+<td>String!</td>
+<td></td>
+</tr>
+<tr>
+<td>iconImageKey / logoImageKey / backgroundImageKey</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean = true</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>permission: <code>createApplication</code></p>
+<hr />
+<h4 id="updateapplication">updateApplication<a class="headerlink" href="#updateapplication" title="Permanent link">&para;</a></h4>
+<p>แก้ข้อมูลแอป (<code>appName</code>, รูป, <code>isActive</code>) แล้วส่ง <code>sync-application</code> (ADD)</p>
+<pre><code class="language-graphql">mutation { updateApplication(id: &quot;&lt;id&gt;&quot;, update: { appName: &quot;New name&quot; }) { appKey appName } }
+</code></pre>
+<p>permission: <code>updateApplication</code></p>
+<hr />
+<h4 id="deleteapplication">deleteApplication<a class="headerlink" href="#deleteapplication" title="Permanent link">&para;</a></h4>
+<p>ลบแอป แล้วส่ง <code>sync-application</code> (REMOVE)</p>
+<pre><code class="language-graphql">mutation { deleteApplication(id: &quot;&lt;id&gt;&quot;) { appKey } }
+</code></pre>
+<p>permission: <code>deleteApplication</code></p>
+<hr />
+<h4 id="createtheme-updatetheme-deletetheme-resettheme">createTheme / updateTheme / deleteTheme / resetTheme<a class="headerlink" href="#createtheme-updatetheme-deletetheme-resettheme" title="Permanent link">&para;</a></h4>
+<p>จัดการ theme กลาง · <code>parentThemeId</code> ทำให้ theme สืบค่าจาก theme แม่ · <code>resetTheme</code> คำนวณ <code>calVariable</code> ของทุก theme ใหม่</p>
+<pre><code class="language-graphql">mutation {
+  createTheme(createThemeInput: { themeName: &quot;Dark Blue&quot;, parentThemeId: null, variable: { colorPrimary: &quot;#1d4ed8&quot; }, isDefault: false }) {
+    _id themeKey themeKeyPath calVariable
+  }
+}
+</code></pre>
+<p>permission: <code>createTheme</code> · <code>updateTheme</code> · <code>deleteTheme</code> · <code>resetTheme</code></p>
+<hr />
+<h4 id="createapptheme-deleteapptheme">createAppTheme / deleteAppTheme<a class="headerlink" href="#createapptheme-deleteapptheme" title="Permanent link">&para;</a></h4>
+<p>เลือก theme ให้แอป</p>
+<pre><code class="language-graphql">mutation { createAppTheme(createAppThemeInput: { appKey: &quot;my-app&quot;, themeKey: &quot;&lt;themeKey&gt;&quot;, isDefault: true }) { _id appKey themeKey } }
+</code></pre>
+<p>permission: <code>createAppTheme</code> · <code>deleteAppTheme</code></p>
+<hr />
+<h4 id="createcredentialapptheme-deletecredentialapptheme">createCredentialAppTheme / deleteCredentialAppTheme<a class="headerlink" href="#createcredentialapptheme-deletecredentialapptheme" title="Permanent link">&para;</a></h4>
+<p>เลือก theme ให้ app credential</p>
+<pre><code class="language-graphql">mutation { createCredentialAppTheme(createCredentialAppThemeInput: { appKey: &quot;my-app&quot;, credentialId: &quot;&lt;appCredentialId&gt;&quot;, themeKey: &quot;&lt;themeKey&gt;&quot; }) { _id } }
+</code></pre>
+<p>ใช้โดยผู้ดูแลแอป</p>
+<hr />
+<h4 id="createhosttheme-updatedhosttheme-deletehosttheme">createHostTheme / updatedHostTheme / deleteHostTheme<a class="headerlink" href="#createhosttheme-updatedhosttheme-deletehosttheme" title="Permanent link">&para;</a></h4>
+<p>ผูกโดเมนกับแอป + app credential + theme</p>
+<pre><code class="language-graphql">mutation {
+  createHostTheme(createHostThemeInput: { hostName: &quot;admin.example.com&quot;, appCredentialId: &quot;&lt;appCredentialId&gt;&quot;, themeKey: &quot;&lt;themeKey&gt;&quot;, isDefault: true }) {
+    _id hostThemeKey hostName appKey clientId
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>input (create)</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hostName</td>
+<td>String!</td>
+<td>โดเมน</td>
+</tr>
+<tr>
+<td>appCredentialId</td>
+<td>String!</td>
+<td>app credential ที่หน้าบ้านจะใช้</td>
+</tr>
+<tr>
+<td>themeKey</td>
+<td>String!</td>
+<td></td>
+</tr>
+<tr>
+<td>hostThemeKey</td>
+<td>String</td>
+<td>ไม่ระบุได้</td>
+</tr>
+<tr>
+<td>isDefault</td>
+<td>Boolean = false</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean = true</td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>updatedHostTheme(hostThemeId, updateHostThemeInput: { isDefault, themeKey, description, isActive })</code></p>
+<p>permission: <code>createHostTheme</code> · <code>updateHostTheme</code> · <code>deleteHostTheme</code></p>
+<hr />
+<h2 id="kafka-consume-reference">kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>header ทุกข้อความ: <code>appKey</code> และ <code>serviceKey</code> = service ปลายทาง · topic ที่ส่งถึง service เดียวจะทำงานเฉพาะเมื่อ <code>serviceKey</code> = <code>application</code> และ application มี App Certificate ในแอปนั้น</p>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>ผู้ส่ง</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init-system</code></td>
+<td>core</td>
+<td>ตั้งระบบครั้งแรก: สร้างแอป SYSTEM, เก็บ App Certificate / app credential และสร้าง Theme / AppTheme / CredentialAppTheme ตั้งต้น</td>
+</tr>
+<tr>
+<td><code>refresh-data</code></td>
+<td>core</td>
+<td>ส่ง <code>sync-application</code> ของแอปนั้น + <code>sync-permission</code> ขึ้นไปใหม่ แล้วล้าง cache ของตัวเอง</td>
+</tr>
+<tr>
+<td><code>sync-app-certificate</code></td>
+<td>core</td>
+<td>เก็บ App Certificate ของ service ในแอป</td>
+</tr>
+<tr>
+<td><code>sync-app-credential</code></td>
+<td>authentication</td>
+<td>เก็บ app credential (ใช้ตรวจ token / clientId)</td>
+</tr>
+<tr>
+<td><code>sync-service-setting</code></td>
+<td>core</td>
+<td>เก็บ service setting ของ application</td>
+</tr>
+<tr>
+<td><code>sync-app-service-setting</code></td>
+<td>core</td>
+<td>เก็บ app service setting (ใช้ตอบ <code>getConfigByHost</code>)</td>
+</tr>
+<tr>
+<td><code>sync-user-policy</code></td>
+<td>access-control</td>
+<td>เก็บ UserPolicy ใช้ตรวจ permission ของ API</td>
+</tr>
+</tbody>
+</table>
+<p>รายละเอียด payload ของแต่ละ topic ดูที่ <a href="../serviceX/">สิ่งที่ Service ต้องมี</a></p>
+<hr />
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="sync-application">sync-application<a class="headerlink" href="#sync-application" title="Permanent link">&para;</a></h3>
+<p>ข้อมูลแอป กระจายให้ทุก service (รวม core)</p>
+<pre><code>topic: sync-application
+header: appKey
+Action: ADD (สร้าง / แก้ไข) | REMOVE (ลบ)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key ใน <code>application</code></th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>appName</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>iconImageKey / logoImageKey / backgroundImageKey</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>boolean</td>
+<td></td>
+</tr>
+<tr>
+<td>isSystem</td>
+<td>boolean</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">sync-permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>permission ของ API ใน application ส่งให้ access-control (ตอบ refresh-data)</p>
+<pre><code>topic: sync-permission
+header: appKey, serviceKey = access-control
+Action: ADD
+</code></pre>
+<p>payload ดูที่ <a href="../serviceX/">สิ่งที่ Service ต้องมี › sync-permission</a></p>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-application-service@45a5f62 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

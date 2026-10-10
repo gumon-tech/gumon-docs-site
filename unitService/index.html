@@ -1,0 +1,7347 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/unitService/">
+      
+      
+        <link rel="prev" href="../aclService/">
+      
+      
+        <link rel="next" href="../userService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Unit Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#unit-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Unit Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topic-มาตรฐาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        topic มาตรฐาน
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-admin-app-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add-admin-app-role
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-custom-running-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register-custom-running-number
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-running-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate-running-number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduleService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topic-มาตรฐาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        topic มาตรฐาน
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-admin-app-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add-admin-app-role
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-custom-running-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register-custom-running-number
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-running-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate-running-number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="unit-service">Unit Service<a class="headerlink" href="#unit-service" title="Permanent link">&para;</a></h1>
+<p>Service สำหรับจัดการโครงสร้างองค์กรและ role ของแต่ละแอป</p>
+<pre><code>serviceKey: unit
+</code></pre>
+<p>หน้าที่หลัก</p>
+<ul>
+<li><strong>Organization</strong> — องค์กร / หน่วยงาน เป็นโครงต้นไม้ (<code>parentOrganizationId</code>, <code>organizationPath</code>) มีองค์กรสาธารณะ (<code>isPublic</code>) และการอนุมัติองค์กร</li>
+<li><strong>Organization Type / Organization Tag</strong> — ประเภทและแท็กขององค์กร (เป็นต้นไม้เช่นกัน)</li>
+<li><strong>Organization Approve</strong> — ใบอนุมัติองค์กรและรายละเอียดประกอบ สถานะ <code>INPROGRESS</code>, <code>APPROVED</code>, <code>REJECTED</code>, <code>NEED_MORE_INFORMATION</code></li>
+<li><strong>Contact</strong> — ผู้ติดต่อขององค์กร (<code>organizationContact</code>), บุคคลติดต่อ (<code>organizationContactPeople</code>), ความสัมพันธ์ (<code>organizationContactRelation</code>) และประเภทลูกค้า (<code>customerType</code>)</li>
+<li><strong>Role</strong> — นิยาม <code>appRole</code> (ทั้งแอป), <code>organizationRole</code> (ต่อองค์กร) และ <code>defaultOrganizationRole</code> (แม่แบบ role ที่ทุกองค์กรใหม่จะได้อัตโนมัติ) · การผูก permission / เมนู / ผู้ใช้เข้ากับ role ทำที่ <a href="../aclService/">ACL Service</a></li>
+<li><strong>Custom Running Number</strong> — เลขรันนิ่ง (เช่น เลขเอกสาร) ระดับแอปหรือองค์กร ตาม pattern / รอบ ปี-เดือน-วัน</li>
+</ul>
+<p>หน้าที่ของ Label Service เดิม (label ขององค์กร หน่วยงาน ตำแหน่ง role) ถูกรวมมาไว้ที่ service นี้แล้ว ในรูปของ organization, organization type / tag และ role ข้างบน · ดู <a href="../labelService/">Label Service (เลิกใช้)</a></p>
+<p>การสร้างองค์กรใหม่ จะสร้าง organizationRole จาก defaultOrganizationRole ทุกตัวให้อัตโนมัติ และสร้างใบอนุมัติองค์กร</p>
+<p><br></p>
+<ul>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">Kafka Produce Reference</a></li>
+</ul>
+<hr />
+<p><br>
+<br></p>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>การยืนยันตัวตนและ header ดูที่ <a href="../authenticationService/#app-credential">Authentication Service</a> · "สิทธิ์" คือ permissionKey ของ service <code>unit</code> ที่ได้รับผ่าน role ใน <a href="../aclService/">ACL Service</a> · "ระดับองค์กร" หมายถึงสิทธิ์ที่ให้แยกตามองค์กร</p>
+<p>นอกจาก GraphQL มี REST สำหรับนำเข้าผู้ติดต่อจากไฟล์ CSV: <code>POST /organization-contact/import</code> (multipart: <code>file</code> เป็น CSV, <code>organizationKey</code>) · ต้อง login · สิทธิ์ <code>importOrganizationContact</code></p>
+<hr />
+<p><strong>สรุป API ทั้งหมด 94 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#getapproles">getAppRoles</a></td>
+<td>ดึงข้อมูล appRoles ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getapprolebyid">getAppRoleById</a></td>
+<td>ดึงข้อมูล appRoles ตาม ID ถ้าอยากค้นหาข้าม appKey จำเป็นต้องระบุ input.appKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getapprolebykey">getAppRoleByKey</a></td>
+<td>ดึงข้อมูล appRoles ตาม appRoleKey ถ้าอยากค้นหาข้าม appKey จำเป็นต้องระบุ input.appKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberlogs">getCustomRunningNumberLogs</a></td>
+<td>ดึงข้อมูล custom running number log ทั้งหมด</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberlogbyorganizationkey">getCustomRunningNumberLogByOrganizationKey</a></td>
+<td>ดึงข้อมูل custom running number log ตาม organization key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberlogbyid">getCustomRunningNumberLogById</a></td>
+<td>ดึงข้อมูล custom running number log ตาม id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberlogbycustomrunningnumberid">getCustomRunningNumberLogByCustomRunningNumberId</a></td>
+<td>ดึงข้อมูล custom running number log ตาม custom running number id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumbers">getCustomRunningNumbers</a></td>
+<td>ดึงข้อมูล custom running number ทั้งหมด</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberbyorganizationkey">getCustomRunningNumberByOrganizationKey</a></td>
+<td>ดึงข้อมูล custom running number ตาม organization key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberbyid">getCustomRunningNumberById</a></td>
+<td>ดึงข้อมูล custom running number ตาม id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberbykey">getCustomRunningNumberByKey</a></td>
+<td>ดึงข้อมูล custom running number ตาม key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomrunningnumberbyrefkey">getCustomRunningNumberByRefKey</a></td>
+<td>ดึงข้อมูล custom running number ตาม ref key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getnextrunningnumber">getNextRunningNumber</a></td>
+<td>ขอ running number ถัดไป ตาม custom running number id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomertypes">getCustomerTypes</a></td>
+<td>ดึงข้อมูล customer type ทั้งหมด</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomertypebyorganizationkey">getCustomerTypeByOrganizationKey</a></td>
+<td>ดึงข้อมูล customer type ตาม organization key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomertypebyid">getCustomerTypeById</a></td>
+<td>ดึงข้อมูล customer type ตาม id</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getcustomertypebykey">getCustomerTypeByKey</a></td>
+<td>ดึงข้อมูล customer type ตาม key</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getdefaultorganizationroles">getDefaultOrganizationRoles</a></td>
+<td>ดึงข้อมูล defaultOrganizationRoles ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getdefaultorganizationrolebyid">getDefaultOrganizationRoleById</a></td>
+<td>ดึงข้อมูล defaultOrganizationRole ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationapprovedetails">getOrganizationApproveDetails</a></td>
+<td>ดึงข้อมูล Details ของใบอนุมัติ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationapprovedetailbyid">getOrganizationApproveDetailById</a></td>
+<td>ดึงข้อมูล Details ของใบอนุมัติตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationapproves">getOrganizationApproves</a></td>
+<td>ดึงข้อมูล organizationApprove ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationapprovebyid">getOrganizationApproveById</a></td>
+<td>ดึงข้อมูล organizationApprove ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationapprovebykey">getOrganizationApproveByKey</a></td>
+<td>ดึงข้อมูล organizationApprove ตาม organizationKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactpeoples">getOrganizationContactPeoples</a></td>
+<td>ดึงข้อมูล organizationContactPeoples ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactpeoplebyid">getOrganizationContactPeopleById</a></td>
+<td>ดึงข้อมูล organizationContactPeoples ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactpeoplebykey">getOrganizationContactPeopleByKey</a></td>
+<td>ดึงข้อมูล organizationContactPeoples ตาม organizationContactPeopleKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactrelations">getOrganizationContactRelations</a></td>
+<td>ดึงข้อมูล organizationContactRelations ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactrelationbyid">getOrganizationContactRelationById</a></td>
+<td>ดึงข้อมูล organizationContactRelation ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactrelationbykey">getOrganizationContactRelationByKey</a></td>
+<td>ดึงข้อมูล organizationContactRelation ตาม organizationContactRelationKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontacts">getOrganizationContacts</a></td>
+<td>ดึงข้อมูล organizationContacts ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactbyid">getOrganizationContactById</a></td>
+<td>ดึงข้อมูล organizationContacts ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactbykey">getOrganizationContactByKey</a></td>
+<td>ดึงข้อมูล organizationContacts ตาม organizationContactKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationcontactbytaxid">getOrganizationContactByTaxID</a></td>
+<td>ดึงข้อมูล organizationContacts ตาม taxIdentificationNumber</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationroles">getOrganizationRoles</a></td>
+<td>ดึงข้อมูล organizationRoles ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationrolesbyorganizationkey">getOrganizationRolesByOrganizationKey</a></td>
+<td>ดึงข้อมูล organizationRoles ตาม organizationKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationrolebyid">getOrganizationRoleById</a></td>
+<td>ดึงข้อมูล organizationRoles ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationrolebykey">getOrganizationRoleByKey</a></td>
+<td>ดึงข้อมูล organizationRoles ตาม organizationRoleKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationtags">getOrganizationTags</a></td>
+<td>ดึงข้อมูล organizationTags ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationtagbyid">getOrganizationTagById</a></td>
+<td>ดึงข้อมูล organizationTags ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationtagbykey">getOrganizationTagByKey</a></td>
+<td>ดึงข้อมูล organizationTags ตาม</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationtypes">getOrganizationTypes</a></td>
+<td>ดึงข้อมูล organizationTypes ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationtypebyid">getOrganizationTypeById</a></td>
+<td>ดึงข้อมูล organizationTypes ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationtypebykey">getOrganizationTypeByKey</a></td>
+<td>ดึงข้อมูล organizationTypes ตาม</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizations">getOrganizations</a></td>
+<td>ดึงข้อมูล organizations</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationbyid">getOrganizationById</a></td>
+<td>ดึงข้อมูล organizations ตาม ID</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getorganizationbykey">getOrganizationByKey</a></td>
+<td>ดึงข้อมูล organizations ตาม organizationKey</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getpublicorganizations">getPublicOrganizations</a></td>
+<td>ดึงข้อมูล organizations ที่ isPublic = true AND isApproved = true AND isActive = true</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getpublicorganizationbyid">getPublicOrganizationById</a></td>
+<td>ดึงข้อมูล organizations ตาม ID ที่ isPublic = true AND isApproved = true AND isActive =…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getpublicorganizationbykey">getPublicOrganizationByKey</a></td>
+<td>ดึงข้อมูล organizations ตาม organizationKey ที่ isPublic = true AND isApproved = true A…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getuserorganizations">getUserOrganizations</a></td>
+<td>ดึงข้อมูล userOrganizations ทั้งหมดที่มีในระบบ</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#getuserorganizationbyid">getUserOrganizationById</a></td>
+<td>ดึงข้อมูล userOrganization โดย id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createapprole">createAppRole</a></td>
+<td>สร้างข้อมูล AppRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateapprole">updateAppRole</a></td>
+<td>แก้ไขข้อมูล AppRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteapprole">deleteAppRole</a></td>
+<td>ลบข้อมูล AppRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deletecustomrunningnumberlog">deleteCustomRunningNumberLog</a></td>
+<td>ลบ custom running number log ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createcustomrunningnumber">createCustomRunningNumber</a></td>
+<td>สร้าง custom running number</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatecustomrunningnumber">updateCustomRunningNumber</a></td>
+<td>แก้ไข custom running number ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deletecustomrunningnumber">deleteCustomRunningNumber</a></td>
+<td>ลบ custom running number ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#usecustomrunningnumber">useCustomRunningNumber</a></td>
+<td>ใช้ custom running number ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createcustomertype">createCustomerType</a></td>
+<td>สร้าง customer type</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatecustomertype">updateCustomerType</a></td>
+<td>แก้ไข customer type ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deletecustomertype">deleteCustomerType</a></td>
+<td>ลบ customer type ตาม id</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createdefaultorganizationrole">createDefaultOrganizationRole</a></td>
+<td>สร้างข้อมูล DefaultOrganizationRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updatedefaultorganizationrole">updateDefaultOrganizationRole</a></td>
+<td>แก้ไขข้อมูล DefaultOrganizationRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deletedefaultorganizationrole">deleteDefaultOrganizationRole</a></td>
+<td>ลบข้อมูล DefaultOrganizationRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationapprovedetail">createOrganizationApproveDetail</a></td>
+<td>สร้างข้อมูล OrganizationApproveDetail</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationapprovedetail">updateOrganizationApproveDetail</a></td>
+<td>แก้ไขข้อมูล OrganizationApproveDetail</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationapprovedetail">deleteOrganizationApproveDetail</a></td>
+<td>ลบข้อมูล OrganizationApproveDetail</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#setorganizationapprovestatustoinprogress">setOrganizationApproveStatusToInProgress</a></td>
+<td>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น IN_PROGRESS</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#setorganizationapprovestatustoapproved">setOrganizationApproveStatusToApproved</a></td>
+<td>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น APPROVED</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#setorganizationapprovestatustorejected">setOrganizationApproveStatusToRejected</a></td>
+<td>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น REJECTED</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#setorganizationapprovestatustoneedmoreinformation">setOrganizationApproveStatusToNeedMoreInformation</a></td>
+<td>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น NEED_MORE_INFORMATION</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationcontactpeople">createOrganizationContactPeople</a></td>
+<td>สร้างข้อมูล OrganizationContactPeople</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationcontactpeople">updateOrganizationContactPeople</a></td>
+<td>แก้ไขข้อมูล OrganizationContactPeople</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationcontactpeople">deleteOrganizationContactPeople</a></td>
+<td>ลบข้อมูล OrganizationContactPeople</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationcontactrelation">createOrganizationContactRelation</a></td>
+<td>สร้างข้อมูล OrganizationContactRelation</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationcontactrelation">updateOrganizationContactRelation</a></td>
+<td>แก้ไขข้อมูล OrganizationContactRelation</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationcontactrelation">deleteOrganizationContactRelation</a></td>
+<td>ลบข้อมูล OrganizationContactRelation</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationcontact">createOrganizationContact</a></td>
+<td>สร้างข้อมูล OrganizationContact</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationcontact">updateOrganizationContact</a></td>
+<td>แก้ไขข้อมูล OrganizationContact</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationcontact">deleteOrganizationContact</a></td>
+<td>ลบข้อมูล OrganizationContact</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationrole">createOrganizationRole</a></td>
+<td>สร้างข้อมูล OrganizationRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationrole">updateOrganizationRole</a></td>
+<td>แก้ไขข้อมูล OrganizationRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationrole">deleteOrganizationRole</a></td>
+<td>ลบข้อมูล OrganizationRole</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationtag">createOrganizationTag</a></td>
+<td>สร้างข้อมูล OrganizationTag</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationtag">updateOrganizationTag</a></td>
+<td>แก้ไขข้อมูล OrganizationTag ถ้ามีลูก ห้ามแก้ organizationParent</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationtag">deleteOrganizationTag</a></td>
+<td>ลบข้อมูล OrganizationTag ถ้ามีลูก ห้ามลบ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganizationtype">createOrganizationType</a></td>
+<td>สร้างข้อมูล OrganizationType</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganizationtype">updateOrganizationType</a></td>
+<td>แก้ไขข้อมูล OrganizationType ถ้ามีลูก ห้ามแก้ organizationParent</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganizationtype">deleteOrganizationType</a></td>
+<td>ลบข้อมูล OrganizationType ถ้ามีลูก ห้ามลบ</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#createorganization">createOrganization</a></td>
+<td>สร้างข้อมูล Organization</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#updateorganization">updateOrganization</a></td>
+<td>แก้ไขข้อมูล Organization ถ้ามีลูก ห้ามแก้ organizationParent</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#deleteorganization">deleteOrganization</a></td>
+<td>ลบข้อมูล Organization ถ้ามีลูก ห้ามลบ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการ Query ข้อมูลออกมา ไม่มีการแก้ไข Data</p>
+<hr />
+<h4 id="getapproles">getAppRoles<a class="headerlink" href="#getapproles" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล appRoles ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getAppRoles</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetAppRoles($input: GetAppRoleInput) {
+  getAppRoles(input: $input) {
+    appRoles { _id appRoleKey title subTitle description systemNote }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetAppRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetAppRoleFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetAppRoleSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetAppRoleSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppRolePagination!</code></p>
+<hr />
+<h4 id="getapprolebyid">getAppRoleById<a class="headerlink" href="#getapprolebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล appRoles ตาม ID ถ้าอยากค้นหาข้าม appKey จำเป็นต้องระบุ input.appKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getAppRoleById</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetAppRoleById($appRoleId: ID!, $appKey: String) {
+  getAppRoleById(appRoleId: $appRoleId, appKey: $appKey) {
+    _id
+    appRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    createdBy
+    updatedBy
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appRoleId</td>
+<td><code>ID!</code></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppRole!</code></p>
+<hr />
+<h4 id="getapprolebykey">getAppRoleByKey<a class="headerlink" href="#getapprolebykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล appRoles ตาม appRoleKey ถ้าอยากค้นหาข้าม appKey จำเป็นต้องระบุ input.appKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getAppRoleByKey</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetAppRoleByKey($appRoleKey: String!, $appKey: String) {
+  getAppRoleByKey(appRoleKey: $appRoleKey, appKey: $appKey) {
+    _id
+    appRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    createdBy
+    updatedBy
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appRoleKey</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppRole!</code></p>
+<hr />
+<h4 id="getcustomrunningnumberlogs">getCustomRunningNumberLogs<a class="headerlink" href="#getcustomrunningnumberlogs" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number log ทั้งหมด</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberLogs</code></li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberLogs($getInput: GetCustomRunningNumberLogInput) {
+  getCustomRunningNumberLogs(getInput: $getInput) {
+    customRunningNumberLogs { _id organizationId organizationKey customRunningNumberId customRunningNumberKey generatedCode }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomRunningNumberLogInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomRunningNumberLogFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomRunningNumberLogSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomRunningNumberLogSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumberLogPagination</code></p>
+<hr />
+<h4 id="getcustomrunningnumberlogbyorganizationkey">getCustomRunningNumberLogByOrganizationKey<a class="headerlink" href="#getcustomrunningnumberlogbyorganizationkey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูل custom running number log ตาม organization key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberLogByOrganizationKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberLogByOrganizationKey($organizationKey: String!, $getInput: GetCustomRunningNumberLogByOrganizationKeyInput) {
+  getCustomRunningNumberLogByOrganizationKey(organizationKey: $organizationKey, getInput: $getInput) {
+    customRunningNumberLogs { _id organizationId organizationKey customRunningNumberId customRunningNumberKey generatedCode }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomRunningNumberLogByOrganizationKeyInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomRunningNumberLogByOrganizationKeyFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomRunningNumberLogByOrganizationKeySearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomRunningNumberLogSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationKey: String!</code></p>
+<p>Response: <code>CustomRunningNumberLogPagination</code></p>
+<hr />
+<h4 id="getcustomrunningnumberlogbyid">getCustomRunningNumberLogById<a class="headerlink" href="#getcustomrunningnumberlogbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number log ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberLogById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberLogById($customRunningNumberLogId: String!) {
+  getCustomRunningNumberLogById(customRunningNumberLogId: $customRunningNumberLogId) {
+    _id
+    organizationId
+    organizationKey
+    customRunningNumberId
+    customRunningNumberKey
+    generatedCode
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberLogId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumberLog</code></p>
+<hr />
+<h4 id="getcustomrunningnumberlogbycustomrunningnumberid">getCustomRunningNumberLogByCustomRunningNumberId<a class="headerlink" href="#getcustomrunningnumberlogbycustomrunningnumberid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number log ตาม custom running number id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberLogByCustomRunningNumberId</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberLogByCustomRunningNumberId($customRunningNumberId: String!, $getInput: GetCustomRunningNumberLogByCustomRunningNumberIdInput) {
+  getCustomRunningNumberLogByCustomRunningNumberId(customRunningNumberId: $customRunningNumberId, getInput: $getInput) {
+    customRunningNumberLogs { _id organizationId organizationKey customRunningNumberId customRunningNumberKey generatedCode }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomRunningNumberLogByCustomRunningNumberIdInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomRunningNumberLogByCustomRunningNumberIdFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomRunningNumberLogByCustomRunningNumberIdSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomRunningNumberLogSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>customRunningNumberId: String!</code></p>
+<p>Response: <code>CustomRunningNumberLogPagination</code></p>
+<hr />
+<h4 id="getcustomrunningnumbers">getCustomRunningNumbers<a class="headerlink" href="#getcustomrunningnumbers" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number ทั้งหมด</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumbers</code></li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumbers($getInput: GetCustomRunningNumberInput) {
+  getCustomRunningNumbers(getInput: $getInput) {
+    customRunningNumbers { _id level organizationId organizationKey customRunningNumberKey refKey }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomRunningNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomRunningNumberFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomRunningNumberSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomRunningNumberSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumberPagination</code></p>
+<hr />
+<h4 id="getcustomrunningnumberbyorganizationkey">getCustomRunningNumberByOrganizationKey<a class="headerlink" href="#getcustomrunningnumberbyorganizationkey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number ตาม organization key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberByOrganizationKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberByOrganizationKey($organizationKey: String!, $getInput: GetCustomRunningNumberByOrganizationKeyInput) {
+  getCustomRunningNumberByOrganizationKey(organizationKey: $organizationKey, getInput: $getInput) {
+    customRunningNumbers { _id level organizationId organizationKey customRunningNumberKey refKey }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomRunningNumberByOrganizationKeyInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomRunningNumberByOrganizationKeyFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomRunningNumberByOrganizationKeySearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomRunningNumberSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationKey: String!</code></p>
+<p>Response: <code>CustomRunningNumberPagination</code></p>
+<hr />
+<h4 id="getcustomrunningnumberbyid">getCustomRunningNumberById<a class="headerlink" href="#getcustomrunningnumberbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberById($customRunningNumberId: String!) {
+  getCustomRunningNumberById(customRunningNumberId: $customRunningNumberId) {
+    _id
+    level
+    organizationId
+    organizationKey
+    customRunningNumberKey
+    refKey
+    order
+    title
+    description
+    serial
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumber</code></p>
+<hr />
+<h4 id="getcustomrunningnumberbykey">getCustomRunningNumberByKey<a class="headerlink" href="#getcustomrunningnumberbykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number ตาม key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberByKey($customRunningNumberKey: String!) {
+  getCustomRunningNumberByKey(customRunningNumberKey: $customRunningNumberKey) {
+    _id
+    level
+    organizationId
+    organizationKey
+    customRunningNumberKey
+    refKey
+    order
+    title
+    description
+    serial
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumber</code></p>
+<hr />
+<h4 id="getcustomrunningnumberbyrefkey">getCustomRunningNumberByRefKey<a class="headerlink" href="#getcustomrunningnumberbyrefkey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล custom running number ตาม ref key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomRunningNumberByRefKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomRunningNumberByRefKey($refKey: String!, $getInput: GetCustomRunningNumberByRefKeyInput) {
+  getCustomRunningNumberByRefKey(refKey: $refKey, getInput: $getInput) {
+    customRunningNumbers { _id level organizationId organizationKey customRunningNumberKey refKey }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomRunningNumberByRefKeyInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomRunningNumberByRefKeyFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomRunningNumberByRefKeySearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomRunningNumberSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>refKey: String!</code></p>
+<p>Response: <code>CustomRunningNumberPagination</code></p>
+<hr />
+<h4 id="getnextrunningnumber">getNextRunningNumber<a class="headerlink" href="#getnextrunningnumber" title="Permanent link">&para;</a></h4>
+<p>ขอ running number ถัดไป ตาม custom running number id</p>
+<p>ดูเลขถัดไปโดยยังไม่บันทึกการใช้</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getNextRunningNumber</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetNextRunningNumber($customRunningNumberId: String!) {
+  getNextRunningNumber(customRunningNumberId: $customRunningNumberId)
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>String</code></p>
+<hr />
+<h4 id="getcustomertypes">getCustomerTypes<a class="headerlink" href="#getcustomertypes" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล customer type ทั้งหมด</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomerTypes</code></li>
+</ul>
+<pre><code class="language-graphql">query GetCustomerTypes($getInput: GetCustomerTypeInput) {
+  getCustomerTypes(getInput: $getInput) {
+    customerTypes { _id organizationId organizationKey customerTypeKey customerTypeCode title }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomerTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomerTypeFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomerTypeSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomerTypeSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomerTypePagination</code></p>
+<hr />
+<h4 id="getcustomertypebyorganizationkey">getCustomerTypeByOrganizationKey<a class="headerlink" href="#getcustomertypebyorganizationkey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล customer type ตาม organization key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomerTypeByOrganizationKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomerTypeByOrganizationKey($organizationKey: String!, $getInput: GetCustomerTypeByOrganizationKeyInput) {
+  getCustomerTypeByOrganizationKey(organizationKey: $organizationKey, getInput: $getInput) {
+    customerTypes { _id organizationId organizationKey customerTypeKey customerTypeCode title }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetCustomerTypeByOrganizationKeyInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetCustomerTypeByOrganizationKeyFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetCustomerTypeByOrganizationKeySearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetCustomerTypeSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationKey: String!</code></p>
+<p>Response: <code>CustomerTypePagination</code></p>
+<hr />
+<h4 id="getcustomertypebyid">getCustomerTypeById<a class="headerlink" href="#getcustomertypebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล customer type ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomerTypeById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomerTypeById($customerTypeId: String!) {
+  getCustomerTypeById(customerTypeId: $customerTypeId) {
+    _id
+    organizationId
+    organizationKey
+    customerTypeKey
+    customerTypeCode
+    title
+    subTitle
+    description
+    isActive
+    createdBy
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customerTypeId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomerType</code></p>
+<hr />
+<h4 id="getcustomertypebykey">getCustomerTypeByKey<a class="headerlink" href="#getcustomertypebykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล customer type ตาม key</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getCustomerTypeByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetCustomerTypeByKey($customerTypeKey: String!) {
+  getCustomerTypeByKey(customerTypeKey: $customerTypeKey) {
+    _id
+    organizationId
+    organizationKey
+    customerTypeKey
+    customerTypeCode
+    title
+    subTitle
+    description
+    isActive
+    createdBy
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customerTypeKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomerType</code></p>
+<hr />
+<h4 id="getdefaultorganizationroles">getDefaultOrganizationRoles<a class="headerlink" href="#getdefaultorganizationroles" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล defaultOrganizationRoles ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getDefaultOrganizationRoles</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetDefaultOrganizationRoles($getInput: GetDefaultOrganizationRoleInput, $appKey: String) {
+  getDefaultOrganizationRoles(getInput: $getInput, appKey: $appKey) {
+    defaultOrganizationRoles { _id defaultOrganizationRoleKey title subTitle description systemNote }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetDefaultOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetDefaultOrganizationRoleFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetDefaultOrganizationRoleSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetDefaultOrganizationRoleSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appKey: String</code></p>
+<p>Response: <code>DefaultOrganizationRolePagination!</code></p>
+<hr />
+<h4 id="getdefaultorganizationrolebyid">getDefaultOrganizationRoleById<a class="headerlink" href="#getdefaultorganizationrolebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล defaultOrganizationRole ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getDefaultOrganizationRoleById</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">query GetDefaultOrganizationRoleById($defaultOrganizationRoleId: ID!, $appKey: String) {
+  getDefaultOrganizationRoleById(defaultOrganizationRoleId: $defaultOrganizationRoleId, appKey: $appKey) {
+    _id
+    defaultOrganizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isActive
+    createdBy
+    updatedBy
+    createdAt
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>defaultOrganizationRoleId</td>
+<td><code>ID!</code></td>
+</tr>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>DefaultOrganizationRole!</code></p>
+<hr />
+<h4 id="getorganizationapprovedetails">getOrganizationApproveDetails<a class="headerlink" href="#getorganizationapprovedetails" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล Details ของใบอนุมัติ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationApproveDetails</code></li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationApproveDetails($organizationKey: String!, $input: GetOrganizationApproveDetailInput) {
+  getOrganizationApproveDetails(organizationKey: $organizationKey, input: $input) {
+    organizationApproveDetails { _id organizationId organizationKey organizationApproveId timeStamp isAuto }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationApproveDetailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationApproveDetailFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationApproveDetailSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationApproveDetailSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationKey: String!</code></p>
+<p>Response: <code>OrganizationApproveDetailPagination!</code></p>
+<hr />
+<h4 id="getorganizationapprovedetailbyid">getOrganizationApproveDetailById<a class="headerlink" href="#getorganizationapprovedetailbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล Details ของใบอนุมัติตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationApproveDetailById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationApproveDetailById($organizationApproveDetailId: ID!) {
+  getOrganizationApproveDetailById(organizationApproveDetailId: $organizationApproveDetailId) {
+    _id
+    organizationId
+    organizationKey
+    organizationApproveId
+    timeStamp
+    isAuto
+    isActive
+    text
+    files
+    images
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationApproveDetailId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApproveDetail!</code></p>
+<hr />
+<h4 id="getorganizationapproves">getOrganizationApproves<a class="headerlink" href="#getorganizationapproves" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationApprove ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationApprove</code></li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationApproves($input: GetOrganizationApproveInput) {
+  getOrganizationApproves(input: $input) {
+    organizationApproves { _id organizationId organizationKey approveStatus createdBy updatedBy }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationApproveInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationApproveFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationApproveSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationApproveSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprovePagination!</code></p>
+<hr />
+<h4 id="getorganizationapprovebyid">getOrganizationApproveById<a class="headerlink" href="#getorganizationapprovebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationApprove ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationApproveById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationApproveById($organizationApproveId: ID!) {
+  getOrganizationApproveById(organizationApproveId: $organizationApproveId) {
+    _id
+    organizationId
+    organizationKey
+    organization { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    approveStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationApproveId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprove!</code></p>
+<hr />
+<h4 id="getorganizationapprovebykey">getOrganizationApproveByKey<a class="headerlink" href="#getorganizationapprovebykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationApprove ตาม organizationKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationApproveByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationApproveByKey($organizationKey: String!) {
+  getOrganizationApproveByKey(organizationKey: $organizationKey) {
+    _id
+    organizationId
+    organizationKey
+    organization { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    approveStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprove!</code></p>
+<hr />
+<h4 id="getorganizationcontactpeoples">getOrganizationContactPeoples<a class="headerlink" href="#getorganizationcontactpeoples" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContactPeoples ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactPeoples</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactPeoples($input: GetOrganizationContactPeopleInput) {
+  getOrganizationContactPeoples(input: $input) {
+    organizationContactPeoples { _id organizationId organizationKey organizationPath organizationContactPeopleKey name }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationContactPeopleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationContactPeopleFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationContactPeopleSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationContactPeopleSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactPeoplePagination!</code></p>
+<hr />
+<h4 id="getorganizationcontactpeoplebyid">getOrganizationContactPeopleById<a class="headerlink" href="#getorganizationcontactpeoplebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContactPeoples ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactPeopleById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactPeopleById($organizationContactPeopleId: ID!) {
+  getOrganizationContactPeopleById(organizationContactPeopleId: $organizationContactPeopleId) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactPeopleKey
+    name
+    description
+    address { address1 address2 address3 city subdivision postalCode }
+    phoneNumber
+    position
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactPeopleId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactPeople!</code></p>
+<hr />
+<h4 id="getorganizationcontactpeoplebykey">getOrganizationContactPeopleByKey<a class="headerlink" href="#getorganizationcontactpeoplebykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContactPeoples ตาม organizationContactPeopleKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactPeopleByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactPeopleByKey($organizationContactPeopleKey: String!) {
+  getOrganizationContactPeopleByKey(organizationContactPeopleKey: $organizationContactPeopleKey) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactPeopleKey
+    name
+    description
+    address { address1 address2 address3 city subdivision postalCode }
+    phoneNumber
+    position
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactPeopleKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactPeople!</code></p>
+<hr />
+<h4 id="getorganizationcontactrelations">getOrganizationContactRelations<a class="headerlink" href="#getorganizationcontactrelations" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContactRelations ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactRelations</code></li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactRelations($input: GetOrganizationContactRelationInput) {
+  getOrganizationContactRelations(input: $input) {
+    organizationContactRelations { _id organizationId organizationKey organizationPath organizationContactRelationKey organizationContactId }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationContactRelationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationContactRelationFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationContactRelationSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationContactRelationSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactRelationPagination</code></p>
+<hr />
+<h4 id="getorganizationcontactrelationbyid">getOrganizationContactRelationById<a class="headerlink" href="#getorganizationcontactrelationbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContactRelation ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactRelationById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactRelationById($relationId: ID!) {
+  getOrganizationContactRelationById(relationId: $relationId) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactRelationKey
+    organizationContactId
+    organizationContactKey
+    organizationContact { _id organizationId organizationKey organizationPath organizationContactKey organizationContactCode }
+    organizationContactPeopleId
+    organizationContactPeopleKey
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>relationId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactRelation</code></p>
+<hr />
+<h4 id="getorganizationcontactrelationbykey">getOrganizationContactRelationByKey<a class="headerlink" href="#getorganizationcontactrelationbykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContactRelation ตาม organizationContactRelationKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactRelationByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactRelationByKey($relationKey: String!) {
+  getOrganizationContactRelationByKey(relationKey: $relationKey) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactRelationKey
+    organizationContactId
+    organizationContactKey
+    organizationContact { _id organizationId organizationKey organizationPath organizationContactKey organizationContactCode }
+    organizationContactPeopleId
+    organizationContactPeopleKey
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>relationKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactRelation</code></p>
+<hr />
+<h4 id="getorganizationcontacts">getOrganizationContacts<a class="headerlink" href="#getorganizationcontacts" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContacts ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContacts</code></li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContacts($input: GetOrganizationContactInput) {
+  getOrganizationContacts(input: $input) {
+    organizationContacts { _id organizationId organizationKey organizationPath organizationContactKey organizationContactCode }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationContactInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationContactFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationContactSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationContactSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactPagination!</code></p>
+<hr />
+<h4 id="getorganizationcontactbyid">getOrganizationContactById<a class="headerlink" href="#getorganizationcontactbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContacts ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactById($organizationContactId: ID!) {
+  getOrganizationContactById(organizationContactId: $organizationContactId) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactKey
+    organizationContactCode
+    name
+    name2
+    name3
+    description
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContact!</code></p>
+<hr />
+<h4 id="getorganizationcontactbykey">getOrganizationContactByKey<a class="headerlink" href="#getorganizationcontactbykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContacts ตาม organizationContactKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationContactByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactByKey($organizationContactKey: String!) {
+  getOrganizationContactByKey(organizationContactKey: $organizationContactKey) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactKey
+    organizationContactCode
+    name
+    name2
+    name3
+    description
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContact!</code></p>
+<hr />
+<h4 id="getorganizationcontactbytaxid">getOrganizationContactByTaxID<a class="headerlink" href="#getorganizationcontactbytaxid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationContacts ตาม taxIdentificationNumber</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationContactByTaxID($organizationKey: String!, $taxIdentificationNumber: String!) {
+  getOrganizationContactByTaxID(organizationKey: $organizationKey, taxIdentificationNumber: $taxIdentificationNumber) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactKey
+    organizationContactCode
+    name
+    name2
+    name3
+    description
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>taxIdentificationNumber</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContact</code></p>
+<hr />
+<h4 id="getorganizationroles">getOrganizationRoles<a class="headerlink" href="#getorganizationroles" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationRoles ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationRoles</code></li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationRoles($input: GetOrganizationRoleInput) {
+  getOrganizationRoles(input: $input) {
+    organizationRoles { _id organizationId organizationKey organizationRoleKey title subTitle }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationRoleFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationRoleSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationRoleSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationRolePagination!</code></p>
+<hr />
+<h4 id="getorganizationrolesbyorganizationkey">getOrganizationRolesByOrganizationKey<a class="headerlink" href="#getorganizationrolesbyorganizationkey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationRoles ตาม organizationKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationRolesByOrganizationKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationRolesByOrganizationKey($organizationKey: String!, $input: GetOrganizationRoleInput) {
+  getOrganizationRolesByOrganizationKey(organizationKey: $organizationKey, input: $input) {
+    organizationRoles { _id organizationId organizationKey organizationRoleKey title subTitle }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationRoleFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationRoleSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationRoleSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationKey: String!</code></p>
+<p>Response: <code>OrganizationRolePagination!</code></p>
+<hr />
+<h4 id="getorganizationrolebyid">getOrganizationRoleById<a class="headerlink" href="#getorganizationrolebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationRoles ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationRoleById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationRoleById($organizationRoleId: ID!) {
+  getOrganizationRoleById(organizationRoleId: $organizationRoleId) {
+    _id
+    organizationId
+    organizationKey
+    organizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationRoleId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationRole!</code></p>
+<hr />
+<h4 id="getorganizationrolebykey">getOrganizationRoleByKey<a class="headerlink" href="#getorganizationrolebykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationRoles ตาม organizationRoleKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationRoleByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationRoleByKey($organizationRoleKey: String!, $organizationKey: String!) {
+  getOrganizationRoleByKey(organizationRoleKey: $organizationRoleKey, organizationKey: $organizationKey) {
+    _id
+    organizationId
+    organizationKey
+    organizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationRoleKey</td>
+<td><code>String!</code></td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationRole!</code></p>
+<hr />
+<h4 id="getorganizationtags">getOrganizationTags<a class="headerlink" href="#getorganizationtags" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationTags ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationTags($input: GetOrganizationTagInput) {
+  getOrganizationTags(input: $input) {
+    organizationTags { _id organizationTagKey organizationTagPath parentOrganizationTagId title subTitle }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationTagInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationTagFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationTagSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationTagSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationTagPagination!</code></p>
+<hr />
+<h4 id="getorganizationtagbyid">getOrganizationTagById<a class="headerlink" href="#getorganizationtagbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationTags ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationTagById($organizationTagId: ID!) {
+  getOrganizationTagById(organizationTagId: $organizationTagId) {
+    _id
+    organizationTagKey
+    organizationTagPath
+    parentOrganizationTagId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTagId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationTag!</code></p>
+<hr />
+<h4 id="getorganizationtagbykey">getOrganizationTagByKey<a class="headerlink" href="#getorganizationtagbykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationTags ตาม</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationTagByKey($organizationTagKey: String!) {
+  getOrganizationTagByKey(organizationTagKey: $organizationTagKey) {
+    _id
+    organizationTagKey
+    organizationTagPath
+    parentOrganizationTagId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTagKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationTag!</code></p>
+<hr />
+<h4 id="getorganizationtypes">getOrganizationTypes<a class="headerlink" href="#getorganizationtypes" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationTypes ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationTypes($input: GetOrganizationTypeInput) {
+  getOrganizationTypes(input: $input) {
+    organizationTypes { _id organizationTypeKey organizationTypePath parentOrganizationTypeId title subTitle }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationTypeFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationTypeSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationTypeSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationTypePagination!</code></p>
+<hr />
+<h4 id="getorganizationtypebyid">getOrganizationTypeById<a class="headerlink" href="#getorganizationtypebyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationTypes ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationTypeById($organizationTypeId: ID!) {
+  getOrganizationTypeById(organizationTypeId: $organizationTypeId) {
+    _id
+    organizationTypeKey
+    organizationTypePath
+    parentOrganizationTypeId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTypeId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationType!</code></p>
+<hr />
+<h4 id="getorganizationtypebykey">getOrganizationTypeByKey<a class="headerlink" href="#getorganizationtypebykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizationTypes ตาม</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationTypeByKey($organizationTypeKey: String!) {
+  getOrganizationTypeByKey(organizationTypeKey: $organizationTypeKey) {
+    _id
+    organizationTypeKey
+    organizationTypePath
+    parentOrganizationTypeId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTypeKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationType!</code></p>
+<hr />
+<h4 id="getorganizations">getOrganizations<a class="headerlink" href="#getorganizations" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizations</p>
+<p>ปกติเห็นเฉพาะองค์กรที่ผู้ใช้มีสิทธิ์ · ผู้ที่มีสิทธิ์ <code>queryAllOrganizations</code> เห็นทุกองค์กรในแอป</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizations</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizations($input: GetOrganizationInput) {
+  getOrganizations(input: $input) {
+    organizations { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationPagination!</code></p>
+<hr />
+<h4 id="getorganizationbyid">getOrganizationById<a class="headerlink" href="#getorganizationbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizations ตาม ID</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationById</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationById($organizationId: ID!) {
+  getOrganizationById(organizationId: $organizationId) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<h4 id="getorganizationbykey">getOrganizationByKey<a class="headerlink" href="#getorganizationbykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizations ตาม organizationKey</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getOrganizationByKey</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">query GetOrganizationByKey($organizationKey: String!) {
+  getOrganizationByKey(organizationKey: $organizationKey) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<h4 id="getpublicorganizations">getPublicOrganizations<a class="headerlink" href="#getpublicorganizations" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizations ที่ isPublic = true AND isApproved = true AND isActive = true</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetPublicOrganizations($input: GetOrganizationInput) {
+  getPublicOrganizations(input: $input) {
+    organizations { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>GetOrganizationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>GetOrganizationFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>GetOrganizationSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>GetOrganizationSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationPagination!</code></p>
+<hr />
+<h4 id="getpublicorganizationbyid">getPublicOrganizationById<a class="headerlink" href="#getpublicorganizationbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizations ตาม ID ที่ isPublic = true AND isApproved = true AND isActive = true</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetPublicOrganizationById($organizationId: ID!) {
+  getPublicOrganizationById(organizationId: $organizationId) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<h4 id="getpublicorganizationbykey">getPublicOrganizationByKey<a class="headerlink" href="#getpublicorganizationbykey" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล organizations ตาม organizationKey ที่ isPublic = true AND isApproved = true AND isActive = true</p>
+<ul>
+<li>การยืนยันตัวตน: ระดับแอป: header <code>X-APP-CLIENT-ID</code> (ไม่ต้อง login)</li>
+</ul>
+<pre><code class="language-graphql">query GetPublicOrganizationByKey($organizationKey: String!) {
+  getPublicOrganizationByKey(organizationKey: $organizationKey) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<h4 id="getuserorganizations">getUserOrganizations<a class="headerlink" href="#getuserorganizations" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล userOrganizations ทั้งหมดที่มีในระบบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getUserOrganizations</code></li>
+</ul>
+<pre><code class="language-graphql">query GetUserOrganizations($getInput: GetUserOrganizationsInput!) {
+  getUserOrganizations(getInput: $getInput) {
+    userOrganizations { _id authId organizationId organizationKey organizationPath }
+    pagination { limit page totalItems totalPages hasPrevPage hasNextPage }
+  }
+}
+</code></pre>
+<p><code>getInput</code>: <code>GetUserOrganizationsInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td><code>UserOrganizationFilterInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>search</td>
+<td><code>UserOrganizationSearchInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sort</td>
+<td><code>UserOrganizationSortInput</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>pagination</td>
+<td><code>CustomPaginateInput</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserOrganizationPagination</code></p>
+<hr />
+<h4 id="getuserorganizationbyid">getUserOrganizationById<a class="headerlink" href="#getuserorganizationbyid" title="Permanent link">&para;</a></h4>
+<p>ดึงข้อมูล userOrganization โดย id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>getUserOrganization</code></li>
+</ul>
+<pre><code class="language-graphql">query GetUserOrganizationById($id: String!) {
+  getUserOrganizationById(id: $id) {
+    _id
+    authId
+    organizationId
+    organizationKey
+    organizationPath
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>UserOrganization</code></p>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการแก้ไขข้อมูล</p>
+<hr />
+<h4 id="createapprole">createAppRole<a class="headerlink" href="#createapprole" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล AppRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createAppRole</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation CreateAppRole($createInput: CreateAppRoleInput!) {
+  createAppRole(createInput: $createInput) {
+    _id
+    appRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    createdBy
+    updatedBy
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateAppRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>สามารถสร้าง ข้าม app ได้โดยการระบุ appkey ที่อยากสร้างลงไป</td>
+</tr>
+<tr>
+<td>appRoleKey</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td></td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>isInvite</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppRole!</code></p>
+<hr />
+<h4 id="updateapprole">updateAppRole<a class="headerlink" href="#updateapprole" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล AppRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateAppRole</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateAppRole($appRoleId: ID!, $updateInput: UpdateAppRoleInput!) {
+  updateAppRole(appRoleId: $appRoleId, updateInput: $updateInput) {
+    _id
+    appRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    createdBy
+    updatedBy
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateAppRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>isInvite</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>appRoleId: ID!</code></p>
+<p>Response: <code>AppRole!</code></p>
+<hr />
+<h4 id="deleteapprole">deleteAppRole<a class="headerlink" href="#deleteapprole" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล AppRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteAppRole</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteAppRole($appRoleId: ID!) {
+  deleteAppRole(appRoleId: $appRoleId) {
+    _id
+    appRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    createdBy
+    updatedBy
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appRoleId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>AppRole!</code></p>
+<hr />
+<h4 id="deletecustomrunningnumberlog">deleteCustomRunningNumberLog<a class="headerlink" href="#deletecustomrunningnumberlog" title="Permanent link">&para;</a></h4>
+<p>ลบ custom running number log ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteCustomRunningNumberLog</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteCustomRunningNumberLog($customRunningNumberLogId: String!) {
+  deleteCustomRunningNumberLog(customRunningNumberLogId: $customRunningNumberLogId) {
+    _id
+    organizationId
+    organizationKey
+    customRunningNumberId
+    customRunningNumberKey
+    generatedCode
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberLogId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumberLog</code></p>
+<hr />
+<h4 id="createcustomrunningnumber">createCustomRunningNumber<a class="headerlink" href="#createcustomrunningnumber" title="Permanent link">&para;</a></h4>
+<p>สร้าง custom running number</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createCustomRunningNumber</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateCustomRunningNumber($createInput: CreateCustomRunningNumberInput!) {
+  createCustomRunningNumber(createInput: $createInput) {
+    _id
+    level
+    organizationId
+    organizationKey
+    customRunningNumberKey
+    refKey
+    order
+    title
+    description
+    serial
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateCustomRunningNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>level</td>
+<td><code>EnumLevel</code></td>
+<td></td>
+<td>level</td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>key ของ org ถ้าเป็น org level ต้องระบุ app level ไม่ต้องระบุ</td>
+</tr>
+<tr>
+<td>customRunningNumberKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>key ของ custom running number</td>
+</tr>
+<tr>
+<td>refKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ref key</td>
+</tr>
+<tr>
+<td>order</td>
+<td><code>Float</code></td>
+<td></td>
+<td>ลำดับ</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>serial</td>
+<td><code>EnumSerialType</code></td>
+<td></td>
+<td>ประเภท serial</td>
+</tr>
+<tr>
+<td>padding</td>
+<td><code>Int</code></td>
+<td></td>
+<td>padding</td>
+</tr>
+<tr>
+<td>pattern</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>pattern</td>
+</tr>
+<tr>
+<td>isDefault</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เป็น default หรือไม่</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumber!</code></p>
+<hr />
+<h4 id="updatecustomrunningnumber">updateCustomRunningNumber<a class="headerlink" href="#updatecustomrunningnumber" title="Permanent link">&para;</a></h4>
+<p>แก้ไข custom running number ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateCustomRunningNumber</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateCustomRunningNumber($customRunningNumberId: String!, $updateInput: UpdateCustomRunningNumberInput!) {
+  updateCustomRunningNumber(customRunningNumberId: $customRunningNumberId, updateInput: $updateInput) {
+    _id
+    level
+    organizationId
+    organizationKey
+    customRunningNumberKey
+    refKey
+    order
+    title
+    description
+    serial
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateCustomRunningNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>order</td>
+<td><code>Float</code></td>
+<td></td>
+<td>ลำดับ</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>serial</td>
+<td><code>EnumSerialType</code></td>
+<td></td>
+<td>ประเภท serial</td>
+</tr>
+<tr>
+<td>padding</td>
+<td><code>Int</code></td>
+<td></td>
+<td>padding</td>
+</tr>
+<tr>
+<td>pattern</td>
+<td><code>String</code></td>
+<td></td>
+<td>pattern</td>
+</tr>
+<tr>
+<td>isDefault</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เป็น default หรือไม่</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน ถ้าถูกใช้อยู่จะไม่สามารถเปลี่ยนแปลงได้</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>customRunningNumberId: String!</code></p>
+<p>Response: <code>CustomRunningNumber!</code></p>
+<hr />
+<h4 id="deletecustomrunningnumber">deleteCustomRunningNumber<a class="headerlink" href="#deletecustomrunningnumber" title="Permanent link">&para;</a></h4>
+<p>ลบ custom running number ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteCustomRunningNumber</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteCustomRunningNumber($customRunningNumberId: String!) {
+  deleteCustomRunningNumber(customRunningNumberId: $customRunningNumberId) {
+    _id
+    level
+    organizationId
+    organizationKey
+    customRunningNumberKey
+    refKey
+    order
+    title
+    description
+    serial
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumber</code></p>
+<hr />
+<h4 id="usecustomrunningnumber">useCustomRunningNumber<a class="headerlink" href="#usecustomrunningnumber" title="Permanent link">&para;</a></h4>
+<p>ใช้ custom running number ตาม id</p>
+<p>ออกเลขถัดไปและบันทึก log ของการใช้เลข</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>useCustomRunningNumber</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UseCustomRunningNumber($useInput: UseCustomRunningNumberInput!) {
+  useCustomRunningNumber(useInput: $useInput) {
+    _id
+    organizationId
+    organizationKey
+    customRunningNumberId
+    customRunningNumberKey
+    generatedCode
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    # ...
+  }
+}
+</code></pre>
+<p><code>useInput</code>: <code>UseCustomRunningNumberInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumberId</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>key ของ custom running number</td>
+</tr>
+<tr>
+<td>generatedCode</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>code ที่ใช้</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomRunningNumberLog</code></p>
+<hr />
+<h4 id="createcustomertype">createCustomerType<a class="headerlink" href="#createcustomertype" title="Permanent link">&para;</a></h4>
+<p>สร้าง customer type</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createCustomerType</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateCustomerType($createInput: CreateCustomerTypeInput!) {
+  createCustomerType(createInput: $createInput) {
+    _id
+    organizationId
+    organizationKey
+    customerTypeKey
+    customerTypeCode
+    title
+    subTitle
+    description
+    isActive
+    createdBy
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateCustomerTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>key ของ org</td>
+</tr>
+<tr>
+<td>customerTypeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>key ของ customer type</td>
+</tr>
+<tr>
+<td>customerTypeCode</td>
+<td><code>String</code></td>
+<td></td>
+<td>รหัสของ customer type</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อของ customer type</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อย่อของ customer type</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบายของ customer type</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomerType!</code></p>
+<hr />
+<h4 id="updatecustomertype">updateCustomerType<a class="headerlink" href="#updatecustomertype" title="Permanent link">&para;</a></h4>
+<p>แก้ไข customer type ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateCustomerType</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateCustomerType($customerTypeId: String!, $updateInput: UpdateCustomerTypeInput!) {
+  updateCustomerType(customerTypeId: $customerTypeId, updateInput: $updateInput) {
+    _id
+    organizationId
+    organizationKey
+    customerTypeKey
+    customerTypeCode
+    title
+    subTitle
+    description
+    isActive
+    createdBy
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateCustomerTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customerTypeCode</td>
+<td><code>String</code></td>
+<td></td>
+<td>รหัสของ customer type</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อของ customer type</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อย่อของ customer type</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบายของ customer type</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน ถ้าถูกใช้อยู่จะไม่สามารถเปลี่ยนแปลงได้</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>customerTypeId: String!</code></p>
+<p>Response: <code>CustomerType!</code></p>
+<hr />
+<h4 id="deletecustomertype">deleteCustomerType<a class="headerlink" href="#deletecustomertype" title="Permanent link">&para;</a></h4>
+<p>ลบ customer type ตาม id</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteCustomerType</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteCustomerType($customerTypeId: String!) {
+  deleteCustomerType(customerTypeId: $customerTypeId) {
+    _id
+    organizationId
+    organizationKey
+    customerTypeKey
+    customerTypeCode
+    title
+    subTitle
+    description
+    isActive
+    createdBy
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customerTypeId</td>
+<td><code>String!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>CustomerType</code></p>
+<hr />
+<h4 id="createdefaultorganizationrole">createDefaultOrganizationRole<a class="headerlink" href="#createdefaultorganizationrole" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล DefaultOrganizationRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createDefaultOrganizationRole</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation CreateDefaultOrganizationRole($createInput: CreateDefaultOrganizationRoleInput!) {
+  createDefaultOrganizationRole(createInput: $createInput) {
+    _id
+    defaultOrganizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isActive
+    createdBy
+    updatedBy
+    createdAt
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateDefaultOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>appKey แอพพลิเคชั่น (optional, จะใช้ของ user ถ้าไม่ระบุ)</td>
+</tr>
+<tr>
+<td>defaultOrganizationRoleKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>defaultOrganizationRoleKey รหัส default organization role</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>DefaultOrganizationRole!</code></p>
+<hr />
+<h4 id="updatedefaultorganizationrole">updateDefaultOrganizationRole<a class="headerlink" href="#updatedefaultorganizationrole" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล DefaultOrganizationRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateDefaultOrganizationRole</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateDefaultOrganizationRole($defaultOrganizationRoleId: ID!, $updateInput: UpdateDefaultOrganizationRoleInput!) {
+  updateDefaultOrganizationRole(defaultOrganizationRoleId: $defaultOrganizationRoleId, updateInput: $updateInput) {
+    _id
+    defaultOrganizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isActive
+    createdBy
+    updatedBy
+    createdAt
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateDefaultOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>defaultOrganizationRoleId: ID!</code></p>
+<p>Response: <code>DefaultOrganizationRole!</code></p>
+<hr />
+<h4 id="deletedefaultorganizationrole">deleteDefaultOrganizationRole<a class="headerlink" href="#deletedefaultorganizationrole" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล DefaultOrganizationRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteDefaultOrganizationRole</code></li>
+<li>ทำงานข้ามแอปได้เมื่อมีสิทธิ์ <code>systemApp</code></li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteDefaultOrganizationRole($defaultOrganizationRoleId: ID!) {
+  deleteDefaultOrganizationRole(defaultOrganizationRoleId: $defaultOrganizationRoleId) {
+    _id
+    defaultOrganizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isActive
+    createdBy
+    updatedBy
+    createdAt
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>defaultOrganizationRoleId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>DefaultOrganizationRole!</code></p>
+<hr />
+<h4 id="createorganizationapprovedetail">createOrganizationApproveDetail<a class="headerlink" href="#createorganizationapprovedetail" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationApproveDetail</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationApproveDetail</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationApproveDetail($createInput: CreateOrganizationApproveDetailInput!) {
+  createOrganizationApproveDetail(createInput: $createInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationApproveId
+    timeStamp
+    isAuto
+    isActive
+    text
+    files
+    images
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationApproveDetailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey ของ organization ที่ระบุ</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>text</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ข้อความแสดงผล</td>
+</tr>
+<tr>
+<td>files</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>array files</td>
+</tr>
+<tr>
+<td>images</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>array images</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApproveDetail!</code></p>
+<hr />
+<h4 id="updateorganizationapprovedetail">updateOrganizationApproveDetail<a class="headerlink" href="#updateorganizationapprovedetail" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationApproveDetail</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationApproveDetail</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationApproveDetail($organizationApproveDetailId: ID!, $updateInput: UpdateOrganizationApproveDetailInput!) {
+  updateOrganizationApproveDetail(organizationApproveDetailId: $organizationApproveDetailId, updateInput: $updateInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationApproveId
+    timeStamp
+    isAuto
+    isActive
+    text
+    files
+    images
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationApproveDetailInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>text</td>
+<td><code>String</code></td>
+<td></td>
+<td>ข้อความแสดงผล</td>
+</tr>
+<tr>
+<td>files</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>array files</td>
+</tr>
+<tr>
+<td>images</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>array images</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationApproveDetailId: ID!</code></p>
+<p>Response: <code>OrganizationApproveDetail!</code></p>
+<hr />
+<h4 id="deleteorganizationapprovedetail">deleteOrganizationApproveDetail<a class="headerlink" href="#deleteorganizationapprovedetail" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationApproveDetail</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationApproveDetail</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationApproveDetail($organizationApproveDetailId: ID!) {
+  deleteOrganizationApproveDetail(organizationApproveDetailId: $organizationApproveDetailId) {
+    _id
+    organizationId
+    organizationKey
+    organizationApproveId
+    timeStamp
+    isAuto
+    isActive
+    text
+    files
+    images
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationApproveDetailId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApproveDetail!</code></p>
+<hr />
+<h4 id="setorganizationapprovestatustoinprogress">setOrganizationApproveStatusToInProgress<a class="headerlink" href="#setorganizationapprovestatustoinprogress" title="Permanent link">&para;</a></h4>
+<p>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น IN_PROGRESS</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>setOrganizationApproveStatusToInProgress</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation SetOrganizationApproveStatusToInProgress($input: SetOrganizationApproveStatusInput!) {
+  setOrganizationApproveStatusToInProgress(input: $input) {
+    _id
+    organizationId
+    organizationKey
+    organization { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    approveStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>SetOrganizationApproveStatusInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey ที่ระบุ</td>
+</tr>
+<tr>
+<td>text</td>
+<td><code>String</code></td>
+<td></td>
+<td>ข้อความที่ใช้ระบุเหตุผลการดำเนินการ</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprove!</code></p>
+<hr />
+<h4 id="setorganizationapprovestatustoapproved">setOrganizationApproveStatusToApproved<a class="headerlink" href="#setorganizationapprovestatustoapproved" title="Permanent link">&para;</a></h4>
+<p>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น APPROVED</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>setOrganizationApproveStatusToApproved</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation SetOrganizationApproveStatusToApproved($input: SetOrganizationApproveStatusInput!) {
+  setOrganizationApproveStatusToApproved(input: $input) {
+    _id
+    organizationId
+    organizationKey
+    organization { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    approveStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>SetOrganizationApproveStatusInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey ที่ระบุ</td>
+</tr>
+<tr>
+<td>text</td>
+<td><code>String</code></td>
+<td></td>
+<td>ข้อความที่ใช้ระบุเหตุผลการดำเนินการ</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprove!</code></p>
+<hr />
+<h4 id="setorganizationapprovestatustorejected">setOrganizationApproveStatusToRejected<a class="headerlink" href="#setorganizationapprovestatustorejected" title="Permanent link">&para;</a></h4>
+<p>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น REJECTED</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>setOrganizationApproveStatusToRejected</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation SetOrganizationApproveStatusToRejected($input: SetOrganizationApproveStatusInput!) {
+  setOrganizationApproveStatusToRejected(input: $input) {
+    _id
+    organizationId
+    organizationKey
+    organization { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    approveStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>SetOrganizationApproveStatusInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey ที่ระบุ</td>
+</tr>
+<tr>
+<td>text</td>
+<td><code>String</code></td>
+<td></td>
+<td>ข้อความที่ใช้ระบุเหตุผลการดำเนินการ</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprove!</code></p>
+<hr />
+<h4 id="setorganizationapprovestatustoneedmoreinformation">setOrganizationApproveStatusToNeedMoreInformation<a class="headerlink" href="#setorganizationapprovestatustoneedmoreinformation" title="Permanent link">&para;</a></h4>
+<p>ใช้เพื่อเปลี่ยนสถานะใบอนุมัติเป็น NEED_MORE_INFORMATION</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>setOrganizationApproveStatusToNeedMoreInformation</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation SetOrganizationApproveStatusToNeedMoreInformation($input: SetOrganizationApproveStatusInput!) {
+  setOrganizationApproveStatusToNeedMoreInformation(input: $input) {
+    _id
+    organizationId
+    organizationKey
+    organization { _id organizationKey organizationPath parentOrganizationId organizationImageKey organizationBackgroundImageKey }
+    approveStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+  }
+}
+</code></pre>
+<p><code>input</code>: <code>SetOrganizationApproveStatusInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey ที่ระบุ</td>
+</tr>
+<tr>
+<td>text</td>
+<td><code>String</code></td>
+<td></td>
+<td>ข้อความที่ใช้ระบุเหตุผลการดำเนินการ</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationApprove!</code></p>
+<hr />
+<h4 id="createorganizationcontactpeople">createOrganizationContactPeople<a class="headerlink" href="#createorganizationcontactpeople" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationContactPeople</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationContactPeople</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationContactPeople($createInput: CreateOrganizationContactPeopleInput!) {
+  createOrganizationContactPeople(createInput: $createInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactPeopleKey
+    name
+    description
+    address { address1 address2 address3 city subdivision postalCode }
+    phoneNumber
+    position
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationContactPeopleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactPeopleKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey organization ที่ระบุ</td>
+</tr>
+<tr>
+<td>organizationContactKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>organizationContactKey เพื่อสร้าง relation อัตโนมัต</td>
+</tr>
+<tr>
+<td>name</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>phoneNumber text</td>
+</tr>
+<tr>
+<td>position</td>
+<td><code>String</code></td>
+<td></td>
+<td>position text</td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String</code></td>
+<td></td>
+<td>email</td>
+</tr>
+<tr>
+<td>taxIdentificationNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>taxIdentificationNumber</td>
+</tr>
+<tr>
+<td>taxIdentificationExpireDate</td>
+<td><code>Date</code></td>
+<td></td>
+<td>วันหมดอายุของเลขประจำตัวผู้เสียภาษี</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>documentKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>file key เอกสาร</td>
+</tr>
+<tr>
+<td>profileImageKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>profileImageKey เป็น key ของรูปโปรไฟล์ที่เก็บใน storage</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactPeople!</code></p>
+<hr />
+<h4 id="updateorganizationcontactpeople">updateOrganizationContactPeople<a class="headerlink" href="#updateorganizationcontactpeople" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationContactPeople</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationContactPeople</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationContactPeople($organizationContactPeopleId: ID!, $updateInput: UpdateOrganizationContactPeopleInput!) {
+  updateOrganizationContactPeople(organizationContactPeopleId: $organizationContactPeopleId, updateInput: $updateInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactPeopleKey
+    name
+    description
+    address { address1 address2 address3 city subdivision postalCode }
+    phoneNumber
+    position
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationContactPeopleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>phoneNumber text</td>
+</tr>
+<tr>
+<td>position</td>
+<td><code>String</code></td>
+<td></td>
+<td>position text</td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String</code></td>
+<td></td>
+<td>email</td>
+</tr>
+<tr>
+<td>taxIdentificationNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>taxIdentificationNumber</td>
+</tr>
+<tr>
+<td>taxIdentificationExpireDate</td>
+<td><code>Date</code></td>
+<td></td>
+<td>วันหมดอายุของเลขประจำตัวผู้เสียภาษี</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>documentKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>file key เอกสาร</td>
+</tr>
+<tr>
+<td>profileImageKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>profileImageKey เป็น key ของรูปโปรไฟล์ที่เก็บใน storage</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationContactPeopleId: ID!</code></p>
+<p>Response: <code>OrganizationContactPeople!</code></p>
+<hr />
+<h4 id="deleteorganizationcontactpeople">deleteOrganizationContactPeople<a class="headerlink" href="#deleteorganizationcontactpeople" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationContactPeople</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationContactPeople</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationContactPeople($organizationContactPeopleId: ID!) {
+  deleteOrganizationContactPeople(organizationContactPeopleId: $organizationContactPeopleId) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactPeopleKey
+    name
+    description
+    address { address1 address2 address3 city subdivision postalCode }
+    phoneNumber
+    position
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactPeopleId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactPeople!</code></p>
+<hr />
+<h4 id="createorganizationcontactrelation">createOrganizationContactRelation<a class="headerlink" href="#createorganizationcontactrelation" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationContactRelation</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationContactRelation</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationContactRelation($createInput: CreateOrganizationContactRelationInput!) {
+  createOrganizationContactRelation(createInput: $createInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactRelationKey
+    organizationContactId
+    organizationContactKey
+    organizationContact { _id organizationId organizationKey organizationPath organizationContactKey organizationContactCode }
+    organizationContactPeopleId
+    organizationContactPeopleKey
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationContactRelationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationContactKey</td>
+</tr>
+<tr>
+<td>organizationContactPeopleKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationContactPeopleKey</td>
+</tr>
+<tr>
+<td>organizationContactRelationKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>organizationContactRelationKey autogen ใช้เพื่อแสดงหน้าบ้าน</td>
+</tr>
+<tr>
+<td>order</td>
+<td><code>Float</code></td>
+<td></td>
+<td>ลำดับการแสดงผล</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>โน๊ต</td>
+</tr>
+<tr>
+<td>position</td>
+<td><code>String</code></td>
+<td></td>
+<td>ต่ำแหน่งของผู้ติดต่อ</td>
+</tr>
+<tr>
+<td>documentKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>file key เอกสาร</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactRelation</code></p>
+<hr />
+<h4 id="updateorganizationcontactrelation">updateOrganizationContactRelation<a class="headerlink" href="#updateorganizationcontactrelation" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationContactRelation</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationContactRelation</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationContactRelation($relationId: ID!, $updateInput: UpdateOrganizationContactRelationInput!) {
+  updateOrganizationContactRelation(relationId: $relationId, updateInput: $updateInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactRelationKey
+    organizationContactId
+    organizationContactKey
+    organizationContact { _id organizationId organizationKey organizationPath organizationContactKey organizationContactCode }
+    organizationContactPeopleId
+    organizationContactPeopleKey
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationContactRelationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>order</td>
+<td><code>Float</code></td>
+<td></td>
+<td>ลำดับการแสดงผล</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>โน๊ต</td>
+</tr>
+<tr>
+<td>position</td>
+<td><code>String</code></td>
+<td></td>
+<td>ต่ำแหน่งของผู้ติดต่อ</td>
+</tr>
+<tr>
+<td>documentKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>file key เอกสาร</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>relationId: ID!</code></p>
+<p>Response: <code>OrganizationContactRelation</code></p>
+<hr />
+<h4 id="deleteorganizationcontactrelation">deleteOrganizationContactRelation<a class="headerlink" href="#deleteorganizationcontactrelation" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationContactRelation</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationContactRelation</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationContactRelation($relationId: ID!) {
+  deleteOrganizationContactRelation(relationId: $relationId) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactRelationKey
+    organizationContactId
+    organizationContactKey
+    organizationContact { _id organizationId organizationKey organizationPath organizationContactKey organizationContactCode }
+    organizationContactPeopleId
+    organizationContactPeopleKey
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>relationId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContactRelation</code></p>
+<hr />
+<h4 id="createorganizationcontact">createOrganizationContact<a class="headerlink" href="#createorganizationcontact" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationContact</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationContact</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationContact($createInput: CreateOrganizationContactInput!) {
+  createOrganizationContact(createInput: $createInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactKey
+    organizationContactCode
+    name
+    name2
+    name3
+    description
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationContactInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>organizationContactCode</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey organization ที่ระบุ</td>
+</tr>
+<tr>
+<td>name</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>name2</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ 2</td>
+</tr>
+<tr>
+<td>name3</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ 3</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>type</td>
+<td><code>EnumOrganizationContactType</code></td>
+<td></td>
+<td>ประเภทของบริษัท เช่น บุคคลธรรมดา, นิติบุคคล, อื่นๆ</td>
+</tr>
+<tr>
+<td>customerTypeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>key ประเภทของลูกค้า</td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>address2</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>phoneNumber text</td>
+</tr>
+<tr>
+<td>position</td>
+<td><code>String</code></td>
+<td></td>
+<td>position text</td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String</code></td>
+<td></td>
+<td>email</td>
+</tr>
+<tr>
+<td>taxIdentificationNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>taxIdentificationNumber</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>documentKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>file key เอกสาร</td>
+</tr>
+<tr>
+<td>isCustomer</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เป็น customer หรือไม่</td>
+</tr>
+<tr>
+<td>isSupplier</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เป็น supplier หรือไม่</td>
+</tr>
+<tr>
+<td>directors</td>
+<td><code>[DirectorInput]</code></td>
+<td></td>
+<td>ข้อมูลกรรมการ</td>
+</tr>
+<tr>
+<td>documentFile</td>
+<td><code>DocumentFileInput</code></td>
+<td></td>
+<td>ข้อมูลไฟล์เอกสาร</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td>(มีอีก 1 ฟิลด์ ดู schema)</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContact!</code></p>
+<hr />
+<h4 id="updateorganizationcontact">updateOrganizationContact<a class="headerlink" href="#updateorganizationcontact" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationContact</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationContact</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationContact($organizationContactId: ID!, $updateInput: UpdateOrganizationContactInput!) {
+  updateOrganizationContact(organizationContactId: $organizationContactId, updateInput: $updateInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactKey
+    organizationContactCode
+    name
+    name2
+    name3
+    description
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationContactInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactCode</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>name</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>name2</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ 2</td>
+</tr>
+<tr>
+<td>name3</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ 3</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>คำอธิบาย</td>
+</tr>
+<tr>
+<td>type</td>
+<td><code>EnumOrganizationContactType</code></td>
+<td></td>
+<td>ประเภทของบริษัท เช่น บุคคลธรรมดา, นิติบุคคล, อื่นๆ</td>
+</tr>
+<tr>
+<td>customerTypeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>key ประเภทของลูกค้า null = ลบออก</td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>address2</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>phoneNumber text</td>
+</tr>
+<tr>
+<td>position</td>
+<td><code>String</code></td>
+<td></td>
+<td>position text</td>
+</tr>
+<tr>
+<td>email</td>
+<td><code>String</code></td>
+<td></td>
+<td>email</td>
+</tr>
+<tr>
+<td>taxIdentificationNumber</td>
+<td><code>String</code></td>
+<td></td>
+<td>taxIdentificationNumber</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>documentKeys</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>file key เอกสาร</td>
+</tr>
+<tr>
+<td>isCustomer</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เป็น customer หรือไม่</td>
+</tr>
+<tr>
+<td>isSupplier</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>เป็น supplier หรือไม่</td>
+</tr>
+<tr>
+<td>directors</td>
+<td><code>[DirectorInput]</code></td>
+<td></td>
+<td>ข้อมูลกรรมการ</td>
+</tr>
+<tr>
+<td>documentFile</td>
+<td><code>DocumentFileInput</code></td>
+<td></td>
+<td>ข้อมูลไฟล์เอกสาร</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationContactId: ID!</code></p>
+<p>Response: <code>OrganizationContact!</code></p>
+<hr />
+<h4 id="deleteorganizationcontact">deleteOrganizationContact<a class="headerlink" href="#deleteorganizationcontact" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationContact</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationContact</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationContact($organizationContactId: ID!) {
+  deleteOrganizationContact(organizationContactId: $organizationContactId) {
+    _id
+    organizationId
+    organizationKey
+    organizationPath
+    organizationContactKey
+    organizationContactCode
+    name
+    name2
+    name3
+    description
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationContactId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationContact!</code></p>
+<hr />
+<h4 id="createorganizationrole">createOrganizationRole<a class="headerlink" href="#createorganizationrole" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationRole</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationRole($createInput: CreateOrganizationRoleInput!) {
+  createOrganizationRole(createInput: $createInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationRoleKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>organizationKey organization ที่ระบุ</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isInvite</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>นำไปใช้ใน inviteCode ได้ไหม</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationRole!</code></p>
+<hr />
+<h4 id="updateorganizationrole">updateOrganizationRole<a class="headerlink" href="#updateorganizationrole" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationRole</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationRole($organizationRoleId: ID!, $updateInput: UpdateOrganizationRoleInput!) {
+  updateOrganizationRole(organizationRoleId: $organizationRoleId, updateInput: $updateInput) {
+    _id
+    organizationId
+    organizationKey
+    organizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationRoleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isInvite</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>นำไปใช้ใน inviteCode ได้ไหม</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationRoleId: ID!</code></p>
+<p>Response: <code>OrganizationRole!</code></p>
+<hr />
+<h4 id="deleteorganizationrole">deleteOrganizationRole<a class="headerlink" href="#deleteorganizationrole" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationRole</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationRole</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationRole($organizationRoleId: ID!) {
+  deleteOrganizationRole(organizationRoleId: $organizationRoleId) {
+    _id
+    organizationId
+    organizationKey
+    organizationRoleKey
+    title
+    subTitle
+    description
+    systemNote
+    isInvite
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationRoleId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationRole!</code></p>
+<hr />
+<h4 id="createorganizationtag">createOrganizationTag<a class="headerlink" href="#createorganizationtag" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationTag</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationTag</code></li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationTag($createInput: CreateOrganizationTagInput!) {
+  createOrganizationTag(createInput: $createInput) {
+    _id
+    organizationTagKey
+    organizationTagPath
+    parentOrganizationTagId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationTagInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTagKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>parentOrganizationTagId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organizationTag ของแม่</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>icon</td>
+<td><code>String</code></td>
+<td></td>
+<td>icon</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>isPublic</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการPublic true เมื่อเปิดให้ Public</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationTag!</code></p>
+<hr />
+<h4 id="updateorganizationtag">updateOrganizationTag<a class="headerlink" href="#updateorganizationtag" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationTag ถ้ามีลูก ห้ามแก้ organizationParent</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationTag</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationTag($organizationTagId: ID!, $updateInput: UpdateOrganizationTagInput!) {
+  updateOrganizationTag(organizationTagId: $organizationTagId, updateInput: $updateInput) {
+    _id
+    organizationTagKey
+    organizationTagPath
+    parentOrganizationTagId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationTagInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>parentOrganizationTagId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organizationTag ของแม่</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>icon</td>
+<td><code>String</code></td>
+<td></td>
+<td>icon</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>isPublic</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการPublic true เมื่อเปิดให้ Public</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationTagId: ID!</code></p>
+<p>Response: <code>OrganizationTag!</code></p>
+<hr />
+<h4 id="deleteorganizationtag">deleteOrganizationTag<a class="headerlink" href="#deleteorganizationtag" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationTag ถ้ามีลูก ห้ามลบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationTag</code></li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationTag($organizationTagId: ID!) {
+  deleteOrganizationTag(organizationTagId: $organizationTagId) {
+    _id
+    organizationTagKey
+    organizationTagPath
+    parentOrganizationTagId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTagId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationTag!</code></p>
+<hr />
+<h4 id="createorganizationtype">createOrganizationType<a class="headerlink" href="#createorganizationtype" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล OrganizationType</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganizationType</code></li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganizationType($createInput: CreateOrganizationTypeInput!) {
+  createOrganizationType(createInput: $createInput) {
+    _id
+    organizationTypeKey
+    organizationTypePath
+    parentOrganizationTypeId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTypeKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>parentOrganizationTypeId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organizationType ของแม่</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>icon</td>
+<td><code>String</code></td>
+<td></td>
+<td>icon</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>isPublic</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการPublic true เมื่อเปิดให้ Public</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationType!</code></p>
+<hr />
+<h4 id="updateorganizationtype">updateOrganizationType<a class="headerlink" href="#updateorganizationtype" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล OrganizationType ถ้ามีลูก ห้ามแก้ organizationParent</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganizationType</code></li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganizationType($organizationTypeId: ID!, $updateInput: UpdateOrganizationTypeInput!) {
+  updateOrganizationType(organizationTypeId: $organizationTypeId, updateInput: $updateInput) {
+    _id
+    organizationTypeKey
+    organizationTypePath
+    parentOrganizationTypeId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationTypeInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>parentOrganizationTypeId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organizationType ของแม่</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>icon</td>
+<td><code>String</code></td>
+<td></td>
+<td>icon</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>isPublic</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการPublic true เมื่อเปิดให้ Public</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationTypeId: ID!</code></p>
+<p>Response: <code>OrganizationType!</code></p>
+<hr />
+<h4 id="deleteorganizationtype">deleteOrganizationType<a class="headerlink" href="#deleteorganizationtype" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล OrganizationType ถ้ามีลูก ห้ามลบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganizationType</code></li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganizationType($organizationTypeId: ID!) {
+  deleteOrganizationType(organizationTypeId: $organizationTypeId) {
+    _id
+    organizationTypeKey
+    organizationTypePath
+    parentOrganizationTypeId
+    title
+    subTitle
+    description
+    icon
+    systemNote
+    isActive
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationTypeId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>OrganizationType!</code></p>
+<hr />
+<h4 id="createorganization">createOrganization<a class="headerlink" href="#createorganization" title="Permanent link">&para;</a></h4>
+<p>สร้างข้อมูล Organization</p>
+<p>สร้างองค์กรแล้ว ระบบจะสร้าง organizationRole จาก defaultOrganizationRole ทุกตัวให้อัตโนมัติ และสร้างใบอนุมัติองค์กร (ผู้ที่มีสิทธิ์ <code>autoOrganizationApprove</code> จะอนุมัติทันที)</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>createOrganization</code></li>
+</ul>
+<pre><code class="language-graphql">mutation CreateOrganization($createInput: CreateOrganizationInput!) {
+  createOrganization(createInput: $createInput) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<p><code>createInput</code>: <code>CreateOrganizationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>ถ้าไม่ระบุ จะ auto gen</td>
+</tr>
+<tr>
+<td>parentOrganizationId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organization ของแม่</td>
+</tr>
+<tr>
+<td>organizationImageKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>fileKey ของรูปภาพ ใช้เป็นรูป profile ของ organization</td>
+</tr>
+<tr>
+<td>organizationBackgroundImageKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>fileKey ของรูปภาพ ใช้เป็นรูปภาพพื้นหลังของ organization</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String!</code></td>
+<td>ใช่</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>title2</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ 2</td>
+</tr>
+<tr>
+<td>subTitle2</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง 2</td>
+</tr>
+<tr>
+<td>description2</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายละเอียด 2</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>isPublic</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการPublic true เมื่อเปิดให้ Public</td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>address2</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization2</td>
+</tr>
+<tr>
+<td>organizationTypeId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organizationType ที่ระบุ</td>
+</tr>
+<tr>
+<td>organizationTagIds</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>array ของ _id organizationTag</td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<h4 id="updateorganization">updateOrganization<a class="headerlink" href="#updateorganization" title="Permanent link">&para;</a></h4>
+<p>แก้ไขข้อมูล Organization ถ้ามีลูก ห้ามแก้ organizationParent</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>updateOrganization</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation UpdateOrganization($organizationId: ID!, $updateInput: UpdateOrganizationInput!) {
+  updateOrganization(organizationId: $organizationId, updateInput: $updateInput) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<p><code>updateInput</code>: <code>UpdateOrganizationInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>จำเป็น</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>parentOrganizationId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organization ของแม่</td>
+</tr>
+<tr>
+<td>organizationImageKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>fileKey ของรูปภาพ ใช้เป็นรูป profile ของ organization</td>
+</tr>
+<tr>
+<td>organizationBackgroundImageKey</td>
+<td><code>String</code></td>
+<td></td>
+<td>fileKey ของรูปภาพ ใช้เป็นรูปภาพพื้นหลังของ organization</td>
+</tr>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>subTitle</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง ซึ้งอาจจะเป็นชื่อเวอร์ชั่นภาษาอื่น หรือชื่อย่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายล่ะเอียด</td>
+</tr>
+<tr>
+<td>title2</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อ 2</td>
+</tr>
+<tr>
+<td>subTitle2</td>
+<td><code>String</code></td>
+<td></td>
+<td>ชื่อรอง 2</td>
+</tr>
+<tr>
+<td>description2</td>
+<td><code>String</code></td>
+<td></td>
+<td>รายละเอียด 2</td>
+</tr>
+<tr>
+<td>systemNote</td>
+<td><code>String</code></td>
+<td></td>
+<td>ไว้สำหรับ admin</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการใช้งาน true เมื่อเปิดการใช้งาน</td>
+</tr>
+<tr>
+<td>isPublic</td>
+<td><code>Boolean</code></td>
+<td></td>
+<td>สถานะการPublic true เมื่อเปิดให้ Public</td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization</td>
+</tr>
+<tr>
+<td>address2</td>
+<td><code>OrganizationAddressInput</code></td>
+<td></td>
+<td>ข้อมูลที่อยู่ของ organization2</td>
+</tr>
+<tr>
+<td>organizationTypeId</td>
+<td><code>String</code></td>
+<td></td>
+<td>_id organizationType ที่ระบุ</td>
+</tr>
+<tr>
+<td>organizationTagIds</td>
+<td><code>[String]</code></td>
+<td></td>
+<td>array ของ _id organizationTag</td>
+</tr>
+</tbody>
+</table>
+<p>argument อื่น: <code>organizationId: ID!</code></p>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<h4 id="deleteorganization">deleteOrganization<a class="headerlink" href="#deleteorganization" title="Permanent link">&para;</a></h4>
+<p>ลบข้อมูล Organization ถ้ามีลูก ห้ามลบ</p>
+<ul>
+<li>การยืนยันตัวตน: ต้อง login (header <code>authorization</code>) หรือใช้ credential แบบ SYSTEM</li>
+<li>สิทธิ์: <code>deleteOrganization</code> (ระดับองค์กร)</li>
+</ul>
+<pre><code class="language-graphql">mutation DeleteOrganization($organizationId: ID!) {
+  deleteOrganization(organizationId: $organizationId) {
+    _id
+    organizationKey
+    organizationPath
+    parentOrganizationId
+    organizationImageKey
+    organizationBackgroundImageKey
+    title
+    subTitle
+    description
+    title2
+    # ...
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>argument</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organizationId</td>
+<td><code>ID!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Response: <code>Organization!</code></p>
+<hr />
+<p><br>
+<br></p>
+<h2 id="kafka-consume-reference">Kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>ทุกข้อความมี header <code>appKey</code> และ <code>serviceKey</code> (service ปลายทาง) · payload อยู่ในรูป <code>{ &lt;ข้อมูล&gt;: {...}, action: "ADD" | "REMOVE" | ... }</code> · ข้อความของแอปที่ service นี้ไม่มี AppCertificate จะถูกข้าม</p>
+<hr />
+<h3 id="topic-มาตรฐาน">topic มาตรฐาน<a class="headerlink" href="#topic-มาตรฐาน" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init-system</code></td>
+<td>ตั้งระบบจากศูนย์ (เฉพาะ core set)</td>
+</tr>
+<tr>
+<td><code>refresh-data</code></td>
+<td>core สั่งให้ส่งข้อมูลที่ถืออยู่ขึ้นไปใหม่ (organization, type, tag, approve, contact, role, running number ฯลฯ และ <code>sync-permission</code>) + ล้าง cache</td>
+</tr>
+<tr>
+<td><code>sync-app-certificate</code></td>
+<td>รับ AppCertificate ของ service ต่อแอป จาก core</td>
+</tr>
+<tr>
+<td><code>sync-app-credential</code></td>
+<td>รับ AppCredential ของแอป จาก Authentication Service ใช้ตรวจ token / header</td>
+</tr>
+<tr>
+<td><code>sync-service-setting</code> / <code>sync-app-service-setting</code></td>
+<td>รับค่าตั้งค่าเพิ่มเติมแบบ JSON ทั้งระบบ / รายแอป</td>
+</tr>
+<tr>
+<td><code>sync-application</code></td>
+<td>รับข้อมูลแอป</td>
+</tr>
+<tr>
+<td><code>sync-user-policy</code></td>
+<td>รับ UserPolicy ของ permission <code>unit</code> จาก ACL · ใช้ตรวจสิทธิ์ และใช้รู้ว่าผู้ใช้อยู่องค์กรใด (<code>getUserOrganizations</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="add-admin-app-role">add-admin-app-role<a class="headerlink" href="#add-admin-app-role" title="Permanent link">&para;</a></h3>
+<p>เมื่อมีแอปใหม่ core สั่งให้สร้าง appRole <code>admin</code> ของแอปนั้น แล้วส่ง <code>sync-app-role</code> (พร้อม <code>isAdmin: true</code>) ให้ ACL</p>
+<pre><code>topic: add-admin-app-role
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>adminAppRole.appKey</td>
+<td>string</td>
+<td>แอปที่ต้องการสร้าง role admin</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="register-custom-running-number">register-custom-running-number<a class="headerlink" href="#register-custom-running-number" title="Permanent link">&para;</a></h3>
+<p>ให้ service อื่นลงทะเบียนรูปแบบเลขรันนิ่งที่ตัวเองใช้</p>
+<pre><code>topic: register-custom-running-number
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunningNumber.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>customRunningNumber.level</td>
+<td>string</td>
+<td><code>APP</code>, <code>ORG</code></td>
+</tr>
+<tr>
+<td>customRunningNumber.organizationId / organizationKey</td>
+<td>string</td>
+<td>องค์กร (เมื่อ level = <code>ORG</code>)</td>
+</tr>
+<tr>
+<td>customRunningNumber.customRunningNumberKey</td>
+<td>string</td>
+<td>key ของเลขรันนิ่ง</td>
+</tr>
+<tr>
+<td>customRunningNumber.refKey</td>
+<td>string</td>
+<td>key อ้างอิงของผู้ใช้งาน</td>
+</tr>
+<tr>
+<td>customRunningNumber.title / description / order</td>
+<td></td>
+<td>ข้อมูลแสดงผล</td>
+</tr>
+<tr>
+<td>customRunningNumber.serial</td>
+<td>string</td>
+<td>รอบการนับ <code>YEAR</code>, <code>MONTH</code>, <code>DAY</code>, <code>INDEX</code></td>
+</tr>
+<tr>
+<td>customRunningNumber.padding</td>
+<td>number</td>
+<td>จำนวนหลัก</td>
+</tr>
+<tr>
+<td>customRunningNumber.pattern</td>
+<td>string</td>
+<td>รูปแบบเลข</td>
+</tr>
+<tr>
+<td>customRunningNumber.isDefault / isActive</td>
+<td>boolean</td>
+<td>สถานะ</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="generate-running-number">generate-running-number<a class="headerlink" href="#generate-running-number" title="Permanent link">&para;</a></h3>
+<p>ให้ service อื่นขอเลขรันนิ่งถัดไป · ผลตอบกลับทาง <code>generated-running-number-result</code></p>
+<pre><code>topic: generate-running-number
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customRunNumber.customRunningNumberKey</td>
+<td>string</td>
+<td>key ของเลขรันนิ่ง</td>
+</tr>
+<tr>
+<td>customRunNumber.pattern</td>
+<td>string</td>
+<td>(ไม่บังคับ) pattern ที่ต้องการใช้แทนค่าที่ตั้งไว้</td>
+</tr>
+<tr>
+<td>customRunNumber.targetId / targetKey / targetType</td>
+<td>string</td>
+<td>เอกสารปลายทางที่จะใช้เลขนี้ (ส่งกลับมาในผลลัพธ์)</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>ADD</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><br>
+<br></p>
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<p>header <code>appKey</code> = แอปของข้อมูล · payload ของแต่ละ topic คือข้อมูลของ entity นั้นตาม type ใน API ด้านบน พร้อม <code>action</code></p>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>root key</th>
+<th>ส่งเมื่อ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sync-organization</code></td>
+<td><code>organization</code></td>
+<td>สร้าง / แก้ / ลบองค์กร (<code>id</code>, <code>appKey</code>, <code>organizationKey</code>, <code>organizationPath</code>, <code>parentOrganizationId</code>, <code>title</code>, <code>address</code>, <code>organizationTypeId</code>, <code>organizationTagIds</code>, <code>isApproved</code>, <code>isPublic</code>, <code>isActive</code>, ...)</td>
+</tr>
+<tr>
+<td><code>sync-organization-type</code></td>
+<td><code>organizationType</code></td>
+<td>สร้าง / แก้ / ลบประเภทองค์กร</td>
+</tr>
+<tr>
+<td><code>sync-organization-tag</code></td>
+<td><code>organizationTag</code></td>
+<td>สร้าง / แก้ / ลบแท็กองค์กร</td>
+</tr>
+<tr>
+<td><code>sync-organization-approve</code></td>
+<td><code>organizationApprove</code></td>
+<td>สร้างใบอนุมัติ / เปลี่ยนสถานะ (<code>approveStatus</code>)</td>
+</tr>
+<tr>
+<td><code>sync-organization-approve-detail</code></td>
+<td><code>organizationApproveDetail</code></td>
+<td>สร้าง / แก้ / ลบรายละเอียดใบอนุมัติ</td>
+</tr>
+<tr>
+<td><code>sync-organization-contact</code></td>
+<td><code>organizationContact</code></td>
+<td>สร้าง / แก้ / ลบผู้ติดต่อ</td>
+</tr>
+<tr>
+<td><code>sync-organization-contact-people</code></td>
+<td><code>organizationContactPeople</code></td>
+<td>สร้าง / แก้ / ลบบุคคลติดต่อ</td>
+</tr>
+<tr>
+<td><code>sync-organization-contact-relation</code></td>
+<td><code>organizationContactRelation</code></td>
+<td>สร้าง / แก้ / ลบความสัมพันธ์ผู้ติดต่อ</td>
+</tr>
+<tr>
+<td><code>sync-app-role</code></td>
+<td><code>appRole</code></td>
+<td>สร้าง / แก้ / ลบ appRole</td>
+</tr>
+<tr>
+<td><code>sync-organization-role</code></td>
+<td><code>organizationRole</code></td>
+<td>สร้าง / แก้ / ลบ organizationRole (รวมที่สร้างอัตโนมัติจากแม่แบบตอนสร้างองค์กร)</td>
+</tr>
+<tr>
+<td><code>sync-default-organization-role</code></td>
+<td><code>defaultOrganizationRole</code></td>
+<td>สร้าง / แก้ / ลบ defaultOrganizationRole</td>
+</tr>
+<tr>
+<td><code>sync-custom-running-number</code></td>
+<td><code>customRunningNumber</code></td>
+<td>สร้าง / แก้ / ลบเลขรันนิ่ง</td>
+</tr>
+<tr>
+<td><code>generated-running-number-result</code></td>
+<td><code>generatedRunningNumber</code></td>
+<td>ตอบผลของ <code>generate-running-number</code>: <code>customRunningNumberKey</code>, <code>targetId</code>, <code>targetKey</code>, <code>targetType</code>, <code>generatedCode</code></td>
+</tr>
+<tr>
+<td><code>sync-permission</code></td>
+<td><code>permission</code></td>
+<td>ส่ง permission ของ <code>unit</code> ให้ ACL (ตอนได้ <code>refresh-data</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-unit-service@8cd0bc9 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

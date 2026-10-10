@@ -1,0 +1,2223 @@
+
+<!doctype html>
+<html lang="th" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="เอกสาร Gumon — ระบบ Composable ที่ประกอบจาก service ซึ่งคุยกันผ่าน Kafka">
+      
+      
+      
+        <link rel="canonical" href="https://docs.gumon.io/scheduleService/">
+      
+      
+        <link rel="prev" href="../notificationService/">
+      
+      
+        <link rel="next" href="../storageService/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Schedule Service - Gumon Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#schedule-service" class="md-skip">
+          ข้ามไปที่เนื้อหา
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
+    <a href=".." title="Gumon Docs" class="md-header__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gumon Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Schedule Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="ค้นหา" placeholder="ค้นหา" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="ค้นหา">
+        
+        <button type="reset" class="md-search__icon md-icon" title="ล้าง" aria-label="ล้าง" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            กำลังเริ่มต้นการค้นหา
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ตัวนำทาง" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gumon Docs" class="md-nav__button md-logo" aria-label="Gumon Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gumon Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าแรก
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    แนวคิด
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concept/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    แนวคิด Gumon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../standardTopics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka topic มาตรฐาน
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceLifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    วงจรชีวิตของ service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    หน้าบ้าน (Admin UI)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สร้าง Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serviceX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สิ่งที่ Service ต้องมี
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../createService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สร้าง Service ใหม่
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gumoncli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gumon CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Service
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coreService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../applicationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authenticationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notificationService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schedule Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ภาพรวมการใชงาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ภาพรวมการใช้งาน
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storageService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labelService/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Service (เลิกใช้)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="สารบัญ">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      สารบัญ
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ภาพรวมการใชงาน" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ภาพรวมการใช้งาน
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-consume-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kafka consume Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kafka consume Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka-produce-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kafka Produce Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kafka Produce Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schedule-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule Alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-schedule-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set Schedule Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync-permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Permission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="schedule-service">Schedule Service<a class="headerlink" href="#schedule-service" title="Permanent link">&para;</a></h1>
+<p>Service กลางสำหรับตั้งเวลาและรอบการทำงาน (cron/job) ของทุก service ในระบบ · serviceKey: <code>schedule</code></p>
+<p>service อื่นไม่ต้องมี cron ของตัวเอง แต่ฝาก "นัดหมาย" ไว้ที่ schedule ผ่าน Kafka topic <code>set-schedule</code> เมื่อถึงเวลา schedule จะส่ง event <code>schedule-alarm</code> กลับไปหา service เจ้าของนัดหมาย</p>
+<p>ทำไมต้องรวมไว้ที่เดียว: ถ้าแต่ละ service ตั้ง cron เอง เมื่อ scale หลาย replica ทุก replica จะยิงงานเดียวกันซ้ำ · เมื่อใช้ schedule กลาง แต่ละ service รับ <code>schedule-alarm</code> ผ่าน consumer group ของตัวเอง Kafka จึงส่งแต่ละ alarm ให้ replica เดียวในกลุ่ม ⇒ service ปลายทางรันหลาย replica ได้โดยไม่ยิงซ้ำ</p>
+<p>ตัว schedule service เองออกแบบให้รัน <strong>replica เดียว</strong> (single instance)</p>
+<p><br></p>
+<ul>
+<li><a href="#ภาพรวมการใชงาน">ภาพรวมการใช้งาน</a></li>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#kafka-consume-reference">kafka consume Reference</a></li>
+<li><a href="#kafka-produce-reference">kafka produce Reference</a></li>
+</ul>
+<hr />
+<p><br>
+<br></p>
+<h2 id="ภาพรวมการใชงาน">ภาพรวมการใช้งาน<a class="headerlink" href="#ภาพรวมการใชงาน" title="Permanent link">&para;</a></h2>
+<pre><code>service X ──set-schedule {action: ADD | REMOVE, schedule}──────────────▶ schedule
+schedule  ──set-schedule-result {action: SUCCESS | ERROR}──────────────▶ service X
+[ตรวจทุก 1 นาที] หา schedule ที่ถึงเวลา → คำนวณรอบถัดไป → บันทึกประวัติ (transaction)
+schedule  ──schedule-alarm {action: ADD, scheduleAlarm}  header.serviceKey = X ──▶ service X
+service X ──schedule-alarm-result {action: ADD, scheduleAlarm + เวลารับ/ส่ง}──▶ schedule
+</code></pre>
+<ul>
+<li>header ของทุกข้อความมี <code>appKey</code> และ <code>serviceKey</code> · <code>serviceKey</code> = <strong>service ปลายทาง</strong> เสมอ</li>
+<li>ส่ง <code>set-schedule</code> / <code>schedule-alarm-result</code> มาที่ schedule ⇒ header <code>serviceKey: schedule</code></li>
+<li>schedule ส่ง <code>schedule-alarm</code> ⇒ header <code>serviceKey</code> = serviceKey ของ service เจ้าของนัดหมาย</li>
+<li>ใน payload <code>schedule.serviceKey</code> = service ที่จะได้รับ alarm (ปกติคือ serviceKey ของผู้ส่งเอง)</li>
+<li>ความละเอียดของเวลา 1 นาที</li>
+<li>ใช้ <code>scheduleRefKey</code> / <code>scheduleRefType</code> อ้างถึงข้อมูลฝั่งตัวเอง และ <code>alarmData</code> ฝากข้อมูลอิสระ (object) ที่จะได้คืนมาตอน alarm</li>
+<li>ประวัติการส่งเก็บเป็น ScheduleTransaction จับคู่กับผลตอบกลับด้วย <code>alarmRefKey</code></li>
+</ul>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<p>GraphQL endpoint <code>/graphql</code> · ทุก API ต้อง login (header <code>authorization</code>) และมี permission ตามที่ระบุ ยกเว้น API แบบ <code>...ByAppKey</code> ที่ใช้ app credential ของระบบภายนอก · การระบุ <code>appKey</code> อื่นนอกจากแอปที่ login ต้องมี permission <code>systemApp</code></p>
+<p><strong>สรุป API ทั้งหมด 11 รายการ</strong> — กดชื่อเพื่อไปที่รายละเอียด</p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>API</th>
+<th>ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedules">Get Schedules</a></td>
+<td>ดึงรายการ schedule ทั้งหมดของแอปที่ login (แบ่งหน้า) · permission: <code>getSchedules</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedule-by-id">Get Schedule By ID</a></td>
+<td>ดึง schedule ตาม <code>_id</code> · permission: <code>getScheduleById</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedule-by-key">Get Schedule By Key</a></td>
+<td>ดึง schedule ตาม <code>scheduleKey</code> · permission: <code>getScheduleByKey</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedule-by-appkey">Get Schedule By AppKey</a></td>
+<td>ดึงรายการ schedule ของแอปที่ระบุ สำหรับระบบภายนอกที่เรียกด้วย app credential (header `X…</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedule-transactions">Get Schedule Transactions</a></td>
+<td>ดึงประวัติการส่ง alarm ของแอปที่ login (แบ่งหน้า) · permission: <code>getScheduleTransactions</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedule-transaction-by-id">Get Schedule Transaction By ID</a></td>
+<td>ดึงประวัติการส่งตาม <code>_id</code> · permission: <code>getScheduleTransactionById</code></td>
+</tr>
+<tr>
+<td>Query</td>
+<td><a href="#get-schedule-transactions-by-appkey">Get Schedule Transactions By AppKey</a></td>
+<td>ดึงประวัติการส่งของแอปที่ระบุ สำหรับระบบภายนอกที่เรียกด้วย app credential</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#create-schedule">Create Schedule</a></td>
+<td>สร้าง schedule จากหน้าบ้าน (ผลเหมือนส่ง <code>set-schedule</code> action <code>ADD</code>) · permission: `cre…</td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#update-schedule">Update Schedule</a></td>
+<td>แก้ไข schedule · permission: <code>updateSchedule</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#delete-schedule">Delete Schedule</a></td>
+<td>ลบ schedule · permission: <code>deleteSchedule</code></td>
+</tr>
+<tr>
+<td>Mutation</td>
+<td><a href="#sent-schedule">Sent Schedule</a></td>
+<td>สั่งส่ง alarm ของ schedule นี้ทันทีโดยไม่รอเวลา (ส่ง <code>schedule-alarm</code> ไปยัง service เจ้…</td>
+</tr>
+</tbody>
+</table>
+<h3 id="query">Query<a class="headerlink" href="#query" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการ Query ข้อมูลออกมา ไม่มีการแก้ไข Data</p>
+<h4 id="get-schedules">Get Schedules<a class="headerlink" href="#get-schedules" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ schedule ทั้งหมดของแอปที่ login (แบ่งหน้า) · permission: <code>getSchedules</code></p>
+<pre><code class="language-graphql">query {
+  getSchedules(input: {
+    filter: { serviceKey: &quot;storage&quot;, isActive: true }
+    search: { title: &quot;แจ้งเตือน&quot; }
+    sort: { sortBy: createdAt, sortOrder: DESC }
+    pagination: { limit: 10, page: 1 }
+  }) {
+    schedules { _id scheduleKey serviceKey title isRecurring nextNotificationAt isSent }
+    pagination { page limit totalItems totalPages hasNextPage }
+  }
+}
+</code></pre>
+<p>Input <code>GetScheduleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td>GetScheduleFilterInput</td>
+<td>กรองตรงตัว: serviceKey, scheduleKey, scheduleRefKey, scheduleRefType, title, description, isActive, timeZone, isRecurring, notificationCount, isSent, createdBy, updatedBy</td>
+</tr>
+<tr>
+<td>search</td>
+<td>GetScheduleSearchInput</td>
+<td>ค้นหาบางส่วน: serviceKey, scheduleKey, scheduleRefKey, scheduleRefType, title, description</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>GetScheduleSortInput</td>
+<td><code>sortBy</code> (ค่าเริ่มต้น <code>createdAt</code>), <code>sortOrder</code> ASC / DESC</td>
+</tr>
+<tr>
+<td>pagination</td>
+<td>CustomPaginateInput</td>
+<td><code>limit</code> (ค่าเริ่มต้น 10), <code>page</code> (ค่าเริ่มต้น 1)</td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>SchedulePagination</code> = <code>{ schedules: [Schedule], pagination: CustomPaginate }</code></p>
+<p>Schedule</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>String</td>
+<td>service ที่จะได้รับ alarm</td>
+</tr>
+<tr>
+<td>scheduleKey</td>
+<td>String</td>
+<td>key อ้างอิงของ schedule</td>
+</tr>
+<tr>
+<td>scheduleRefKey</td>
+<td>String</td>
+<td>key อ้างอิงข้อมูลฝั่ง service เจ้าของ</td>
+</tr>
+<tr>
+<td>scheduleRefType</td>
+<td>String</td>
+<td>ประเภทข้อมูลฝั่ง service เจ้าของ</td>
+</tr>
+<tr>
+<td>alarmData</td>
+<td>JSON</td>
+<td>ข้อมูลอิสระที่ฝากไว้ จะส่งคืนตอน alarm</td>
+</tr>
+<tr>
+<td>title</td>
+<td>String</td>
+<td>ชื่อ schedule</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>รายละเอียด</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean</td>
+<td>เปิดใช้งานอยู่หรือไม่</td>
+</tr>
+<tr>
+<td>timeZone</td>
+<td>String</td>
+<td>เขตเวลา เช่น <code>Asia/Bangkok</code> (ใช้กับ recurrence แบบ <code>SPECIFIC</code>)</td>
+</tr>
+<tr>
+<td>isRecurring</td>
+<td>Boolean</td>
+<td>วนซ้ำหรือไม่</td>
+</tr>
+<tr>
+<td>recurrence</td>
+<td>ScheduleRecurrence</td>
+<td>การตั้งค่าวนซ้ำ (ดูด้านล่าง)</td>
+</tr>
+<tr>
+<td>firstNotificationAt</td>
+<td>Date</td>
+<td>เวลาแจ้งเตือนครั้งแรก</td>
+</tr>
+<tr>
+<td>nextNotificationAt</td>
+<td>Date</td>
+<td>เวลาแจ้งเตือนครั้งถัดไป</td>
+</tr>
+<tr>
+<td>notificationCount</td>
+<td>Int</td>
+<td>จำนวนครั้งที่แจ้งเตือนแล้ว</td>
+</tr>
+<tr>
+<td>isSent</td>
+<td>Boolean</td>
+<td>ส่งครบแล้วหรือไม่</td>
+</tr>
+<tr>
+<td>expiryAt</td>
+<td>Date</td>
+<td>เวลาหมดอายุ</td>
+</tr>
+<tr>
+<td>lastSentAt</td>
+<td>Date</td>
+<td>เวลาส่งครั้งล่าสุด</td>
+</tr>
+<tr>
+<td>createdBy, updatedBy</td>
+<td>String</td>
+<td>ผู้สร้าง / ผู้แก้ไข</td>
+</tr>
+<tr>
+<td>createdAt, updatedAt</td>
+<td>Date</td>
+<td>เวลาสร้าง / แก้ไขล่าสุด</td>
+</tr>
+</tbody>
+</table>
+<p>ScheduleRecurrence</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td>ENUM</td>
+<td><code>INTERVAL</code> (ทุก ๆ ช่วงเวลา) · <code>SPECIFIC</code> (วันที่กำหนด)</td>
+</tr>
+<tr>
+<td>interval</td>
+<td>ENUM</td>
+<td><code>MINUTES</code>, <code>HOURS</code>, <code>DAYS</code>, <code>WEEKS</code>, <code>MONTHS</code> (ใช้กับ <code>INTERVAL</code>)</td>
+</tr>
+<tr>
+<td>value</td>
+<td>Int</td>
+<td>จำนวนหน่วยของ interval เช่น 24 + <code>HOURS</code></td>
+</tr>
+<tr>
+<td>specific.dayOfWeek</td>
+<td>Int</td>
+<td>0–6 (อาทิตย์ = 0) ใช้กับ <code>SPECIFIC</code></td>
+</tr>
+<tr>
+<td>specific.dayOfMonth</td>
+<td>Int</td>
+<td>1–31 ใช้กับ <code>SPECIFIC</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-schedule-by-id">Get Schedule By ID<a class="headerlink" href="#get-schedule-by-id" title="Permanent link">&para;</a></h4>
+<p>ดึง schedule ตาม <code>_id</code> · permission: <code>getScheduleById</code></p>
+<pre><code class="language-graphql">query {
+  getScheduleById(scheduleId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) {
+    _id scheduleKey title nextNotificationAt recurrence { type interval value }
+  }
+}
+</code></pre>
+<p>Response : <code>Schedule</code></p>
+<hr />
+<h4 id="get-schedule-by-key">Get Schedule By Key<a class="headerlink" href="#get-schedule-by-key" title="Permanent link">&para;</a></h4>
+<p>ดึง schedule ตาม <code>scheduleKey</code> · permission: <code>getScheduleByKey</code></p>
+<pre><code class="language-graphql">query {
+  getScheduleByKey(scheduleKey: &quot;aB3dE5fG7h&quot;) { _id title nextNotificationAt isSent }
+}
+</code></pre>
+<p>Response : <code>Schedule</code></p>
+<hr />
+<h4 id="get-schedule-by-appkey">Get Schedule By AppKey<a class="headerlink" href="#get-schedule-by-appkey" title="Permanent link">&para;</a></h4>
+<p>ดึงรายการ schedule ของแอปที่ระบุ สำหรับระบบภายนอกที่เรียกด้วย app credential (header <code>X-APP-CLIENT-ID</code> + <code>X-APP-CLIENT-SECRET</code>)</p>
+<pre><code class="language-graphql">query {
+  getScheduleByAppKey(appKey: &quot;yourAppKey&quot;, input: { pagination: { limit: 10, page: 1 } }) {
+    schedules { _id title nextNotificationAt }
+    pagination { totalItems }
+  }
+}
+</code></pre>
+<p>Response : <code>SchedulePagination</code></p>
+<hr />
+<h4 id="get-schedule-transactions">Get Schedule Transactions<a class="headerlink" href="#get-schedule-transactions" title="Permanent link">&para;</a></h4>
+<p>ดึงประวัติการส่ง alarm ของแอปที่ login (แบ่งหน้า) · permission: <code>getScheduleTransactions</code></p>
+<pre><code class="language-graphql">query {
+  getScheduleTransactions(input: {
+    filter: { isSuccess: false }
+    sort: { sortBy: scheduleSentAt, sortOrder: DESC }
+    pagination: { limit: 20, page: 1 }
+  }) {
+    scheduleTransaction { _id scheduleKey alarmRefKey scheduleSentAt clientReceivedAt isSuccess }
+    pagination { totalItems }
+  }
+}
+</code></pre>
+<p>Input <code>GetScheduleTransactionInput</code>: <code>filter</code> (scheduleKey, isSuccess, alarmRefKey, createdBy, updatedBy, schedule) · <code>search</code> (scheduleKey, alarmRefKey) · <code>sort</code> · <code>pagination</code></p>
+<p>Response : <code>ScheduleTransactionPagination</code> = <code>{ scheduleTransaction: [ScheduleTransaction], pagination: CustomPaginate }</code></p>
+<p>ScheduleTransaction</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>id ที่ใช้อ้างอิง</td>
+</tr>
+<tr>
+<td>scheduleId</td>
+<td>ID</td>
+<td>id ของ schedule</td>
+</tr>
+<tr>
+<td>scheduleKey</td>
+<td>String</td>
+<td>key ของ schedule</td>
+</tr>
+<tr>
+<td>alarmRefKey</td>
+<td>String</td>
+<td>key ของการส่งรอบนี้ ใช้จับคู่กับ <code>schedule-alarm-result</code></td>
+</tr>
+<tr>
+<td>scheduleSentAt</td>
+<td>Date</td>
+<td>เวลาที่ schedule ส่ง alarm</td>
+</tr>
+<tr>
+<td>clientReceivedAt</td>
+<td>Date</td>
+<td>เวลาที่ service ปลายทางได้รับ</td>
+</tr>
+<tr>
+<td>clientSentAt</td>
+<td>Date</td>
+<td>เวลาที่ service ปลายทางตอบกลับ</td>
+</tr>
+<tr>
+<td>scheduleReceivedAt</td>
+<td>Date</td>
+<td>เวลาที่ schedule ได้รับผลตอบกลับ</td>
+</tr>
+<tr>
+<td>isSuccess</td>
+<td>Boolean</td>
+<td>ได้รับผลตอบกลับแล้วหรือไม่</td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>Schedule</td>
+<td>ข้อมูล schedule ณ เวลาที่ส่ง</td>
+</tr>
+<tr>
+<td>createdAt, updatedAt</td>
+<td>Date</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="get-schedule-transaction-by-id">Get Schedule Transaction By ID<a class="headerlink" href="#get-schedule-transaction-by-id" title="Permanent link">&para;</a></h4>
+<p>ดึงประวัติการส่งตาม <code>_id</code> · permission: <code>getScheduleTransactionById</code></p>
+<pre><code class="language-graphql">query {
+  getScheduleTransactionById(scheduleTransactionId: &quot;6650f0c2a1b2c3d4e5f60719&quot;) {
+    _id alarmRefKey isSuccess scheduleSentAt scheduleReceivedAt
+  }
+}
+</code></pre>
+<p>Response : <code>ScheduleTransaction</code></p>
+<hr />
+<h4 id="get-schedule-transactions-by-appkey">Get Schedule Transactions By AppKey<a class="headerlink" href="#get-schedule-transactions-by-appkey" title="Permanent link">&para;</a></h4>
+<p>ดึงประวัติการส่งของแอปที่ระบุ สำหรับระบบภายนอกที่เรียกด้วย app credential</p>
+<pre><code class="language-graphql">query {
+  getScheduleTransactionsByAppKey(appKey: &quot;yourAppKey&quot;, input: { pagination: { limit: 20, page: 1 } }) {
+    scheduleTransaction { _id alarmRefKey isSuccess }
+  }
+}
+</code></pre>
+<p>Response : <code>ScheduleTransactionPagination</code></p>
+<hr />
+<h3 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h3>
+<p>เป็น API ที่ใช้สำหรับการแก้ไขข้อมูล</p>
+<h4 id="create-schedule">Create Schedule<a class="headerlink" href="#create-schedule" title="Permanent link">&para;</a></h4>
+<p>สร้าง schedule จากหน้าบ้าน (ผลเหมือนส่ง <code>set-schedule</code> action <code>ADD</code>) · permission: <code>createSchedule</code></p>
+<pre><code class="language-graphql">mutation {
+  createSchedule(input: {
+    serviceKey: &quot;yourServiceKey&quot;
+    scheduleRefType: &quot;alarmTimeConfig&quot;
+    title: &quot;แจ้งเตือนเข้างาน&quot;
+    timeZone: &quot;Asia/Bangkok&quot;
+    isRecurring: true
+    recurrence: { type: INTERVAL, interval: HOURS, value: 24 }
+    firstNotificationAt: &quot;2026-11-01T02:00:00Z&quot;
+    expiryAt: &quot;2027-11-01T02:00:00Z&quot;
+  }) {
+    _id scheduleKey nextNotificationAt
+  }
+}
+</code></pre>
+<p>Input <code>CreateScheduleInput</code></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>String</td>
+<td>ไม่ใส่ = แอปที่ login</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>String!</td>
+<td>service ที่จะได้รับ alarm</td>
+</tr>
+<tr>
+<td>scheduleRefKey</td>
+<td>String</td>
+<td>key อ้างอิงข้อมูลฝั่ง service เจ้าของ</td>
+</tr>
+<tr>
+<td>scheduleRefType</td>
+<td>String</td>
+<td>ประเภทข้อมูลฝั่ง service เจ้าของ</td>
+</tr>
+<tr>
+<td>title</td>
+<td>String</td>
+<td>ชื่อ</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>รายละเอียด</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>Boolean</td>
+<td>เปิดใช้งาน</td>
+</tr>
+<tr>
+<td>timeZone</td>
+<td>String</td>
+<td>เขตเวลา เช่น <code>Asia/Bangkok</code></td>
+</tr>
+<tr>
+<td>isRecurring</td>
+<td>Boolean</td>
+<td>วนซ้ำหรือไม่ (ค่าเริ่มต้น <code>false</code>)</td>
+</tr>
+<tr>
+<td>recurrence</td>
+<td>CreateScheduleRecurrenceInput</td>
+<td><code>type</code> (ค่าเริ่มต้น <code>INTERVAL</code>), <code>interval</code>, <code>value</code>, <code>specific { dayOfWeek, dayOfMonth }</code></td>
+</tr>
+<tr>
+<td>firstNotificationAt</td>
+<td>Date!</td>
+<td>เวลาแจ้งเตือนครั้งแรก</td>
+</tr>
+<tr>
+<td>expiryAt</td>
+<td>Date</td>
+<td>เวลาหมดอายุ</td>
+</tr>
+</tbody>
+</table>
+<p>Response : <code>Schedule</code></p>
+<hr />
+<h4 id="update-schedule">Update Schedule<a class="headerlink" href="#update-schedule" title="Permanent link">&para;</a></h4>
+<p>แก้ไข schedule · permission: <code>updateSchedule</code></p>
+<pre><code class="language-graphql">mutation {
+  updateSchedule(
+    scheduleId: &quot;6650f0c2a1b2c3d4e5f60718&quot;
+    input: { title: &quot;แจ้งเตือนเข้างาน (ใหม่)&quot;, isRecurring: true, isActive: true }
+  ) {
+    _id title isActive
+  }
+}
+</code></pre>
+<p>Input: <code>scheduleId: String!</code>, <code>appKey: String</code> (ไม่ใส่ = แอปที่ login), <code>input: UpdateScheduleInput</code> (ฟิลด์เดียวกับ CreateScheduleInput ยกเว้น appKey และไม่บังคับทุกฟิลด์) · ควรส่ง <code>isRecurring</code> ทุกครั้งที่แก้ schedule แบบวนซ้ำ (ค่าเริ่มต้นของฟิลด์นี้คือ <code>false</code>)</p>
+<p>Response : <code>Schedule</code></p>
+<hr />
+<h4 id="delete-schedule">Delete Schedule<a class="headerlink" href="#delete-schedule" title="Permanent link">&para;</a></h4>
+<p>ลบ schedule · permission: <code>deleteSchedule</code></p>
+<pre><code class="language-graphql">mutation {
+  deleteSchedule(scheduleId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id title }
+}
+</code></pre>
+<p>Input: <code>scheduleId: ID!</code>, <code>appKey: String</code></p>
+<p>Response : <code>Schedule</code> (ข้อมูลที่ถูกลบ)</p>
+<hr />
+<h4 id="sent-schedule">Sent Schedule<a class="headerlink" href="#sent-schedule" title="Permanent link">&para;</a></h4>
+<p>สั่งส่ง alarm ของ schedule นี้ทันทีโดยไม่รอเวลา (ส่ง <code>schedule-alarm</code> ไปยัง service เจ้าของ)</p>
+<pre><code class="language-graphql">mutation {
+  sentSchedule(scheduleId: &quot;6650f0c2a1b2c3d4e5f60718&quot;) { _id notificationCount lastSentAt }
+}
+</code></pre>
+<p>Input: <code>scheduleId: ID!</code>, <code>appKey: String</code></p>
+<p>Response : <code>Schedule</code></p>
+<hr />
+<h2 id="kafka-consume-reference">kafka consume Reference<a class="headerlink" href="#kafka-consume-reference" title="Permanent link">&para;</a></h2>
+<p>ทุก topic ตรวจว่า schedule มีสิทธิ์ในแอปตาม header <code>appKey</code> (มี appCertificate ของแอปนั้น) ก่อนทำงาน</p>
+<h3 id="standard-topics">Standard topics<a class="headerlink" href="#standard-topics" title="Permanent link">&para;</a></h3>
+<p>topic มาตรฐานของ service ใน core set</p>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init-system</code></td>
+<td>ตั้งระบบจากศูนย์ (เฉพาะ core set)</td>
+</tr>
+<tr>
+<td><code>refresh-data</code></td>
+<td>ส่งข้อมูลที่ตัวเองถือขึ้นไปใหม่ (เช่น permission) และล้าง cache</td>
+</tr>
+<tr>
+<td><code>sync-app-certificate</code></td>
+<td>รับ appCertificate ของแอปที่ schedule มีสิทธิ์</td>
+</tr>
+<tr>
+<td><code>sync-app-credential</code></td>
+<td>รับข้อมูลการเข้าใช้ของ user ในแอป (ใช้ตรวจ token)</td>
+</tr>
+<tr>
+<td><code>sync-application</code></td>
+<td>รับข้อมูลแอป</td>
+</tr>
+<tr>
+<td><code>sync-user-policy</code></td>
+<td>รับ UserPolicy สำหรับตรวจ permission</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="set-schedule">Set Schedule<a class="headerlink" href="#set-schedule" title="Permanent link">&para;</a></h3>
+<p>ลงทะเบียน / ยกเลิกนัดหมายจาก service อื่น · นี่คือช่องทางหลักที่ service อื่นควรใช้</p>
+<pre><code>topic: set-schedule
+header: appKey = แอปของนัดหมาย, serviceKey = schedule
+</code></pre>
+<h4 id="add">Add<a class="headerlink" href="#add" title="Permanent link">&para;</a></h4>
+<p>สร้าง schedule ใหม่ (ทุกข้อความ ADD สร้างรายการใหม่เสมอ ⇒ อย่าส่งซ้ำสำหรับนัดเดียวกัน)</p>
+<pre><code>Action: ADD
+</code></pre>
+<pre><code class="language-json">{
+  &quot;action&quot;: &quot;ADD&quot;,
+  &quot;schedule&quot;: {
+    &quot;appKey&quot;: &quot;yourAppKey&quot;,
+    &quot;serviceKey&quot;: &quot;yourServiceKey&quot;,
+    &quot;scheduleRefKey&quot;: &quot;665000000000000000000001&quot;,
+    &quot;scheduleRefType&quot;: &quot;alarmTimeConfig&quot;,
+    &quot;alarmData&quot;: { &quot;timeRecordId&quot;: &quot;abcd&quot;, &quot;timeConfigType&quot;: &quot;startTime&quot; },
+    &quot;title&quot;: &quot;แจ้งเตือนเข้างาน&quot;,
+    &quot;description&quot;: &quot;แจ้งเตือนเข้างาน&quot;,
+    &quot;timeZone&quot;: &quot;Asia/Bangkok&quot;,
+    &quot;isRecurring&quot;: true,
+    &quot;recurrence&quot;: { &quot;type&quot;: &quot;INTERVAL&quot;, &quot;interval&quot;: &quot;HOURS&quot;, &quot;value&quot;: 24 },
+    &quot;notificationAt&quot;: &quot;2026-11-01T02:00:00Z&quot;,
+    &quot;expiryAt&quot;: &quot;2027-11-01T02:00:00Z&quot;
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td>แอปของนัดหมาย</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td>service ที่จะได้รับ <code>schedule-alarm</code> (ปกติคือตัวผู้ส่งเอง)</td>
+</tr>
+<tr>
+<td>scheduleRefKey</td>
+<td>string</td>
+<td>key อ้างอิงข้อมูลฝั่งผู้ส่ง (ใช้ตอน REMOVE ด้วย)</td>
+</tr>
+<tr>
+<td>scheduleRefType</td>
+<td>string</td>
+<td>ประเภทข้อมูลฝั่งผู้ส่ง ใช้แยกว่า alarm นี้เป็นงานแบบไหน</td>
+</tr>
+<tr>
+<td>alarmData</td>
+<td>object</td>
+<td>ข้อมูลอิสระ จะได้คืนใน <code>schedule-alarm</code></td>
+</tr>
+<tr>
+<td>title, description</td>
+<td>string</td>
+<td>ชื่อ / รายละเอียด</td>
+</tr>
+<tr>
+<td>timeZone</td>
+<td>string</td>
+<td>ใช้คำนวณ "วันในสัปดาห์ / วันที่ของเดือน" ของนัดซ้ำแบบ <code>SPECIFIC</code> ตามเวลาท้องถิ่น · ไม่ใส่ = เขตเวลาของเครื่อง schedule ⇒ ควรระบุเสมอ</td>
+</tr>
+<tr>
+<td>isRecurring</td>
+<td>boolean</td>
+<td>วนซ้ำหรือไม่</td>
+</tr>
+<tr>
+<td>recurrence</td>
+<td>object</td>
+<td><code>{ type, interval, value, specific: { dayOfWeek, dayOfMonth } }</code> ดู <a href="#get-schedules">ScheduleRecurrence</a> · ไม่วนซ้ำให้ส่ง <code>null</code></td>
+</tr>
+<tr>
+<td>notificationAt</td>
+<td>Date</td>
+<td><strong>เวลาที่ยิงจริง</strong> (ครั้งแรก) เป็นเวลาสากล ISO 8601 เช่น <code>2026-11-01T02:00:00Z</code> = 09:00 เวลาไทย — <code>timeZone</code> ไม่เปลี่ยนค่านี้</td>
+</tr>
+<tr>
+<td>expiryAt</td>
+<td>Date</td>
+<td>เวลาหมดอายุ (ไม่ใส่ = notificationAt + 1 ปี)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="remove">Remove<a class="headerlink" href="#remove" title="Permanent link">&para;</a></h4>
+<p>ยกเลิก schedule ทั้งหมดของแอปที่ตรงกับ <code>scheduleRefKey</code> + <code>scheduleRefType</code></p>
+<pre><code>Action: REMOVE
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>schedule.appKey</td>
+<td>string</td>
+<td>แอปของนัดหมาย</td>
+</tr>
+<tr>
+<td>schedule.scheduleRefKey</td>
+<td>string</td>
+<td>key อ้างอิงที่ใช้ตอน ADD</td>
+</tr>
+<tr>
+<td>schedule.scheduleRefType</td>
+<td>string</td>
+<td>ประเภทที่ใช้ตอน ADD</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="schedule-alarm-result">Schedule Alarm Result<a class="headerlink" href="#schedule-alarm-result" title="Permanent link">&para;</a></h3>
+<p>service ปลายทางตอบกลับหลังได้รับ <code>schedule-alarm</code> เพื่อบันทึกประวัติ · schedule จับคู่ด้วย <code>appKey</code> + <code>alarmRefKey</code> แล้วตั้ง <code>isSuccess = true</code> และ <code>scheduleReceivedAt</code></p>
+<pre><code>topic: schedule-alarm-result
+header: appKey, serviceKey = schedule
+Action: ADD
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scheduleAlarm.id</td>
+<td>string</td>
+<td>id ของ schedule (ส่งคืนตามที่ได้รับ)</td>
+</tr>
+<tr>
+<td>scheduleAlarm.appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>scheduleAlarm.serviceKey</td>
+<td>string</td>
+<td>serviceKey ของผู้ตอบ</td>
+</tr>
+<tr>
+<td>scheduleAlarm.scheduleRefKey</td>
+<td>string</td>
+<td>ตามที่ได้รับ</td>
+</tr>
+<tr>
+<td>scheduleAlarm.scheduleRefType</td>
+<td>string</td>
+<td>ตามที่ได้รับ</td>
+</tr>
+<tr>
+<td>scheduleAlarm.alarmData</td>
+<td>object</td>
+<td>ตามที่ได้รับ</td>
+</tr>
+<tr>
+<td>scheduleAlarm.alarmRefKey</td>
+<td>string</td>
+<td><strong>ต้องส่งคืน</strong> ใช้จับคู่ประวัติ</td>
+</tr>
+<tr>
+<td>scheduleAlarm.clientReceivedAt</td>
+<td>Date</td>
+<td>เวลาที่ผู้ตอบได้รับ alarm</td>
+</tr>
+<tr>
+<td>scheduleAlarm.clientSentAt</td>
+<td>Date</td>
+<td>เวลาที่ผู้ตอบส่งผลกลับ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="kafka-produce-reference">Kafka Produce Reference<a class="headerlink" href="#kafka-produce-reference" title="Permanent link">&para;</a></h2>
+<h3 id="schedule-alarm">Schedule Alarm<a class="headerlink" href="#schedule-alarm" title="Permanent link">&para;</a></h3>
+<p>ส่งเมื่อถึงเวลาของ schedule (หรือสั่งด้วย <code>sentSchedule</code>) · เป็น topic เดียวที่ทุก service subscribe ได้ ผู้รับต้องกรองเอาเฉพาะของตัวเองด้วย <code>scheduleAlarm.serviceKey</code> (หรือ header <code>serviceKey</code>) และแยกงานด้วย <code>scheduleRefType</code></p>
+<pre><code>topic: schedule-alarm
+header: appKey = แอปของนัดหมาย, serviceKey = service เจ้าของนัดหมาย
+Action: ADD
+</code></pre>
+<pre><code class="language-json">{
+  &quot;action&quot;: &quot;ADD&quot;,
+  &quot;scheduleAlarm&quot;: {
+    &quot;id&quot;: &quot;6650f0c2a1b2c3d4e5f60718&quot;,
+    &quot;appKey&quot;: &quot;yourAppKey&quot;,
+    &quot;serviceKey&quot;: &quot;yourServiceKey&quot;,
+    &quot;scheduleRefKey&quot;: &quot;665000000000000000000001&quot;,
+    &quot;scheduleRefType&quot;: &quot;alarmTimeConfig&quot;,
+    &quot;alarmData&quot;: { &quot;timeRecordId&quot;: &quot;abcd&quot;, &quot;timeConfigType&quot;: &quot;startTime&quot; },
+    &quot;alarmRefKey&quot;: &quot;Xy12Ab34Cd&quot;
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td>id ของ schedule</td>
+</tr>
+<tr>
+<td>appKey</td>
+<td>string</td>
+<td>appKey</td>
+</tr>
+<tr>
+<td>serviceKey</td>
+<td>string</td>
+<td>service ที่ต้องทำงาน</td>
+</tr>
+<tr>
+<td>scheduleRefKey</td>
+<td>string</td>
+<td>ตามที่ลงทะเบียน</td>
+</tr>
+<tr>
+<td>scheduleRefType</td>
+<td>string</td>
+<td>ตามที่ลงทะเบียน</td>
+</tr>
+<tr>
+<td>alarmData</td>
+<td>object</td>
+<td>ตามที่ลงทะเบียน</td>
+</tr>
+<tr>
+<td>alarmRefKey</td>
+<td>string</td>
+<td>key ของการส่งรอบนี้ ให้ส่งคืนใน <code>schedule-alarm-result</code></td>
+</tr>
+</tbody>
+</table>
+<p>ผู้รับควร produce <code>schedule-alarm-result</code> กลับมาหลังรับงาน เพื่อให้ประวัติการส่งสมบูรณ์</p>
+<hr />
+<h3 id="set-schedule-result">Set Schedule Result<a class="headerlink" href="#set-schedule-result" title="Permanent link">&para;</a></h3>
+<p>ผลการลงทะเบียนจาก <code>set-schedule</code></p>
+<pre><code>topic: set-schedule-result
+Action: SUCCESS | ERROR
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>Type</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>action</td>
+<td>string</td>
+<td><code>SUCCESS</code> หรือ <code>ERROR</code></td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>object</td>
+<td>ข้อมูล schedule ที่ส่งมา</td>
+</tr>
+<tr>
+<td>error</td>
+<td>object</td>
+<td>รายละเอียดข้อผิดพลาด (กรณี ERROR)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sync-permission">Sync Permission<a class="headerlink" href="#sync-permission" title="Permanent link">&para;</a></h3>
+<p>ส่ง permission ของ schedule ให้ access-control เมื่อได้รับ <code>refresh-data</code> เพื่อนำไปผูกกับ role (<code>getSchedules</code>, <code>getScheduleById</code>, <code>getScheduleByKey</code>, <code>createSchedule</code>, <code>updateSchedule</code>, <code>deleteSchedule</code>, <code>sentSchedule</code>, <code>getScheduleTransactions</code>, <code>getScheduleTransactionById</code>, <code>systemApp</code>)</p>
+<pre><code>topic: sync-permission
+Action: ADD
+</code></pre>
+<hr />
+<blockquote>
+<p>อัปเดตจากโค้ด gumon-schedule-service@4bea2c8 · 2026-10-05</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  กลับไปด้านบนสุด
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "toc.follow", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01\u0e41\u0e25\u0e49\u0e27", "clipboard.copy": "\u0e04\u0e31\u0e14\u0e25\u0e2d\u0e01", "search.result.more.one": "\u0e2d\u0e35\u0e01\u0e2b\u0e19\u0e36\u0e48\u0e07\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.more.other": "# \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21\u0e43\u0e19\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49", "search.result.none": "\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.one": "\u0e1e\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.other": "\u0e1e\u0e1a # \u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e19", "search.result.placeholder": "\u0e1e\u0e34\u0e21\u0e1e\u0e4c\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e23\u0e34\u0e48\u0e21\u0e04\u0e49\u0e19\u0e2b\u0e32", "search.result.term.missing": "\u0e44\u0e21\u0e48\u0e1e\u0e1a", "select.version": "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e0a\u0e31\u0e19"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
